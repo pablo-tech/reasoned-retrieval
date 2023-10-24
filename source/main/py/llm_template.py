@@ -5,160 +5,6 @@ from langchain.prompts import HumanMessagePromptTemplate
 from langchain import hub
 
 
-class ReactTemplate(TemplateBank):
-
-    def __init__(self):
-        super().__init__()
-
-    def instruction_template(self):
-        return """
-Answer the following questions as best you can.
-
-You have access to the following tools:
-{tool_summaries}
-"""
-
-    def format_template(self):
-        return """
-Use the following format:
-
-Question: the input question you must answer
-Thought: think step-by-step, select one tool action name, and define the tool's input. The tool names are {tool_names}
-Action: selected tool[the input to the tool]
-Observation: the result of the action, if a tool was selelected
-... (this Thought/Action/Observation can repeat a number of times)
-Thought: I now know the final answer
-Action: Finish[think step-by-step and and answer the original question]
-"""
-
-    def example_template(self):
-        return """
-Here are a few examples:
-{fewshot_examples}
-"""
-
-    def history_template(self):
-        return """
-Previous conversation history:
-{chat_history}
-"""
-
-    def question_template(self):
-        return """
-Question: {input_question}
-"""
-
-    def scratch_template(self):
-        return """
-{agent_scratchpad}
-"""
-
-    def system_template(self):
-        template = self.instruction_template() + "\n\n"
-        template += self.format_template() + "\n\n"
-        # template += self.example_template() + "\n\n"
-        return template
-
-    def human_template(self):
-        template = self.history_template() + "\n\n"
-        template += self.question_template() + "\n\n"
-        template += self.scratch_template() + "\n\n"
-        return template
-
-    def inference_template(self):
-        template = self.system_template()
-        template += self.human_template()
-        return PromptTemplate.from_template(template)
-
-    def chat_template(self):
-        # https://python.langchain.com/docs/modules/model_io/prompts/prompt_templates/
-        return ChatPromptTemplate.from_messages([
-                SystemMessagePromptTemplate.from_template(self.system_template()),
-                HumanMessagePromptTemplate.from_template(self.human_template()),
-            ]
-        )
-    
-
-class TemplateHub(TemplateBank):
-
-    def __init__(self):
-        super().__init__()
-
-    def hub_template(self, template_name):
-        return hub.pull(template_name)
-
-    def hub_react_template(self, template_name="hwchase17/react"):
-        template = """Answer the following questions as best you can. You have access to the following tools:
-
-        {tools}
-
-        Use the following format:
-
-        Question: the input question you must answer
-        Thought: you should always think about what to do
-        Action: the action to take, should be one of [{tool_names}]
-        Action Input: the input to the action
-        Observation: the result of the action
-        ... (this Thought/Action/Action Input/Observation can repeat N times)
-        Thought: I now know the final answer
-        Final Answer: the final answer to the original input question
-
-        Begin!
-
-        Question: {input}
-        {agent_scratchpad}"""
-        # Thought: {agent_scratchpad}"""
-        return self.from_template(template)
-        # return self.hub_template(template_name)
-
-    def hub_react_json_template(self, template_name="hwchase17/react-json"):
-        return self.hub_template(template_name)
-
-    def hub_react_chat_template(self, template_name="hwchase17/react-chat"):
-        template = """Assistant is a large language model trained by OpenAI.
-
-        Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
-
-        Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
-
-        Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.
-
-        TOOLS:
-        ------
-
-        Assistant has access to the following tools:
-
-        {tools}
-
-        To use a tool, please use the following format:
-
-        ```
-        Thought: Do I need to use a tool? Yes
-        Action: the action to take, should be one of [{tool_names}]
-        Action Input: the input to the action
-        Observation: the result of the action
-        ```
-
-        When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
-
-        ```
-        Thought: Do I need to use a tool? No
-        Final Answer: [your response here]
-        ```
-
-        Begin!
-
-        Previous conversation history:
-        {chat_history}
-
-        New input: {input}
-        {agent_scratchpad}"""
-        # return self.hub_template(template_name)
-
-    def hub_react_chat_json_template(self, template_name="hwchase17/react-chat-json"):
-        return self.hub_template(template_name)
-    
-
 class TemplateBank():
 
     REACT_DOC_STORE_JOINT_ACTION = """
@@ -330,3 +176,158 @@ Do NOT respond with anything except a JSON snippet no matter what!"""
 
     def __init__(self):
         pass
+    
+
+class ReactTemplate(TemplateBank):
+
+    def __init__(self):
+        super().__init__()
+
+    def instruction_template(self):
+        return """
+Answer the following questions as best you can.
+
+You have access to the following tools:
+{tool_summaries}
+"""
+
+    def format_template(self):
+        return """
+Use the following format:
+
+Question: the input question you must answer
+Thought: think step-by-step, select one tool action name, and define the tool's input. The tool names are {tool_names}
+Action: selected tool[the input to the tool]
+Observation: the result of the action, if a tool was selelected
+... (this Thought/Action/Observation can repeat a number of times)
+Thought: I now know the final answer
+Action: Finish[think step-by-step and and answer the original question]
+"""
+
+    def example_template(self):
+        return """
+Here are a few examples:
+{fewshot_examples}
+"""
+
+    def history_template(self):
+        return """
+Previous conversation history:
+{chat_history}
+"""
+
+    def question_template(self):
+        return """
+Question: {input_question}
+"""
+
+    def scratch_template(self):
+        return """
+{agent_scratchpad}
+"""
+
+    def system_template(self):
+        template = self.instruction_template() + "\n\n"
+        template += self.format_template() + "\n\n"
+        # template += self.example_template() + "\n\n"
+        return template
+
+    def human_template(self):
+        template = self.history_template() + "\n\n"
+        template += self.question_template() + "\n\n"
+        template += self.scratch_template() + "\n\n"
+        return template
+
+    def inference_template(self):
+        template = self.system_template()
+        template += self.human_template()
+        return PromptTemplate.from_template(template)
+
+    def chat_template(self):
+        # https://python.langchain.com/docs/modules/model_io/prompts/prompt_templates/
+        return ChatPromptTemplate.from_messages([
+                SystemMessagePromptTemplate.from_template(self.system_template()),
+                HumanMessagePromptTemplate.from_template(self.human_template()),
+            ]
+        )
+    
+
+class TemplateHub(TemplateBank):
+
+    def __init__(self):
+        super().__init__()
+
+    def hub_template(self, template_name):
+        return hub.pull(template_name)
+
+    def hub_react_template(self, template_name="hwchase17/react"):
+        template = """Answer the following questions as best you can. You have access to the following tools:
+
+        {tools}
+
+        Use the following format:
+
+        Question: the input question you must answer
+        Thought: you should always think about what to do
+        Action: the action to take, should be one of [{tool_names}]
+        Action Input: the input to the action
+        Observation: the result of the action
+        ... (this Thought/Action/Action Input/Observation can repeat N times)
+        Thought: I now know the final answer
+        Final Answer: the final answer to the original input question
+
+        Begin!
+
+        Question: {input}
+        {agent_scratchpad}"""
+        # Thought: {agent_scratchpad}"""
+        return self.from_template(template)
+        # return self.hub_template(template_name)
+
+    def hub_react_json_template(self, template_name="hwchase17/react-json"):
+        return self.hub_template(template_name)
+
+    def hub_react_chat_template(self, template_name="hwchase17/react-chat"):
+        template = """Assistant is a large language model trained by OpenAI.
+
+        Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
+
+        Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
+
+        Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.
+
+        TOOLS:
+        ------
+
+        Assistant has access to the following tools:
+
+        {tools}
+
+        To use a tool, please use the following format:
+
+        ```
+        Thought: Do I need to use a tool? Yes
+        Action: the action to take, should be one of [{tool_names}]
+        Action Input: the input to the action
+        Observation: the result of the action
+        ```
+
+        When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+
+        ```
+        Thought: Do I need to use a tool? No
+        Final Answer: [your response here]
+        ```
+
+        Begin!
+
+        Previous conversation history:
+        {chat_history}
+
+        New input: {input}
+        {agent_scratchpad}"""
+        # return self.hub_template(template_name)
+
+    def hub_react_chat_json_template(self, template_name="hwchase17/react-chat-json"):
+        return self.hub_template(template_name)
+    
