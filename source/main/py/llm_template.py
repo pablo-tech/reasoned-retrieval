@@ -1,6 +1,8 @@
 from langchain.prompts import PromptTemplate
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.prompts import HumanMessagePromptTemplate
+from langchain.prompts.chat import ChatPromptTemplate
+from langchain.prompts.chat import PromptTemplate
 
 from langchain import hub
 
@@ -176,7 +178,7 @@ Do NOT respond with anything except a JSON snippet no matter what!"""
 
     def __init__(self):
         pass
-    
+
 
 class ReactTemplate(TemplateBank):
 
