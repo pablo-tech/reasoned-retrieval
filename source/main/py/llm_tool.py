@@ -54,6 +54,7 @@ class ToolFactory():
     
     @tool
     def get_word_length(word):
+        """Returns the length of a word."""
         return len(word)
 
     def string_tools():
