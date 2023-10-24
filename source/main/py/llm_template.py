@@ -1,7 +1,7 @@
 from langchain.prompts import PromptTemplate
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.prompts import HumanMessagePromptTemplate
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts.chat import ChatPromptTemplate
 from langchain.prompts import PromptTemplate
 
 from langchain import hub
