@@ -4,7 +4,11 @@ from langchain.prompts import HumanMessagePromptTemplate
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.prompts import PromptTemplate
 
+from langchain.chat_models import ChatOpenAI
+
 from langchain import hub
+
+from llm_tool import ToolFactory
 
 
 class TemplateBank():
@@ -254,6 +258,31 @@ Question: {input_question}
         )
     
 
+class PromptFactory(ReactTemplate):
+    # https://smith.langchain.com/hub/hwchase17?organizationId=10beea65-e722-5aa1-9f93-034c22e3cd6e
+
+    def __init__(self, agent_llm):
+        super().__init__()
+        self.agent_llm = agent_llm
+
+    def react_fewshot(self,
+                      tool_set):
+        react_prompt = self.inference_template()
+        if isinstance(self.agent_llm, ChatOpenAI):
+            react_prompt = self.chat_template()
+        return self.prompt_tools(tool_set, react_prompt)
+
+    def prompt_tools(self, tool_set, prompt_template):
+        summaries = ToolFactory().tool_summaries(tool_set)
+        names = ToolFactory().tool_names(tool_set)
+        return prompt_template.partial(tool_summaries=summaries,
+                                       tool_names=names)
+
+    def tool_set(self, tool_name):
+        tool_factory = ToolFactory(self.agent_llm)
+        return tool_factory.tool_set(tool_name)  
+    
+
 class TemplateHub(TemplateBank):
 
     def __init__(self):
@@ -332,4 +361,7 @@ class TemplateHub(TemplateBank):
 
     def hub_react_chat_json_template(self, template_name="hwchase17/react-chat-json"):
         return self.hub_template(template_name)
+    
+
+  
     
