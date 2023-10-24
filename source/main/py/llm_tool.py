@@ -1,10 +1,10 @@
 import os
 
-from langchain import OpenAI, Wikipedia
-from langchain.agents import initialize_agent, Tool
-from langchain.agents import AgentType
+from langchain import Wikipedia
+from langchain.agents import Tool
 from langchain.agents.react.base import DocstoreExplorer
 
+from langchain.agents import tool
 from langchain.agents import load_tools
 from langchain.tools.render import render_text_description
 from langchain.utilities import SerpAPIWrapper
@@ -51,3 +51,12 @@ class ToolFactory():
               description="useful for when you need to ask with lookup"
           )
         ]
+    
+    @tool
+    def get_word_length(word):
+        return len(word)
+
+    def string_tools():
+        return [ToolFactory.get_word_length]
+
+

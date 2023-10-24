@@ -1,4 +1,3 @@
-import langchain
 import openai
 import os
 
@@ -7,8 +6,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.llms import AzureOpenAI
 # from langchain.llms import AzureChatOpenAI
 
-import json
-import sqlite3
 import numpy as np
 import pandas as pd
 import google.generativeai as palm
