@@ -191,16 +191,14 @@ class ReactTemplate(TemplateBank):
 
     def instruction_template(self):
         return """
-Answer the following questions as best you can.
-
-You have access to the following tools:
+ANSWER THE FOLLOWING USER QUESTIONS AS TRUTHFULLY AS YOU CAN.
+YOU HAVE ACCESS TO THE FOLLOWING TOOLS:
 {tool_summaries}
 """
 
     def format_template(self):
         return """
-Use the following format:
-
+USE THE FOLLOWING FORMAT:
 Question: the input question you must answer
 Thought: think step-by-step, select one tool action name, and define the tool's input. The tool names are {tool_names}
 Action: selected tool[the input to the tool]
@@ -212,19 +210,19 @@ Action: Finish[think step-by-step and and answer the original question]
 
     def example_template(self):
         return """
-Here are a few examples:
+FEW-SHOT EXAMPLES:
 {fewshot_examples}
 """
 
     def history_template(self):
         return """
-Previous conversation history:
+CONVERSATION HISTORY:
 {chat_history}
 """
 
     def question_template(self):
         return """
-Question: {input_question}
+USER QUESTION: {input_question}
 """
 
     def scratch_template(self):
@@ -233,15 +231,15 @@ Question: {input_question}
 """
 
     def system_template(self):
-        template = self.instruction_template() + "\n\n"
-        template += self.format_template() + "\n\n"
-        # template += self.example_template() + "\n\n"
+        template = self.instruction_template() + "\n"
+        template += self.format_template() + "\n"
+        # template += self.example_template() + "\n"
         return template
 
     def human_template(self):
-        template = self.history_template() + "\n\n"
-        template += self.question_template() + "\n\n"
-        template += self.scratch_template() + "\n\n"
+        template = self.history_template() + "\n"
+        template += self.question_template() + "\n"
+        template += self.scratch_template() + "\n"
         return template
 
     def inference_template(self):
