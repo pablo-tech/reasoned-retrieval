@@ -33,7 +33,7 @@ class SearchAnswer(SearchEngine):
     def __init__(self):
         super().__init__()
 
-    def invoke(self, query):
+    def run(self, query):
         return self.summarize(self.organic(self.select(query)))
 
     def summarize(self, results):

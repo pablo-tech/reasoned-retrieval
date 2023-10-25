@@ -7,16 +7,15 @@ from langchain.agents.react.base import DocstoreExplorer
 from langchain.agents import tool
 from langchain.agents import load_tools
 from langchain.tools.render import render_text_description
-from langchain.utilities import SerpAPIWrapper
+
+from search_tool import SearchAnswer
 
 
 class ToolFactory():
 
     def __init__(self):
         ## Search engine api
-        # https://serpapi.com/dashboard
-        os.environ['SERPAPI_API_KEY'] = '2c24c5acccd4ab1f8644348773293cac5aa6907314eb0685ab2d8ad3d75e528d'
-        self.search_api = SerpAPIWrapper()
+        self.search_api = SearchAnswer()
         ## Document store
         self.doc_store = DocstoreExplorer(Wikipedia())
 
