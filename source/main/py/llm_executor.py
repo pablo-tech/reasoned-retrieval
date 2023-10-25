@@ -173,10 +173,6 @@ class PipelinedExecutor():
         while remain_iterations > 0:
             try:
               parsed = self.llm_agent.invoke(self.executor_input)
-              # except Exception as e:
-              #   error = str(e)
-              #   parsed = AgentFinish(return_values={'output': error}, log="OPTIMISTIC_PARSING_ERROR="+error)
-              #   self.error_log.append((self.executor_input.str_values(), error))
 
               if isinstance(parsed, AgentAction):
                 # try:
@@ -184,21 +180,11 @@ class PipelinedExecutor():
                 tool_input = parsed.tool_input
                 if tool_name not in ToolFactory().tool_names(self.agent_tools):
                     observation = tool_name + " is not a valid action to take."
-                # tools = [t for t in self.agent_tools if t.name==parsed.tool]
-                # if len(tools) == 0:
-                #     raise ValueError("TOOL_VALUE_ERROR, thought was not followed up with an action. PARSED="+str(parsed))
-                # tool = [t for t in self.agent_tools if t.name==parsed.tool][0]
-                # if tool.name not in ToolFactory().tool_names(self.agent_tools):
-                #     raise ValueError("TOOL_VALUE_ERROR, this is not a valid tool: " + str(tool.name))
                 else:
                     tool = [t for t in self.agent_tools if t.name==tool_name][0]
                     observation = tool.func(tool_input)
                 self.executor_input.add_step(parsed, observation)
                 print(self.tool_observation(tool_name, tool_input, observation))
-                  # except Exception as e:
-                  #   observation = "AGENT_ACTION_ERROR="+str(e)
-                  #   self.executor_input.add_step(parsed, observation)
-                  #   self.error_log.append((parsed, observation))
 
               if isinstance(parsed, AgentFinish):
                   return FinalAnswer(parsed, self.executor_input.get_steps(), self.error_log)
