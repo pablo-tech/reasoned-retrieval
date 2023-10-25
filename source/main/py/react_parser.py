@@ -3,7 +3,7 @@ from langchain.agents.output_parsers import ReActJsonSingleInputOutputParser
 from langchain.agents.output_parsers import JSONAgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.agents.agent import AgentOutputParser
-from langchain.schema import OutputParserException
+from langchain.schema import AgentAction, AgentFinish, OutputParserException
 
 
 class OptimisticParser(AgentOutputParser):
@@ -24,7 +24,10 @@ class OptimisticParser(AgentOutputParser):
       parsed = self.react_output(txt)
       if parsed is not None:
           return parsed
-      raise OutputParserException("Optimistic parser alas defeated with: " + str(txt))
+      error = "OPTIMISTIC_PARSING_ERROR=" + str(txt)
+      return AgentFinish(return_values={'output': str(txt)}, 
+                         log=error)
+    #   raise OutputParserException("Optimistic parser alas defeated with: " + str(txt))
 
   def react_single_input_output(self, txt):
       try:
