@@ -7,7 +7,8 @@ class SearchEngine(SerpAPIWrapper):
     
     def __init__(self):
         # https://serpapi.com/dashboard
-        super().__init__(serpapi_api_key='2c24c5acccd4ab1f8644348773293cac5aa6907314eb0685ab2d8ad3d75e528d')
+        super().__init__()
+        self.serpapi_api_key = '2c24c5acccd4ab1f8644348773293cac5aa6907314eb0685ab2d8ad3d75e528d'
 
     def configurable_results(self, query):
         params = self.configurable_params(query)
