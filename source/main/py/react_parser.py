@@ -12,6 +12,7 @@ class OptimisticParser(AgentOutputParser):
       pass
 
   def parse(self, txt):
+      txt = txt.replace('Answer: ', '')
       if "Thought" not in txt and "Action" not in txt:
             sub = "Thought: I now know the final answer." + "\n"
             sub += "Action: Finish" + "[" + txt + "]"                 

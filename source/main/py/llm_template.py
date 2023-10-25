@@ -193,6 +193,7 @@ class ReactTemplate(TemplateBank):
         return """
 ANSWER THE FOLLOWING USER QUESTION THINKING STEP-BY-STEP.
 YOU HAVE ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+
 {tool_summaries}
 """
 
