@@ -12,6 +12,10 @@ class OptimisticParser(AgentOutputParser):
       pass
 
   def parse(self, txt):
+      if isinstance(txt, str) and "Thought" not in txt:
+            sub = "Thought: I now know the final answer."
+            sub += "Action: Finish" + "[" + txt + "]"                 
+            txt = sub
       parsed = self.react_single_input_output(txt)
       if parsed is not None:
           return parsed
@@ -24,10 +28,9 @@ class OptimisticParser(AgentOutputParser):
       parsed = self.react_output(txt)
       if parsed is not None:
           return parsed
-      error = "OPTIMISTIC_PARSING_ERROR=" + str(txt)
-      return AgentFinish(return_values={'output': str(txt)}, 
-                         log=error)
-    #   raise OutputParserException("Optimistic parser alas defeated with: " + str(txt))
+    #   return AgentFinish(return_values={'output': str(txt)}, 
+    #                      log=error)
+      raise OutputParserException(str(txt))
 
   def react_single_input_output(self, txt):
       try:
