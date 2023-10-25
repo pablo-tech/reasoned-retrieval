@@ -222,7 +222,7 @@ CONVERSATION HISTORY:
 
     def question_template(self):
         return """
-USER QUESTION: {input_question}
+QUESTION: {input_question}
 """
 
     def scratch_template(self):
