@@ -187,7 +187,8 @@ class PipelinedExecutor():
                 print(self.tool_observation(tool_name, tool_input, observation))
 
               if isinstance(parsed, AgentFinish):
-                  return FinalAnswer(parsed, self.executor_input.get_steps(), self.error_log)
+                    self.executor_input.add_step(parsed, "Finish Action")              
+                    return FinalAnswer(parsed, self.executor_input.get_steps(), self.error_log)
 
             except Exception as e:
                 self.error_log.append((self.executor_input.str_values(), str(e)))
