@@ -1,5 +1,6 @@
 from langchain.schema.messages import AIMessage
 from langchain.prompts.base import StringPromptValue
+from langchain.schema import AgentAction, AgentFinish
 
 
 class ExecutorInput():
@@ -105,3 +106,33 @@ class PipelinedAgent():
               s += m.content
             return s
         return str(prompt.text)    
+    
+
+class FinalAnswer():
+
+    def __init__(self, answer, steps, exception):
+        self.answer = answer
+        self.steps = steps
+        self.exception = exception
+        self.is_success = True
+        if isinstance(answer, AgentAction):
+            self.answer = answer.log
+            self.is_success = False
+        if isinstance(answer, AgentFinish):
+            self.answer = answer.return_values['output']
+        if answer is None:
+            self.is_success = False
+
+    def __str__(self):
+        s = "FINAL_ANSWER=>" + "\n"
+        s += " - success: " + str(self.is_success) + "\n"
+        s += " - ANSWER: " + "\n" + str(self.answer) + "\n"
+        s += " - steps: " + "\n"
+        for step in self.steps:
+          s += "\t" + "parsed: " + str(step[0]) + "\n"
+          s += "\t" + "observation: " + str(step[1]) + "\n"
+        s += " - exception=> " + "\n"
+        for entry in self.exception:
+          s += "\t" + "input: " + str(entry[0]) + "\n"
+          s += "\t" + "exception: " + str(entry[1]) + "\n"
+        return s    
