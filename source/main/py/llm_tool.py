@@ -14,8 +14,6 @@ from math_tool import MathAnswer
 class ToolFactory():
 
     def __init__(self):
-        self.search_api = SearchAnswer()
-        self.math_api = MathAnswer()
         self.doc_store = DocstoreExplorer(Wikipedia())
 
     def tool_summaries(self, tool_set):
@@ -35,9 +33,10 @@ class ToolFactory():
         return [self.math_engine(completion_llm)]
     
     def math_engine(self, completion_llm):
+        math_api = MathAnswer(completion_llm)
         return Tool(
               name="Calculate",
-              func=self.math_api.run,
+              func=math_api.run,
               description="useful for when you need to answer math questions"
         )
 
@@ -45,9 +44,10 @@ class ToolFactory():
         return [self.search_engine()]
     
     def search_engine(self):
+        search_api = SearchAnswer()        
         return Tool(
               name="Search",
-              func=self.search_api.run,
+              func=search_api.run,
               description="useful for when you need to answer questions about current events or the current state of the world"
         )
 

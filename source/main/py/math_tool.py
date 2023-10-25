@@ -12,7 +12,7 @@ class MathAnswer():
 
     def __init__(self, completion_llm):
         self.math_engine = LLMMathChain(llm=completion_llm, 
-                                       verbose=True)
+                                        verbose=True)
         self.math_tool = Tool.from_function(
                 func=self.math_engine.run,
                 name="Calculator",
@@ -24,3 +24,4 @@ class MathAnswer():
     def run(self, query):
         result = self.math_tool.run(query)
         return result
+            
