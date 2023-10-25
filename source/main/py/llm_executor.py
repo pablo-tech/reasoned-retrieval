@@ -3,6 +3,7 @@ from langchain.prompts.base import StringPromptValue
 from langchain.schema import AgentAction, AgentFinish
 
 from llm_template import TemplateBank
+from llm_tool import ToolFactory
 
 
 # https://python.langchain.com/docs/modules/agents/
