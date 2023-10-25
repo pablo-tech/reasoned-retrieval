@@ -23,5 +23,8 @@ class MathAnswer():
 
     def run(self, query):
         result = self.math_tool.run(query)
-        return result
+        try:
+            return eval(result.replace('Answer: ', ''))
+        except:
+            return result
             
