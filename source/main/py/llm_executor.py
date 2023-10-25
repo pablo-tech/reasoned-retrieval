@@ -2,6 +2,8 @@ from langchain.schema.messages import AIMessage
 from langchain.prompts.base import StringPromptValue
 from langchain.schema import AgentAction, AgentFinish
 
+from llm_template import TemplateBank
+
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
