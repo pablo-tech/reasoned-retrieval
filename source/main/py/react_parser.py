@@ -12,9 +12,10 @@ class OptimisticParser(AgentOutputParser):
       pass
 
   def parse(self, txt):
-      if isinstance(txt, str) and "Thought" not in txt:
-            sub = "Thought: I now know the final answer."
-            sub += "Action: Finish" + "[" + txt + "]"                 
+      if "Thought" not in txt:
+            sub = "Thought: I now know the final answer." + "\n"
+            sub += txt
+            # sub += "Action: Finish" + "[" + txt + "]"                 
             txt = sub
       parsed = self.react_single_input_output(txt)
       if parsed is not None:
