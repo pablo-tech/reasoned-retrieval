@@ -3,6 +3,10 @@ from langchain.prompts.base import StringPromptValue
 from langchain.schema import AgentAction, AgentFinish
 
 
+# https://python.langchain.com/docs/modules/agents/
+# https://python.langchain.com/docs/modules/agents/
+# https://python.langchain.com/docs/integrations/toolkits/
+# https://github.com/langchain-ai/langchain/tree/master/cookbook
 class ExecutorInput():
 
     def __init__(self):
@@ -136,3 +140,77 @@ class FinalAnswer():
           s += "\t" + "input: " + str(entry[0]) + "\n"
           s += "\t" + "exception: " + str(entry[1]) + "\n"
         return s    
+    
+
+class PipelinedExecutor():
+# https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
+
+    def __init__(self,
+                 llm_agent,
+                 max_iterations,
+                 max_execution_time,
+                 agent_stop=["Observation"]):
+        super().__init__()
+        # save
+        self.llm_agent = llm_agent
+        self.llm_agent.set_stop(agent_stop)
+        self.agent_tools = self.llm_agent.get_tools()
+        self.max_iterations = max_iterations
+        self.max_execution_time = max_execution_time
+        # input
+        self.executor_input = ExecutorInput()
+        self.executor_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
+        # error
+        self.error_log = []
+
+    def invoke(self, user_query):
+        self.executor_input.template_value("input_question", user_query)
+        remain_iterations = self.max_iterations
+
+        while remain_iterations > 0:
+            try:
+              parsed = self.llm_agent.invoke(self.executor_input)
+              # except Exception as e:
+              #   error = str(e)
+              #   parsed = AgentFinish(return_values={'output': error}, log="OPTIMISTIC_PARSING_ERROR="+error)
+              #   self.error_log.append((self.executor_input.str_values(), error))
+
+              if isinstance(parsed, AgentAction):
+                # try:
+                tool_name = parsed.tool
+                tool_input = parsed.tool_input
+                if tool_name not in ToolFactory().tool_names(self.agent_tools):
+                    observation = tool_name + " is not a valid action to take."
+                # tools = [t for t in self.agent_tools if t.name==parsed.tool]
+                # if len(tools) == 0:
+                #     raise ValueError("TOOL_VALUE_ERROR, thought was not followed up with an action. PARSED="+str(parsed))
+                # tool = [t for t in self.agent_tools if t.name==parsed.tool][0]
+                # if tool.name not in ToolFactory().tool_names(self.agent_tools):
+                #     raise ValueError("TOOL_VALUE_ERROR, this is not a valid tool: " + str(tool.name))
+                else:
+                    tool = [t for t in self.agent_tools if t.name==tool_name][0]
+                    observation = tool.func(tool_input)
+                self.executor_input.add_step(parsed, observation)
+                print(self.tool_observation(tool_name, tool_input, observation))
+                  # except Exception as e:
+                  #   observation = "AGENT_ACTION_ERROR="+str(e)
+                  #   self.executor_input.add_step(parsed, observation)
+                  #   self.error_log.append((parsed, observation))
+
+              if isinstance(parsed, AgentFinish):
+                  return FinalAnswer(parsed, self.executor_input.get_steps(), self.error_log)
+
+            except Exception as e:
+                self.error_log.append((self.executor_input.str_values(), str(e)))
+
+            remain_iterations-=1
+            if remain_iterations == 0:
+                print("TIMEOUT...")
+                return FinalAnswer(None, self.executor_input.get_steps(), self.error_log)
+
+    def tool_observation(self, tool, input, observation):
+        s = "\n\nTOOL_INVOCATION=>" + "\n"
+        s += "- tool: " + str(tool) + "\n"
+        s += "- input: " + str(input) + "\n"
+        s += "- observation: " + str(observation) + "\n"
+        return s
