@@ -192,7 +192,7 @@ class ReactTemplate(TemplateBank):
     def instruction_template(self):
         return """
 ANSWER THE FOLLOWING USER QUESTIONS AS TRUTHFULLY AS YOU CAN.
-YOU HAVE ACCESS TO THE FOLLOWING TOOLS:
+YOU HAVE ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 {tool_summaries}
 """
 
