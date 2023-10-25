@@ -5,18 +5,17 @@ from langchain.agents import Tool
 from langchain.agents.react.base import DocstoreExplorer
 
 from langchain.agents import tool
-from langchain.agents import load_tools
 from langchain.tools.render import render_text_description
 
 from search_tool import SearchAnswer
+from math_tool import MathAnswer
 
 
 class ToolFactory():
 
     def __init__(self):
-        ## Search engine api
         self.search_api = SearchAnswer()
-        ## Document store
+        self.math_api = MathAnswer()
         self.doc_store = DocstoreExplorer(Wikipedia())
 
     def tool_summaries(self, tool_set):
@@ -26,10 +25,21 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        math_tools = load_tools(["llm-math"], completion_llm)
+        math_tools = self.math_tools(completion_llm)
+        # math_tools = load_tools(["llm-math"], completion_llm)
         search_tools = self.search_tools()
         return math_tools + search_tools
         # return load_tools(["serpapi", "llm-math"], completion_llm)
+
+    def math_tools(self, completion_llm):
+        return [self.math_engine(completion_llm)]
+    
+    def math_engine(self, completion_llm):
+        return Tool(
+              name="Calculate",
+              func=self.math_api.run,
+              description="useful for when you need to answer math questions"
+        )
 
     def search_tools(self, completion_llm=None):
         return [self.search_engine()]
@@ -46,12 +56,12 @@ class ToolFactory():
           Tool(
               name="Search",
               func=self.doc_store.search,
-              description="useful for when you need to ask with search"
+              description="useful for when needing to search for the truth"
           ),
           Tool(
               name="Lookup",
               func=self.doc_store.lookup,
-              description="useful for when you need to ask with lookup"
+              description="useful for when needing to lookup facts"
           )
         ]
     
