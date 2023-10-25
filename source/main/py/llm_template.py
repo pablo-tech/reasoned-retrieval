@@ -79,14 +79,6 @@ Action: Search[Leonid Levin]
 Observation: Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.
 Thought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.
 Action: Finish[yes]
-
-Question: What is 2+2?
-Thought: I need to calculate 2+2
-Action: Calculate[2+2]
-Observation: 4
-Thought: I now know the final answer
-Action: Finish[think step-by-step and and answer the question]
-
 """
 # Question: {input}
 # {agent_scratchpad}
@@ -199,7 +191,7 @@ class ReactTemplate(TemplateBank):
 
     def instruction_template(self):
         return """
-ANSWER THE FOLLOWING USER QUESTIONS AS TRUTHFULLY AS YOU CAN.
+ANSWER THE FOLLOWING USER QUESTION THINKING STEP-BY-STEP.
 YOU HAVE ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 {tool_summaries}
 """
