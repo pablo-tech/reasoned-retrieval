@@ -200,8 +200,8 @@ YOU HAVE ACCESS TO THE FOLLOWING TOOLS:
         return """
 USE THE FOLLOWING FORMAT:
 Question: the input question you must answer
-Thought: think step-by-step, select one tool action name, and define the tool's input. The tool names are {tool_names}
-Action: selected tool[the input to the tool]
+Thought: think step-by-step in natural language
+Action: selected tool[tool input], where selected tool is one of {tool_names}, and tool input is the value to pass to the tool's function
 Observation: the result of the action, if a tool was selelected
 ... (this Thought/Action/Observation can repeat a number of times)
 Thought: I now know the final answer
