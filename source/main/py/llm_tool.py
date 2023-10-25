@@ -26,16 +26,20 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        return load_tools(["serpapi", "llm-math"], completion_llm)
+        math_tools = load_tools(["llm-math"], completion_llm)
+        search_tools = self.search_tools()
+        return math_tools + search_tools
+        # return load_tools(["serpapi", "llm-math"], completion_llm)
 
     def search_tools(self, completion_llm=None):
-        return [
-          Tool(
+        return [self.search_engine()]
+    
+    def search_engine(self):
+        return Tool(
               name="Search",
               func=self.search_api.run,
               description="useful for when you need to answer questions about current events or the current state of the world"
-          ),
-        ]
+        )
 
     def wikipedia_tools(self, completion_llm=None):
         return [
