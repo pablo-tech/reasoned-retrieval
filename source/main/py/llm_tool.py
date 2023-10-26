@@ -12,6 +12,7 @@ from math_tool import MathAnswer
 
 
 class ToolFactory():
+    # https://python.langchain.com/docs/modules/agents/tools/custom_tools
 
     def __init__(self, is_verbose=True):
         self.is_verbose = is_verbose
