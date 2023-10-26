@@ -68,6 +68,12 @@ class FinalAnswer():
         if answer is None:
             self.is_success = False
 
+    def get_answer(self):
+        return self.answer
+    
+    def get_success(self):
+        return self.is_success
+
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
         s += " - success: " + str(self.is_success) + "\n"
@@ -129,8 +135,9 @@ class PipelinedExecutor():
               if isinstance(parsed, AgentFinish):
                     agent_answer = parsed
                     self.executor_input.add_step(parsed, "Executor DONE") 
-                    self.llm_agent.get_memory().message_exchange(user_query, agent_answer)             
-                    return FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
+                    final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
+                    self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
+                    return final
 
             except Exception as e:
                 self.error_log.append((self.executor_input.str_values(), str(e)))
