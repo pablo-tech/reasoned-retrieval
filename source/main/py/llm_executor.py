@@ -134,7 +134,7 @@ class PipelinedExecutor():
 
               if isinstance(parsed, AgentFinish):
                     agent_answer = parsed
-                    self.executor_input.add_step(parsed, "Executor DONE") 
+                    self.executor_input.add_step(parsed, "EXECUTION_DONE") 
                     final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
                     self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                     return final
