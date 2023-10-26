@@ -64,7 +64,7 @@ class PipelinedAgent():
                  agent_parser,
                  memory_factory,
                  response_template=None,
-                 is_verbose=False):
+                 is_verbose=True):
 
         self.agent_llm = agent_llm
         self.agent_tools = agent_tools
@@ -158,7 +158,7 @@ class PipelinedExecutor():
                  max_iterations,
                  max_execution_time,
                  agent_stop=["Observation"],
-                 is_verbose=False):
+                 is_verbose=True):
         # save
         self.llm_agent = llm_agent
         self.llm_agent.set_stop(agent_stop)
