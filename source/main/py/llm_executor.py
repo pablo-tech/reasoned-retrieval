@@ -63,7 +63,8 @@ class PipelinedAgent():
                  agent_prompt,
                  agent_parser,
                  memory_factory,
-                 response_template=None):
+                 response_template=None,
+                 is_verbose=False):
 
         self.agent_llm = agent_llm
         self.agent_tools = agent_tools
@@ -71,6 +72,7 @@ class PipelinedAgent():
         self.agent_parser = agent_parser
         self.memory_factory = memory_factory
         self.response_template = response_template
+        self.is_verbose = is_verbose
 
     def invoke(self, executor_input):
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
@@ -79,13 +81,16 @@ class PipelinedAgent():
         prompt = self.incomplete_prompt
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
-        print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
+        if self.is_verbose:
+            print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
           inferred = inferred.content
-        print("\nINFERRED=>"+"\n"+str(inferred))
+        if self.is_verbose:
+            print("\nINFERRED=>"+"\n"+str(inferred))
         parsed = self.agent_parser.parse(inferred)
-        print("\nPARSED=>"+str(parsed)+"\n\n")
+        if self.is_verbose:
+            print("\nPARSED=>"+str(parsed)+"\n\n")
         return parsed
 
     def filled_prompt(self, incomplete_prompt, executor_input):
@@ -152,14 +157,15 @@ class PipelinedExecutor():
                  llm_agent,
                  max_iterations,
                  max_execution_time,
-                 agent_stop=["Observation"]):
-        super().__init__()
+                 agent_stop=["Observation"],
+                 is_verbose=False):
         # save
         self.llm_agent = llm_agent
         self.llm_agent.set_stop(agent_stop)
         self.agent_tools = self.llm_agent.get_tools()
         self.max_iterations = max_iterations
         self.max_execution_time = max_execution_time
+        self.is_verbose = is_verbose
         # input
         self.executor_input = ExecutorInput()
         self.executor_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
@@ -184,7 +190,8 @@ class PipelinedExecutor():
                     tool = [t for t in self.agent_tools if t.name==tool_name][0]
                     observation = tool.func(tool_input)
                 self.executor_input.add_step(parsed, observation)
-                print(self.tool_observation(tool_name, tool_input, observation))
+                if self.is_verbose:
+                    print(self.tool_observation(tool_name, tool_input, observation))
 
               if isinstance(parsed, AgentFinish):
                     self.executor_input.add_step(parsed, "Finish Action")              
@@ -195,7 +202,8 @@ class PipelinedExecutor():
 
             remain_iterations-=1
             if remain_iterations == 0:
-                print("TIMEOUT...")
+                if self.is_verbose:
+                    print("TIMEOUT...")
                 return FinalAnswer(None, self.executor_input.get_steps(), self.error_log)
 
     def tool_observation(self, tool, input, observation):

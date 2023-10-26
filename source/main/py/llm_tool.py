@@ -13,7 +13,8 @@ from math_tool import MathAnswer
 
 class ToolFactory():
 
-    def __init__(self):
+    def __init__(self, is_verbose=False):
+        self.is_verbose = is_verbose
         self.doc_store = DocstoreExplorer(Wikipedia())
 
     def tool_summaries(self, tool_set):
