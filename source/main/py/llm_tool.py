@@ -52,7 +52,7 @@ class ToolFactory():
               func=search_api.run,
               description="useful to answer questions about current events or the current state of the world"
         )
-
+    
     def wikipedia_tools(self, completion_llm=None):
         return [
           Tool(
