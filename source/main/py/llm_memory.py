@@ -6,17 +6,9 @@ class LlmMemory():
 
     MEMORY_KEY = "chat_history"
 
-    def __init__(self, human_name="Human: ", ai_name="AI: "):
-        self.human_key = human_name
-        self.ai_name = ai_name
-
+    def __init__(self):
         self.memory_buffer = ConversationBufferMemory(memory_key=LlmMemory.MEMORY_KEY,
                                                       return_messages=True)
-
-    # def conversation_buffer():
-    #     memory_buffer = ConversationBufferMemory(memory_key=LlmMemory.MEMORY_KEY,
-    #                                             return_messages=True)
-    #     return memory_buffer 
 
     def message_exchange(self, human_message, ai_message):
         self.memory_buffer.save_context({"input": human_message}, 
@@ -27,9 +19,12 @@ class LlmMemory():
     
     def __str__(self):
         s = ""
-        for message in self.get_history():
+        for message in self.get_history()['chat_history']:
             if isinstance(message, HumanMessage):
-                s += self.human_name +":" + str(message.content)
+                s += "Question: " +  str(message.content) + "\n"
+                s += "Thought: I now know the answer." + "\n"
             if isinstance(message, AIMessage):
-                s += self.ai_name +":" + str(message.content)
+                content = message.content
+                s += "Observation: " + content + "\n"
+                s += "Action: Finish" + "[" + content + "]" + "\n"                  
         return s
