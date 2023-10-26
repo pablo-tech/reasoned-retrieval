@@ -154,3 +154,6 @@ class PipelinedExecutor():
         s += "- input: " + str(input) + "\n"
         s += "- observation: " + str(observation) + "\n"
         return s
+    
+    def get_agent(self):
+        return self.llm_agent
