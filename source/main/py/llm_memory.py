@@ -26,5 +26,6 @@ class LlmMemory():
             if isinstance(message, AIMessage):
                 content = message.content
                 s += "Observation: " + content + "\n"
-                s += "Action: Finish" + "[" + content + "]" + "\n"                  
+                s += "Action: Finish" + "[" + content + "]" + "\n"  
+            s += "\n"                
         return s
