@@ -2,13 +2,8 @@ from langchain.schema.messages import AIMessage
 from langchain.prompts.base import StringPromptValue
 
 from llm_memory import LlmMemory
-# from llm_tool import ToolFactory
 from llm_template import PromptFactory
-# PipelinedAgentTemplateBank
-# from llm_executor import FinalAnswer
 from react_parser import OptimisticParser
-
-# from typing_extensions import ParamSpecKwargs
 
 
 class PipelinedAgent():
@@ -18,7 +13,7 @@ class PipelinedAgent():
                  agent_tools,
                  agent_prompt,
                  agent_parser,
-                 memory_factory,
+                 agent_memory,
                  response_template=None,
                  is_verbose=True):
 
@@ -26,7 +21,7 @@ class PipelinedAgent():
         self.agent_tools = agent_tools
         self.incomplete_prompt = agent_prompt
         self.agent_parser = agent_parser
-        self.memory_factory = memory_factory
+        self.agent_memory = agent_memory
         self.response_template = response_template
         self.is_verbose = is_verbose
 
@@ -66,6 +61,9 @@ class PipelinedAgent():
 
     def get_parser(self):
         return self.agent_parser
+    
+    def get_memory(self):
+        return self.agent_memory
 
     def filled_str(self, prompt):
         if not isinstance(prompt, StringPromptValue):
@@ -87,7 +85,7 @@ class AgentFactory():
 
     def react_agent(self,
                     tool_factory_func,
-                    memory_factory=LlmMemory.conversation_buffer,
+                    agent_memory=LlmMemory(),
                     agent_parser=OptimisticParser()):
 
         agent_tools = tool_factory_func(self.agent_llm)
@@ -96,5 +94,5 @@ class AgentFactory():
                               agent_tools=agent_tools,
                               agent_prompt=incomplete_prompt,
                               agent_parser=agent_parser,
-                              memory_factory=memory_factory,
+                              agent_memory=agent_memory,
                               is_verbose=self.is_verbose)
