@@ -38,7 +38,7 @@ class ToolFactory():
         return Tool(
               name="Calculate",
               func=math_api.run,
-              description="useful for when you need to answer math questions"
+              description="useful to answer math questions"
         )
 
     def search_tools(self, completion_llm=None):
@@ -49,7 +49,7 @@ class ToolFactory():
         return Tool(
               name="Search",
               func=search_api.run,
-              description="useful for when you need to answer questions about current events or the current state of the world"
+              description="useful to answer questions about current events or the current state of the world"
         )
 
     def wikipedia_tools(self, completion_llm=None):
@@ -57,12 +57,12 @@ class ToolFactory():
           Tool(
               name="Search",
               func=self.doc_store.search,
-              description="useful for when needing to search for the truth"
+              description="useful to search for the truth"
           ),
           Tool(
               name="Lookup",
               func=self.doc_store.lookup,
-              description="useful for when needing to lookup facts"
+              description="useful to lookup facts"
           )
         ]
     
