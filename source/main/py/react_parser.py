@@ -37,8 +37,8 @@ class OptimisticParser(AgentOutputParser):
       if parsed is not None:
           return parsed
       
-      return ParsingFailure("reasoning step-by-stype must start with 'Thought' and include an 'Action'.",
-                            txt )
+      return ParsingFailure("Agent reasoning step-by-stype must start with 'Thought: ' and include a valid 'Action: ' available to the agent.",
+                            txt)
       
     #   error="Thought: " + txt + "\n"
     #   error+="Action: " + "could not be determined."

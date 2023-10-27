@@ -191,22 +191,10 @@ class ReactTemplate(TemplateBank):
 
     def instruction_template(self):
         return """
-ANSWER THE FOLLOWING USER QUESTION THINKING STEP-BY-STEP.
-YOU HAVE ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+YOU ARE AN AI AGENT THAT ANSWERS USER QUESTIONS THINKING STEP-BY-STEP.
+AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 
 {tool_summaries}
-"""
-
-    def format_template(self):
-        return """
-USE THE FOLLOWING FORMAT:
-Question: the input question you must answer
-Thought: think step-by-step in natural language
-Action: selected tool[tool input], where selected tool is one of {tool_names}, and tool input is the value to pass to the tool's function
-Observation: the result of the action, if a tool was selelected
-... (this Thought/Action/Observation can repeat a number of times)
-Thought: I now know the final answer
-Action: Finish[think step-by-step and and answer the original question]
 """
 
     def example_template(self):
