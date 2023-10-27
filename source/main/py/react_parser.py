@@ -7,13 +7,13 @@ from langchain.schema import OutputParserException
 from langchain.schema import AgentAction, AgentFinish
 
 
-class ParsingFailure(AgentAction):
+# class ParsingFailure(AgentAction):
    
-   def __init__(self, 
-                log,
-                tool_name='Describe', 
-                tool_input='tools'):
-      super().__init__(log=log, tool=tool_name, tool_input=tool_input)
+#    def __init__(self, 
+#                 log,
+#                 tool_name='Describe', 
+#                 tool_input='tools'):
+#       super().__init__(log=log, tool=tool_name, tool_input=tool_input)
 
 
 class OptimisticParser(AgentOutputParser):
@@ -22,11 +22,7 @@ class OptimisticParser(AgentOutputParser):
         pass
 
     def parse(self, txt):
-        #   if "Thought" not in txt and "Action" not in txt\
-        #     and len(txt)>0:
-        #         sub = "Thought: I now know the final answer." + "\n"
-        #         sub += "Action: Finish" + "[" + txt + "]"                 
-        #         txt = sub
+
         parsed = self.react_single_input_output(txt)
         if parsed is not None:
             return parsed
@@ -39,13 +35,12 @@ class OptimisticParser(AgentOutputParser):
         parsed = self.react_output(txt)
         if parsed is not None:
             return parsed
-        
-        error = "PARSING_ERROR=" + str(txt)
-        # error ='Agent responese sytax must:' + "\n"
-        # error += """- start with 'Thought: ', thinking step-by-step.""" + "\n"
-        # error += """- include an action 'Action: ', available to the agent.""" + "\n"
-        # error += """- specify the input in brackets '[tool input]' """ + "\n"
-        return ParsingFailure(error)
+        # if "Describe[tools]" in txt:
+        return AgentAction(log=txt, 
+                           tool="Describe", 
+                           tool_input="tools")
+        # error = "PARSING_ERROR=" + str(txt)
+        # return ParsingFailure(error)
   
     # def react_conversation_input_output(self, txt):
     #     if 'Respond' in txt or\

@@ -125,7 +125,7 @@ class PipelinedExecutor():
                     tool_name = parsed.tool
                     tool_input = parsed.tool_input
                     if tool_name not in ToolFactory().tool_names(self.agent_tools):
-                        observation = tool_name + " is not a valid action available to agent." + "\n"
+                        observation = tool_name + " is not a valid action available to agent. "
                         observation += "Try: Describe[tools]."
                     else:
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
@@ -139,11 +139,6 @@ class PipelinedExecutor():
                         final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
-
-                if isinstance(parsed, ParsingFailure):
-                    observation="....... NOW CALL TOOL DESCRIBE"
-                    print(observation)
-                    # observation = parsed.error
 
                 self.executor_input.add_step(parsed, observation)                
 
