@@ -117,7 +117,7 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
-              parsed, observation = None, None
+              parsed, observation = {'log': None}, None
               parsed = self.llm_agent.invoke(self.executor_input)
 
               if isinstance(parsed, AgentAction):
