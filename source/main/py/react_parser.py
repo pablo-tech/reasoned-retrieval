@@ -40,10 +40,10 @@ class OptimisticParser(AgentOutputParser):
         if parsed is not None:
             return parsed
         
-        error ='Agent responese sytax must:'
-        error += """- start with 'Thought: ', thinking step-by-step."""
-        error += """- include an action 'Action: ', available to the agent."""
-        error += """- specify the input in brackets '[tool input]' """
+        error ='Agent responese sytax must:' + "\n"
+        error += """- start with 'Thought: ', thinking step-by-step.""" + "\n"
+        error += """- include an action 'Action: ', available to the agent.""" + "\n"
+        error += """- specify the input in brackets '[tool input]' """ + "\n"
         return ParsingFailure(error)
   
     # def react_conversation_input_output(self, txt):
