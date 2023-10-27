@@ -4,7 +4,7 @@ from langchain.agents.output_parsers import JSONAgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.agents.agent import AgentOutputParser
 from langchain.schema import OutputParserException
-
+from langchain.schema import AgentAction, AgentFinish
 
 class ParsingFailure():
    
@@ -15,30 +15,37 @@ class ParsingFailure():
 
 class OptimisticParser(AgentOutputParser):
 
-  def __init__(self):
-      pass
+    def __init__(self):
+        pass
 
-  def parse(self, txt):
-    #   if "Thought" not in txt and "Action" not in txt\
-    #     and len(txt)>0:
-    #         sub = "Thought: I now know the final answer." + "\n"
-    #         sub += "Action: Finish" + "[" + txt + "]"                 
-    #         txt = sub
-      parsed = self.react_single_input_output(txt)
-      if parsed is not None:
-          return parsed
-      parsed = self.react_json_single_input_output(txt)
-      if parsed is not None:
-          return parsed
-      parsed = self.json_output(txt)
-      if parsed is not None:
-          return parsed
-      parsed = self.react_output(txt)
-      if parsed is not None:
-          return parsed
-      
-      return ParsingFailure("Agent reasoning step-by-stype must start with 'Thought: ' and include a valid 'Action: ' available to the agent.",
-                            txt)
+    def parse(self, txt):
+        #   if "Thought" not in txt and "Action" not in txt\
+        #     and len(txt)>0:
+        #         sub = "Thought: I now know the final answer." + "\n"
+        #         sub += "Action: Finish" + "[" + txt + "]"                 
+        #         txt = sub
+        parsed = self.react_single_input_output(txt)
+        if parsed is not None:
+            return parsed
+        parsed = self.react_json_single_input_output(txt)
+        if parsed is not None:
+            return parsed
+        parsed = self.json_output(txt)
+        if parsed is not None:
+            return parsed
+        parsed = self.react_output(txt)
+        if parsed is not None:
+            return parsed
+        
+        return ParsingFailure("Agent reasoning step-by-stype must start with 'Thought: ' and include a valid 'Action: ' available to the agent.",
+                                txt)
+  
+    def react_conversation_input_output(self, txt):
+        if 'Respond' in txt or\
+            'Answer' in txt or\
+            'Reply' in txt:
+            return AgentAction(txt, txt)
+        return AgentFinish(txt, txt)
       
     #   error="Thought: " + txt + "\n"
     #   error+="Action: " + "could not be determined."
@@ -49,33 +56,33 @@ class OptimisticParser(AgentOutputParser):
     #   txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
     #   raise OutputParserException(str(txt))
 
-  def react_single_input_output(self, txt):
-      try:
-        return ReActSingleInputOutputParser().parse(txt)
-      except Exception as e:
-        # print("ReActSingleInputOutputParser=>"+ str(e))
-        return None
+    def react_single_input_output(self, txt):
+        try:
+            return ReActSingleInputOutputParser().parse(txt)
+        except Exception as e:
+            # print("ReActSingleInputOutputParser=>"+ str(e))
+            return None
 
-  def react_json_single_input_output(self, txt):
-      try:
-        return ReActJsonSingleInputOutputParser().parse(txt)
-      except Exception as e:
-        # print("ReActJsonSingleInputOutputParser=>"+ str(e))
-        return None
+    def react_json_single_input_output(self, txt):
+        try:
+            return ReActJsonSingleInputOutputParser().parse(txt)
+        except Exception as e:
+            # print("ReActJsonSingleInputOutputParser=>"+ str(e))
+            return None
 
-  def json_output(self, txt):
-      try:
-        return JSONAgentOutputParser().parse(txt)
-      except Exception as e:
-        # print("JSONAgentOutputParser=>"+ str(e))
-        return None
+    def json_output(self, txt):
+        try:
+            return JSONAgentOutputParser().parse(txt)
+        except Exception as e:
+            # print("JSONAgentOutputParser=>"+ str(e))
+            return None
 
-  def react_output(self, txt):
-      try:
-        return ReActOutputParser().parse(txt)
-      except Exception as e:
-        # print("JSONAgentOutputParser=>"+ str(e))
-        return None
+    def react_output(self, txt):
+        try:
+            return ReActOutputParser().parse(txt)
+        except Exception as e:
+            # print("JSONAgentOutputParser=>"+ str(e))
+            return None
 
 
 class LangchainParser():
