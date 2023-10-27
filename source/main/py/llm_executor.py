@@ -2,7 +2,7 @@ from langchain.schema import AgentAction, AgentFinish
 
 from llm_template import TemplateBank
 from llm_tool import ToolFactory
-from react_parser import ParsingFailure
+# from react_parser import ParsingFailure
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
