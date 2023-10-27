@@ -140,14 +140,15 @@ class PipelinedExecutor():
                         return final
 
                 if isinstance(parsed, ParsingFailure):
-                    print("....... NOW CALL TOOL DESCRIBE")
+                    observation="....... NOW CALL TOOL DESCRIBE"
+                    print(observation)
                     # observation = parsed.error
+
+                self.executor_input.add_step(parsed, observation)                
 
             except Exception as e:
                 error = str(e)
                 self.error_log.append((self.executor_input.str_values(), error))
-
-            self.executor_input.add_step(parsed, observation)                
 
             remain_iterations-=1
             if remain_iterations == 0:
