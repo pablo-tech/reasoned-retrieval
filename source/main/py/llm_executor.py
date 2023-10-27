@@ -140,7 +140,8 @@ class PipelinedExecutor():
                         return final
 
                 if isinstance(parsed, ParsingFailure):
-                    observation = parsed.error
+                    print("....... NOW CALL TOOL DESCRIBE")
+                    # observation = parsed.error
 
             except Exception as e:
                 error = str(e)

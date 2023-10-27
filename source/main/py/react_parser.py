@@ -6,11 +6,14 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.schema import OutputParserException
 from langchain.schema import AgentAction, AgentFinish
 
-class ParsingFailure():
+
+class ParsingFailure(AgentAction):
    
-   def __init__(self, error, log):
-      self.error = error
-      self.log = log
+   def __init__(self, 
+                log,
+                tool_name='Describe', 
+                tool_input='tools'):
+      super().__init__(log=log, tool_name=tool_name, tool_input=tool_input)
 
 
 class OptimisticParser(AgentOutputParser):
@@ -37,15 +40,18 @@ class OptimisticParser(AgentOutputParser):
         if parsed is not None:
             return parsed
         
-        return ParsingFailure("Agent reasoning step-by-stype must start with 'Thought: ' and include a valid 'Action: ' available to the agent.",
-                                txt)
+        error ='Agent responese sytax must:'
+        error += """- start with 'Thought: ', thinking step-by-step."""
+        error += """- include an action 'Action: ', available to the agent."""
+        error += """- specify the input in brackets '[tool input]' """
+        return ParsingFailure(error)
   
-    def react_conversation_input_output(self, txt):
-        if 'Respond' in txt or\
-            'Answer' in txt or\
-            'Reply' in txt:
-            return AgentAction(txt, txt)
-        return AgentFinish(txt, txt)
+    # def react_conversation_input_output(self, txt):
+    #     if 'Respond' in txt or\
+    #         'Answer' in txt or\
+    #         'Reply' in txt:
+    #         return AgentAction(txt, txt)
+    #     return AgentFinish(txt, txt)
       
     #   error="Thought: " + txt + "\n"
     #   error+="Action: " + "could not be determined."
