@@ -13,7 +13,7 @@ class ParsingFailure(AgentAction):
                 log,
                 tool_name='Describe', 
                 tool_input='tools'):
-      super().__init__(log=log, tool_name=tool_name, tool_input=tool_input)
+      super().__init__(log=log, tool=tool_name, tool_input=tool_input)
 
 
 class OptimisticParser(AgentOutputParser):
