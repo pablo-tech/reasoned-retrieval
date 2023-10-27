@@ -126,7 +126,7 @@ class PipelinedExecutor():
                     tool_input = parsed.tool_input
                     if tool_name not in ToolFactory().tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to agent. "
-                        observation += "Try: 'Thought:\nAction: Describe[tools]'."
+                        observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                     else:
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
