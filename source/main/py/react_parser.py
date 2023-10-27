@@ -6,6 +6,13 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.schema import OutputParserException
 
 
+class ParsingFailure():
+   
+   def __init__(self, error, log):
+      self.error = error
+      self.log = log
+
+
 class OptimisticParser(AgentOutputParser):
 
   def __init__(self):
@@ -29,10 +36,18 @@ class OptimisticParser(AgentOutputParser):
       parsed = self.react_output(txt)
       if parsed is not None:
           return parsed
+      
+      return ParsingFailure("reasoning step-by-stype must start with 'Thought' and include an 'Action'.",
+                            txt )
+      
+    #   error="Thought: " + txt + "\n"
+    #   error+="Action: " + "could not be determined."
+
     #   return AgentFinish(return_values={'output': str(txt)}, 
     #                      log=error)
-      txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
-      raise OutputParserException(str(txt))
+
+    #   txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
+    #   raise OutputParserException(str(txt))
 
   def react_single_input_output(self, txt):
       try:

@@ -117,34 +117,34 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
-              parsed, observation = {'log': None}, None
-              parsed = self.llm_agent.invoke(self.executor_input)
+                parsed, observation = None, None
+                parsed = self.llm_agent.invoke(self.executor_input)
 
-              if isinstance(parsed, AgentAction):
-                # try:
-                tool_name = parsed.tool
-                tool_input = parsed.tool_input
-                if tool_name not in ToolFactory().tool_names(self.agent_tools):
-                    observation = tool_name + " is not a valid action to take."
-                else:
-                    tool = [t for t in self.agent_tools if t.name==tool_name][0]
-                    observation = tool.func(tool_input)
-                    if self.is_verbose:
-                        print(self.tool_observation(tool_name, tool_input, observation))
+                if isinstance(parsed, AgentAction):
+                    # try:
+                    tool_name = parsed.tool
+                    tool_input = parsed.tool_input
+                    if tool_name not in ToolFactory().tool_names(self.agent_tools):
+                        observation = tool_name + " is not a valid action to take."
+                    else:
+                        tool = [t for t in self.agent_tools if t.name==tool_name][0]
+                        observation = tool.func(tool_input)
+                        if self.is_verbose:
+                            print(self.tool_observation(tool_name, tool_input, observation))
 
-              if isinstance(parsed, AgentFinish):
-                    agent_answer = parsed
-                    self.executor_input.add_step(parsed, "EXECUTION_DONE") 
-                    final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
-                    self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
-                    return final
+                if isinstance(parsed, AgentFinish):
+                        agent_answer = parsed
+                        self.executor_input.add_step(parsed, "EXECUTION_DONE") 
+                        final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
+                        self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
+                        return final
 
             except Exception as e:
                 error = str(e)
                 observation = error
                 self.error_log.append((self.executor_input.str_values(), error))
 
-            self.executor_input.add_step(parsed, observation)
+            self.executor_input.add_step(parsed, observation)                
 
             remain_iterations-=1
             if remain_iterations == 0:
