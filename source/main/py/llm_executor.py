@@ -117,6 +117,7 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
+              observation = None
               parsed = self.llm_agent.invoke(self.executor_input)
 
               if isinstance(parsed, AgentAction):
@@ -128,9 +129,8 @@ class PipelinedExecutor():
                 else:
                     tool = [t for t in self.agent_tools if t.name==tool_name][0]
                     observation = tool.func(tool_input)
-                self.executor_input.add_step(parsed, observation)
-                if self.is_verbose:
-                    print(self.tool_observation(tool_name, tool_input, observation))
+                    if self.is_verbose:
+                        print(self.tool_observation(tool_name, tool_input, observation))
 
               if isinstance(parsed, AgentFinish):
                     agent_answer = parsed
@@ -140,7 +140,11 @@ class PipelinedExecutor():
                     return final
 
             except Exception as e:
-                self.error_log.append((self.executor_input.str_values(), str(e)))
+                error = str(e)
+                observation = error
+                self.error_log.append((self.executor_input.str_values(), error))
+
+            self.executor_input.add_step(parsed, observation)
 
             remain_iterations-=1
             if remain_iterations == 0:
