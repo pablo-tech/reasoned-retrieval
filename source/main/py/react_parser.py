@@ -3,7 +3,7 @@ from langchain.agents.output_parsers import ReActJsonSingleInputOutputParser
 from langchain.agents.output_parsers import JSONAgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.agents.agent import AgentOutputParser
-from langchain.schema import AgentAction, AgentFinish, OutputParserException
+from langchain.schema import OutputParserException
 
 
 class OptimisticParser(AgentOutputParser):
@@ -12,7 +12,8 @@ class OptimisticParser(AgentOutputParser):
       pass
 
   def parse(self, txt):
-      if "Thought" not in txt and "Action" not in txt:
+      if "Thought" not in txt and "Action" not in txt\
+        and len(txt)>0:
             sub = "Thought: I now know the final answer." + "\n"
             sub += "Action: Finish" + "[" + txt + "]"                 
             txt = sub
