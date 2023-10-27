@@ -2,7 +2,7 @@ from langchain.schema import AgentAction, AgentFinish
 
 from llm_template import TemplateBank
 from llm_tool import ToolFactory
-
+from react_parser import ParsingFailure
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
@@ -139,9 +139,11 @@ class PipelinedExecutor():
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
+                if isinstance(parsed, ParsingFailure):
+                    observation = parsed.error
+
             except Exception as e:
                 error = str(e)
-                observation = error
                 self.error_log.append((self.executor_input.str_values(), error))
 
             self.executor_input.add_step(parsed, observation)                
