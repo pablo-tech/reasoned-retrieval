@@ -12,11 +12,11 @@ class OptimisticParser(AgentOutputParser):
       pass
 
   def parse(self, txt):
-      if "Thought" not in txt and "Action" not in txt\
-        and len(txt)>0:
-            sub = "Thought: I now know the final answer." + "\n"
-            sub += "Action: Finish" + "[" + txt + "]"                 
-            txt = sub
+    #   if "Thought" not in txt and "Action" not in txt\
+    #     and len(txt)>0:
+    #         sub = "Thought: I now know the final answer." + "\n"
+    #         sub += "Action: Finish" + "[" + txt + "]"                 
+    #         txt = sub
       parsed = self.react_single_input_output(txt)
       if parsed is not None:
           return parsed
@@ -31,6 +31,7 @@ class OptimisticParser(AgentOutputParser):
           return parsed
     #   return AgentFinish(return_values={'output': str(txt)}, 
     #                      log=error)
+      txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
       raise OutputParserException(str(txt))
 
   def react_single_input_output(self, txt):
