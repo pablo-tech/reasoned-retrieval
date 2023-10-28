@@ -30,7 +30,7 @@ class PipelinedAgent():
 
     def invoke(self, executor_input):
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
-        # print("\nAGENT_TOOLS=>"+str(self.get_tools()))
+        print("\nAGENT_TOOLS=>"+str(self.get_tool_names()))
         # print("\nEXECUTOR_INPUT=>"+str(executor_input.__str__()))
         prompt = self.prompt_factory.react_fewshot()
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
