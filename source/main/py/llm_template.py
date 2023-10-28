@@ -284,14 +284,14 @@ class ReactDescribe():
 
     def react_tools(cls, tool_names, tool_summaries): 
         return f"""
-Observation: AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 {tool_summaries}
 """
     
     def react_format(cls): 
 
         return """
-Observation: AGENT MUST SPECIFY BOTH 'Thought: ' AND 'Action: ', AS FOLLOWS:
+AGENT MUST SPECIFY BOTH 'Thought: ' AND 'Action: ', AS FOLLOWS:
 1. 'Thought: ' explains step-by-step the agent's reasoning
 2. 'Action: ' indicates what tool action to take to fulfill the thought
 """ 
