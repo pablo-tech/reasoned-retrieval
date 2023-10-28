@@ -19,12 +19,6 @@ class OptimisticParser(AgentOutputParser):
             if isinstance(parsed, AgentFinish):
                 return parsed
             elif isinstance(parsed, AgentAction) and\
-                parsed.tool == 'Message':
-                return_values={}
-                return_values['output']=parsed.tool_input
-                return AgentFinish(return_values=return_values,
-                                   log=txt)
-            elif isinstance(parsed, AgentAction) and\
                 parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
@@ -37,18 +31,21 @@ class OptimisticParser(AgentOutputParser):
 
     def get_parsed(self, txt):
         parsed = self.react_single_input_output(txt)
+        if parsed is None:
+            parsed = self.react_json_single_input_output(txt)
+        if parsed is None:
+            parsed = self.json_output(txt)
+        if parsed is None:
+            parsed = self.react_output(txt)
         if parsed is not None:
-            return parsed
-        parsed = self.react_json_single_input_output(txt)
-        if parsed is not None:
-            return parsed
-        parsed = self.json_output(txt)
-        if parsed is not None:
-            return parsed
-        parsed = self.react_output(txt)
-        if parsed is not None:
-            return parsed
-        return None
+            if isinstance(parsed, AgentAction) and\
+                parsed.tool == 'Message':
+                return_values={}
+                return_values['output']=parsed.tool_input
+                return AgentFinish(return_values=return_values,
+                                   log=txt) 
+        return parsed
+    
 
     def react_single_input_output(self, txt):
         try:
