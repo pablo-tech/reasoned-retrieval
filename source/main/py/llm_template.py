@@ -282,7 +282,7 @@ class ReactDescribe():
 
     def name_template(cls, tool_names): 
         return f"""
-AGENT ONLY HAS ACCESS TO TOOLS: {tool_names}.  
+AGENT ONLY HAS ACCESS TO THESE TOOLS: {tool_names}.  
 """
 
     def summary_template(cls, tool_summaries): 
