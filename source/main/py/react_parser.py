@@ -22,7 +22,10 @@ class OptimisticParser(AgentOutputParser):
         pass
 
     def parse(self, txt):
-
+        if "Action" not in txt:
+            return AgentAction(log=txt, 
+                            tool="Describe", 
+                            tool_input="tools")
         parsed = self.react_single_input_output(txt)
         if parsed is not None:
             return parsed
@@ -35,12 +38,9 @@ class OptimisticParser(AgentOutputParser):
         parsed = self.react_output(txt)
         if parsed is not None:
             return parsed
-        # if "Describe[tools]" in txt:
         return AgentAction(log=txt, 
                            tool="Describe", 
-                           tool_input="tools")
-        # error = "PARSING_ERROR=" + str(txt)
-        # return ParsingFailure(error)
+                           tool_input="format")
   
     # def react_conversation_input_output(self, txt):
     #     if 'Respond' in txt or\
