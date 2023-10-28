@@ -32,8 +32,8 @@ class PipelinedAgent():
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
         # print("\nAGENT_TOOLS=>"+str(self.get_tools()))
         # print("\nEXECUTOR_INPUT=>"+str(executor_input.__str__()))
-        prompt = self.prompt_factory.react_fewshot(tool_names=self.tool_names(), 
-                                                   tool_summaries=self.tool_summaries())
+        prompt = self.prompt_factory.react_fewshot(tool_names=self.get_tool_names(), 
+                                                   tool_summaries=self.get_tool_summaries())
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
         if self.is_verbose:
@@ -63,7 +63,7 @@ class PipelinedAgent():
     def get_tool_names(self):
         return ToolFactory().tool_summaries(self.get_tools)
 
-    def get_tool_descriptions(self):
+    def get_tool_summaries(self):
         return ToolFactory().tool_summaries(self.get_tools)
 
     def get_prompt(self):
