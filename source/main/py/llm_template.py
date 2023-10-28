@@ -191,7 +191,10 @@ class ReactTemplate(TemplateBank):
 
     def instruction_template(self):
         return """
-YOU ARE AN AI AGENT THAT ANSWERS USER QUESTIONS THINKING STEP-BY-STEP.
+YOU ARE AN AI AGENT THAT ANSWERS QUESTIONS BY THINKING STEP-BY-STEP.
+"""
+    def tool_template(self):
+        return """
 AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 
 {tool_summaries}
@@ -221,6 +224,7 @@ QUESTION: {input_question}
 
     def system_template(self):
         template = self.instruction_template() + "\n"
+        template += self.tool_template() + "\n"
         # template += self.format_template() + "\n"
         template += self.example_template() + "\n"
         return template

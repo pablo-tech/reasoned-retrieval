@@ -7,14 +7,6 @@ from langchain.schema import OutputParserException
 from langchain.schema import AgentAction, AgentFinish
 
 
-# class ParsingFailure(AgentAction):
-   
-#    def __init__(self, 
-#                 log,
-#                 tool_name='Describe', 
-#                 tool_input='tools'):
-#       super().__init__(log=log, tool=tool_name, tool_input=tool_input)
-
 
 class OptimisticParser(AgentOutputParser):
 
@@ -22,7 +14,7 @@ class OptimisticParser(AgentOutputParser):
         pass
 
     def parse(self, txt):
-        if "Action" not in txt:
+        if "Action: " not in txt:
             return AgentAction(log=txt, 
                             tool="Describe", 
                             tool_input="tools")
@@ -42,19 +34,6 @@ class OptimisticParser(AgentOutputParser):
                            tool="Describe", 
                            tool_input="format")
   
-    # def react_conversation_input_output(self, txt):
-    #     if 'Respond' in txt or\
-    #         'Answer' in txt or\
-    #         'Reply' in txt:
-    #         return AgentAction(txt, txt)
-    #     return AgentFinish(txt, txt)
-      
-    #   error="Thought: " + txt + "\n"
-    #   error+="Action: " + "could not be determined."
-
-    #   return AgentFinish(return_values={'output': str(txt)}, 
-    #                      log=error)
-
     #   txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
     #   raise OutputParserException(str(txt))
 
