@@ -255,14 +255,13 @@ class PromptFactory(CompleteTemplate):
         super().__init__()
         self.agent_llm = agent_llm
 
-    def react_fewshot(self,
-                      tool_names, 
-                      tool_summaries):
+    def react_fewshot(self):
         prompt_template = self.inference_template()
         if isinstance(self.agent_llm, ChatOpenAI):            
             prompt_template = self.chat_template()
-        return prompt_template.partial(tool_names=tool_names,
-                                       tool_summaries=tool_summaries)       
+        return prompt_template
+        # return prompt_template.partial(tool_names=tool_names,
+        #                                tool_summaries=tool_summaries)       
         # return self.prompt_tools(tool_set, react_prompt)
 
     # def prompt_tools(self, tool_set, prompt_template):
