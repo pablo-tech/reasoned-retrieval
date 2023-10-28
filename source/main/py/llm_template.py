@@ -193,11 +193,11 @@ class CompleteTemplate(TemplateBank):
         return """
 YOU ARE AN AI AGENT THAT ANSWERS QUESTIONS BY THINKING STEP-BY-STEP.
 """
-    def tool_template(self):
-        return """
-AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
-{tool_summaries}
-"""
+#     def tool_template(self):
+#         return """
+# AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+# {tool_summaries}
+# """
 
     def example_template(self):
         return """
