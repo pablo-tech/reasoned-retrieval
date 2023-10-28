@@ -282,9 +282,14 @@ class ReactDescribe():
     def __init__(self):
         pass
 
-    def react_tools(cls, tool_names, tool_summaries): 
+    def name_template(cls, tool_names): 
         return f"""
-AGENT ONLY HAS ACCESS TO TOOLS: {tool_names}.  TRY EITHER:
+AGENT ONLY HAS ACCESS TO TOOLS: {tool_names}.  
+"""
+
+    def summary_template(cls, tool_summaries): 
+        return f"""
+AGENT TOOL DESCRIPTION:
 {tool_summaries}
 """
     
