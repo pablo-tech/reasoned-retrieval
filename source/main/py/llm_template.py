@@ -289,10 +289,11 @@ Observation: AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
 """
     
     def react_format(cls): 
+
         return """
 Observation: AGENT MUST SPECIFY BOTH 'Thought: ' AND 'Action: ', AS FOLLOWS:
 1. 'Thought: ' explains step-by-step the agent's reasoning
 2. 'Action: ' indicates what tool action to take to fulfill the thought
-3. determine the the action input in between '[' and ']'
 """ 
+# 3. determine the the action input in between '[' and ']'
     
