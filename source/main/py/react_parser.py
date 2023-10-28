@@ -16,16 +16,18 @@ class OptimisticParser(AgentOutputParser):
     def parse(self, txt):
         parsed = self.get_parsed(txt)
         if parsed is not None:
-            if parsed.tool != '':
+            if isinstance(parsed, AgentFinish):
+                return parsed
+            elif parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
-                               tool="Describe", 
-                               tool_input="tools")            
+                            tool="Describe", 
+                            tool_input="tools")            
         # if "Thought: " not in txt and\
         #    "Action: " not in txt:
         return AgentAction(log=txt, 
-                        tool="Describe", 
-                        tool_input="format")
+                           tool="Describe", 
+                           tool_input="format")
     
         # return AgentAction(log=txt,
         #                    tool="Identity")
