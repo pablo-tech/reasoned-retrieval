@@ -63,8 +63,10 @@ class FinalAnswer():
         if isinstance(answer, AgentAction):
             self.answer = answer.log
             self.is_success = False
+            self.log = ''
         if isinstance(answer, AgentFinish):
             self.answer = answer.return_values['output']
+            self.log = answer.log
         if answer is None:
             self.is_success = False
 
@@ -73,11 +75,16 @@ class FinalAnswer():
     
     def get_success(self):
         return self.is_success
+    
+    def get_log(self):
+        return self.log
 
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
-        s += " - success: " + str(self.is_success) + "\n"
-        s += " - ANSWER: " + "\n" + str(self.answer) + "\n"
+        s += " - success: " + str(self.get_success()) + "\n"
+        s += " - ANSWER: " + "\n" 
+        s += "\t" + str(self.get_answer()) + "\n"
+        s += "\t" + str(self.get_log()) + "\n"
         s += " - steps: " + "\n"
         for step in self.steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
