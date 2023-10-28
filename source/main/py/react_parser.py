@@ -18,41 +18,16 @@ class OptimisticParser(AgentOutputParser):
         if parsed is not None:
             if isinstance(parsed, AgentFinish):
                 return parsed
-            elif parsed.tool != '':
+            elif isinstance(parsed, AgentFinish) and\
+                parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
                             tool="Describe", 
                             tool_input="tools")            
-        # if "Thought: " not in txt and\
-        #    "Action: " not in txt:
         return AgentAction(log=txt, 
                            tool="Describe", 
-                           tool_input="format")
-    
-        # return AgentAction(log=txt,
-        #                    tool="Identity")
-        # return AgentAction(log=txt, 
-        #                 tool="Describe", 
-        #                 tool_input="tools")
-
-        # return AgentAction(log=txt, 
-        #                    tool="Describe", 
-        #                    tool_input="format")
-        # if "Thought: " not in txt and\
-        #    "Action: " not in txt:
-        #     return AgentAction(log=txt, 
-        #                     tool="Describe", 
-        #                     tool_input="tools")
-
-            # print("PARSEEDD..." + str(parsed))
-            # tool_name = parsed.tool
-            # tool_input = parsed.tool_input
-            # if "Thought: " in parsed.
-            # parsed.tool != '':
-            #     return parsed
-
-        return   
-    #   raise OutputParserException(str(txt))
+                           tool_input="format")    
+        #   raise OutputParserException(str(txt))
 
     def get_parsed(self, txt):
         parsed = self.react_single_input_output(txt)

@@ -9,6 +9,7 @@ from langchain.tools.render import render_text_description
 
 from search_tool import SearchAnswer
 from math_tool import MathAnswer
+from conversation_tool import ConversationAnswer
 
 
 class ToolFactory():
@@ -26,10 +27,9 @@ class ToolFactory():
 
     def basic_tools(self, completion_llm):
         math_tools = self.math_tools(completion_llm)
-        # math_tools = load_tools(["llm-math"], completion_llm)
         search_tools = self.search_tools()
-        return math_tools + search_tools
-        # return load_tools(["serpapi", "llm-math"], completion_llm)
+        conversation_tools = self.conversation_tools()
+        return math_tools + search_tools + conversation_tools
 
     def math_tools(self, completion_llm):
         return [self.math_engine(completion_llm)]
@@ -51,6 +51,17 @@ class ToolFactory():
               name="Search",
               func=search_api.run,
               description="useful to answer questions about current events or the current state of the world"
+        )
+    
+    def conversation_tools(self, completion_llm=None):
+        return [self.conversation_engine()]
+    
+    def conversation_engine(self):
+        conversation_api = ConversationAnswer()        
+        return Tool(
+              name="Message",
+              func=conversation_api.send_message,
+              description="useful to send a message to the user"
         )
     
     def wikipedia_tools(self, completion_llm=None):
