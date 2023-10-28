@@ -184,7 +184,7 @@ Do NOT respond with anything except a JSON snippet no matter what!"""
         pass
 
 
-class ReactTemplate(TemplateBank):
+class CompleteTemplate(TemplateBank):
 
     def __init__(self):
         super().__init__()
@@ -249,7 +249,7 @@ QUESTION: {input_question}
         )
     
 
-class PromptFactory(ReactTemplate):
+class PromptFactory(CompleteTemplate):
     # https://smith.langchain.com/hub/hwchase17?organizationId=10beea65-e722-5aa1-9f93-034c22e3cd6e
 
     def __init__(self, agent_llm):
@@ -274,4 +274,22 @@ class PromptFactory(ReactTemplate):
         return tool_factory.tool_set(tool_name)  
 
   
+class ReactDescribe():
+
+    def __init__(self):
+        pass
+
+    def react_tools(cls, tool_names, tool_summaries): 
+        return f"""
+Observation: AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+{tool_summaries}
+"""
+    
+    def react_format(cls): 
+        return """
+Observation: AGENT MUST SPECIFY BOTH 'Thought: ' AND 'Action: ', AS FOLLOWS:
+1. 'Thought: ' explains step-by-step the agent's reasoning
+2. 'Action: ' indicates what tool action to take to fulfill the thought
+3. determine the the action input in between '[' and ']'
+""" 
     
