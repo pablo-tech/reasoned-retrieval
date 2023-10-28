@@ -83,8 +83,8 @@ class FinalAnswer():
         s = "FINAL_ANSWER=>" + "\n"
         s += " - success: " + str(self.get_success()) + "\n"
         s += " - RESPONSE: " + "\n" 
-        s += "\t answer:" + str(self.get_answer()) + "\n"
-        s += "\t reason:" + str(self.get_log()) + "\n"
+        s += "\t answer: " + str(self.get_answer()) + "\n"
+        s += "\t reason: " + str(self.get_log()) + "\n"
         s += " - steps: " + "\n"
         for step in self.steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
