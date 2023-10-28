@@ -18,10 +18,10 @@ class ToolFactory():
         self.is_verbose = is_verbose
         self.doc_store = DocstoreExplorer(Wikipedia())
 
-    def tool_summaries(self, tool_set):
+    def tool_summaries(cls, tool_set):
         return render_text_description(tool_set)
 
-    def tool_names(self, tool_set):
+    def tool_names(cls, tool_set):
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):

@@ -4,6 +4,7 @@ from langchain.prompts.base import StringPromptValue
 from llm_memory import LlmMemory
 from llm_template import PromptFactory
 from react_parser import OptimisticParser
+from llm_tool import ToolFactory
 
 
 class PipelinedAgent():
@@ -11,25 +12,28 @@ class PipelinedAgent():
     def __init__(self,
                  agent_llm,
                  agent_tools,
-                 agent_prompt,
                  agent_parser,
                  agent_memory,
+                 prompt_factory,
                  response_template=None,
                  is_verbose=True):
 
         self.agent_llm = agent_llm
         self.agent_tools = agent_tools
-        self.incomplete_prompt = agent_prompt
+        # self.incomplete_prompt = agent_prompt
         self.agent_parser = agent_parser
         self.agent_memory = agent_memory
         self.response_template = response_template
         self.is_verbose = is_verbose
+        self.prompt_factory = prompt_factory
+        # self.incomplete_prompt =  self.prompt_factory.react_fewshot(tool_set=agent_tools)
 
     def invoke(self, executor_input):
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
         # print("\nAGENT_TOOLS=>"+str(self.get_tools()))
         # print("\nEXECUTOR_INPUT=>"+str(executor_input.__str__()))
-        prompt = self.incomplete_prompt
+        prompt = self.prompt_factory.react_fewshot(tool_names=self.tool_names(), 
+                                                   tool_summaries=self.tool_summaries())
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
         if self.is_verbose:
@@ -55,6 +59,12 @@ class PipelinedAgent():
 
     def get_tools(self):
         return self.agent_tools
+    
+    def get_tool_names(self):
+        return ToolFactory().tool_summaries(self.get_tools)
+
+    def get_tool_descriptions(self):
+        return ToolFactory().tool_summaries(self.get_tools)
 
     def get_prompt(self):
         return self.incomplete_prompt
@@ -89,10 +99,10 @@ class AgentFactory():
                     agent_parser=OptimisticParser()):
 
         agent_tools = tool_factory_func(self.agent_llm)
-        incomplete_prompt = self.prompt_factory.react_fewshot(tool_set=agent_tools)
         return PipelinedAgent(agent_llm=self.agent_llm,
                               agent_tools=agent_tools,
-                              agent_prompt=incomplete_prompt,
+                              prompt_factory=self.prompt_factory,
                               agent_parser=agent_parser,
                               agent_memory=agent_memory,
                               is_verbose=self.is_verbose)
+    
