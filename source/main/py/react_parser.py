@@ -18,7 +18,7 @@ class OptimisticParser(AgentOutputParser):
         if parsed is not None:
             if isinstance(parsed, AgentFinish):
                 return parsed
-            elif isinstance(parsed, AgentFinish) and\
+            elif isinstance(parsed, AgentAction) and\
                 parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
