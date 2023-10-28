@@ -61,10 +61,10 @@ class PipelinedAgent():
         return self.agent_tools
     
     def get_tool_names(self):
-        return ToolFactory().tool_summaries(self.get_tools)
+        return ToolFactory().tool_summaries(self.get_tools())
 
     def get_tool_summaries(self):
-        return ToolFactory().tool_summaries(self.get_tools)
+        return ToolFactory().tool_summaries(self.get_tools())
 
     def get_prompt(self):
         return self.incomplete_prompt
