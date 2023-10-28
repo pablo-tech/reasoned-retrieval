@@ -19,6 +19,12 @@ class OptimisticParser(AgentOutputParser):
             if isinstance(parsed, AgentFinish):
                 return parsed
             elif isinstance(parsed, AgentAction) and\
+                parsed.tool == 'Message':
+                return_values={}
+                return_values['output']=parsed.tool_input
+                return AgentFinish(return_values=return_values,
+                                   log=txt)
+            elif isinstance(parsed, AgentAction) and\
                 parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
