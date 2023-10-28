@@ -81,15 +81,15 @@ class FinalAnswer():
 
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
-        s += " - success: " + str(self.get_success()) + "\n"
+        s += " - SUCCESS: " + str(self.get_success()) + "\n"
         s += " - RESPONSE: " + "\n" 
         s += "\t" + "Answer: " + str(self.get_answer()) + "\n"
         s += "\t" + str(self.get_log()) + "\n"
-        s += " - steps: " + "\n"
+        s += " - STEPS: " + "\n"
         for step in self.steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
           s += "\t" + "observation: " + str(step[1]) + "\n"
-        s += " - exception=> " + "\n"
+        s += " - EXCEPTION => " + "\n"
         for entry in self.exception:
           s += "\t" + "input: " + str(entry[0]) + "\n"
           s += "\t" + "exception: " + str(entry[1]) + "\n"
