@@ -2,7 +2,7 @@ from langchain.schema import AgentAction, AgentFinish
 
 from llm_template import TemplateBank
 from llm_tool import ToolFactory
-# from react_parser import ParsingFailure
+from llm_template import ReactDescribe
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
@@ -124,14 +124,19 @@ class PipelinedExecutor():
                     # try:
                     tool_name = parsed.tool
                     tool_input = parsed.tool_input
-                    if tool_name not in ToolFactory().tool_names(self.agent_tools):
-                        observation = tool_name + " is not a valid action available to the agent. "
-                        observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
-                    else:
+                    if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
+                        # TODO: add Describe[tools] as a tool
                         if self.is_verbose:
                             print(self.tool_observation(tool_name, tool_input, observation))
+                    elif tool_name == "Describe" and tool_input == 'format':
+                        observation = ReactDescribe().react_format()
+                    elif tool_name == "Describe" and tool_input == 'tools':
+                        observation = ReactDescribe().react_tools()
+                    elif tool_name not in ToolFactory().tool_names(self.agent_tools):
+                        observation = tool_name + " is not a valid action available to the agent. "
+                        observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
                 if isinstance(parsed, AgentFinish):
                         agent_answer = parsed
