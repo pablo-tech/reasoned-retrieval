@@ -284,7 +284,7 @@ class ReactDescribe():
 
     def react_tools(cls, tool_names, tool_summaries): 
         return f"""
-AGENT HAS ACCESS TO TOOLS: {tool_names}.  TOOL USE DETAILS:
+AGENT ONLY HAS ACCESS TO TOOLS: {tool_names}.  TRY EITHER:
 {tool_summaries}
 """
     
