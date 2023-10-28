@@ -18,6 +18,22 @@ class OptimisticParser(AgentOutputParser):
             return AgentAction(log=txt, 
                             tool="Describe", 
                             tool_input="tools")
+        parsed = self.get_parsed(txt)
+        if parsed is not None:
+            return parsed
+        else:
+            print("PARSEEDD..." + str(parsed))
+            # tool_name = parsed.tool
+            # tool_input = parsed.tool_input
+            # if "Thought: " in parsed.
+            # parsed.tool != '':
+            #     return parsed
+        return AgentAction(log=txt, 
+                           tool="Describe", 
+                           tool_input="format")  
+    #   raise OutputParserException(str(txt))
+
+    def get_parsed(self, txt):
         parsed = self.react_single_input_output(txt)
         if parsed is not None:
             return parsed
@@ -30,12 +46,7 @@ class OptimisticParser(AgentOutputParser):
         parsed = self.react_output(txt)
         if parsed is not None:
             return parsed
-        return AgentAction(log=txt, 
-                           tool="Describe", 
-                           tool_input="format")
-  
-    #   txt = "Error: reasoning step-by-stype must start with 'Thought' and include an 'Action'."
-    #   raise OutputParserException(str(txt))
+        return None
 
     def react_single_input_output(self, txt):
         try:
