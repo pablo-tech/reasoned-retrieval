@@ -130,7 +130,8 @@ class PipelinedExecutor():
                         if self.is_verbose:
                             print(self.tool_observation(tool_name, tool_input, observation))
                     elif tool_name == "Describe" and tool_input == 'format':
-                        observation = ReactDescribe().react_format()
+                        observation = ReactDescribe().react_format() + "\n"
+                        observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
                     elif tool_name == "List" and tool_input == 'tools':
                         observation = ReactDescribe().name_template(self.llm_agent.get_tool_names())
                     elif tool_name == "Describe" and tool_input == 'tools':
