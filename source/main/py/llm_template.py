@@ -223,7 +223,7 @@ QUESTION: {input_question}
 
     def system_template(self):
         template = self.instruction_template() + "\n"
-        template += self.tool_template() + "\n"
+        # template += self.tool_template() + "\n"
         # template += self.format_template() + "\n"
         template += self.example_template() + "\n"
         return template

@@ -127,7 +127,6 @@ class PipelinedExecutor():
                     if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
-                        # TODO: add Describe[tools] as a tool
                         if self.is_verbose:
                             print(self.tool_observation(tool_name, tool_input, observation))
                     elif tool_name == "Describe" and tool_input == 'format':
