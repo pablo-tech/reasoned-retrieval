@@ -257,7 +257,6 @@ class PromptFactory(CompleteTemplate):
         self.agent_llm = agent_llm
 
     def react_fewshot(self,
-                      prompt_template, 
                       tool_names, 
                       tool_summaries):
         prompt_template = self.inference_template()
