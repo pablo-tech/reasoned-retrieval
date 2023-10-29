@@ -30,14 +30,14 @@ class PipelinedAgent():
 
     def invoke(self, executor_input):
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
-        if self.is_verbose:
-            print("\nAGENT_TOOLS=>"+str(self.get_tool_names()))
+        # if self.is_verbose:
+        #     print("\nAGENT_TOOLS=>"+str(self.get_tool_names()))
         # print("\nEXECUTOR_INPUT=>"+str(executor_input.__str__()))
         prompt = self.prompt_factory.react_fewshot()
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
-        # if self.is_verbose:
-        #     print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
+        if self.is_verbose:
+            print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
           inferred = inferred.content
