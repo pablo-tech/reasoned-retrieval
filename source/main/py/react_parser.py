@@ -22,12 +22,16 @@ class OptimisticParser(AgentOutputParser):
                 parsed.tool != '':
                 return parsed
             return AgentAction(log=txt, 
-                            tool="Describe", 
-                            tool_input="tools")            
-        return AgentAction(log=txt, 
-                           tool="Describe", 
-                           tool_input="format")    
-        #   raise OutputParserException(str(txt))
+                               tool="Describe", 
+                               tool_input="format")    
+        raise OutputParserException("UNABLE_TO_PARSE=" + str(txt))
+        #     return AgentAction(log=txt, 
+        #                     tool="Describe", 
+        #                     tool_input="tools")            
+        # return AgentAction(log=txt, 
+        #                    tool="Describe", 
+        #                    tool_input="format")    
+        #   
 
     def get_parsed(self, inferred_txt):
         parsed = self.react_single_input_output(inferred_txt)
