@@ -13,7 +13,7 @@ class ExecutorInput():
     def __init__(self):
         self.template_vars = {}
         self.agent_scratchpad = []
-        self.chat_history = []
+        self.chat_history = ''
 
     def template_values(self, template_vars):
         for key, value in template_vars.items():
@@ -30,6 +30,9 @@ class ExecutorInput():
 
     def get_steps(self):
         return self.agent_scratchpad
+    
+    def set_history(self, chat_history):
+        self.chat_history = chat_history
 
     def str_values(self):
         template_settings = self.template_vars.copy()
@@ -122,7 +125,8 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
-                print("CHAT HISTORY ;;;;; " + self.llm_agent.get_memory().__str__())
+                # print("CHAT HISTORY ;;;;; " + self.llm_agent.get_memory().__str__())
+                self.executor_input.set_history(self.llm_agent.get_memory().__str__())
                 parsed, observation = None, None
                 parsed = self.llm_agent.invoke(self.executor_input)
 

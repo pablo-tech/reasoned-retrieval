@@ -40,7 +40,7 @@ class PipelinedAgent():
             print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
-          inferred = inferred.content
+            inferred = inferred.content
         if self.is_verbose:
             print("\nINFERRED=>"+"\n"+str(inferred))
         parsed = self.agent_parser.parse(inferred)
