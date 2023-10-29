@@ -124,6 +124,7 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
+                print("CHAT HISTORY ;;;;; " + self.llm_agent.get_memory().__str__())
                 parsed, observation = None, None
                 parsed = self.llm_agent.invoke(self.executor_input)
 
