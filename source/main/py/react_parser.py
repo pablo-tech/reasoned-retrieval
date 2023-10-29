@@ -51,7 +51,8 @@ class OptimisticParser(AgentOutputParser):
         if isinstance(parsed, AgentAction) and\
                 parsed.tool == 'Message':
             parsed = self.get_finish(parsed.tool_input, inferred_txt)
-        if parsed is not None and parsed.tool == '':
+        if isinstance(parsed, AgentAction) and\
+                parsed.tool == '':
             parsed =  AgentAction(tool="Describe", 
                                   tool_input="format",
                                   log=inferred_txt)           
