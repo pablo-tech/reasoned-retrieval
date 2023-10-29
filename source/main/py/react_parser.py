@@ -40,8 +40,8 @@ class OptimisticParser(AgentOutputParser):
         if parsed is not None:
             if isinstance(parsed, AgentAction) and parsed.tool == 'Message':
                 return self.get_finish(parsed.tool_input, inferred_txt)
-        # return             
-        return parsed
+        return self.get_finish(inferred_txt, inferred_txt)            
+        # return parsed
 
     def get_finish(self, tool_input, inferred_txt):
         return_values={}
