@@ -16,17 +16,21 @@ class OptimisticParser(AgentOutputParser):
     def parse(self, txt):
         parsed = self.get_parsed(txt)
         if parsed is not None:
-            if isinstance(parsed, AgentFinish):
-                return parsed
-            elif isinstance(parsed, AgentAction) and\
-                parsed.tool != '':
-                return parsed
-            return AgentAction(log=txt, 
-                               tool="Describe", 
-                               tool_input="format")    
+            return parsed
+        # if parsed is not None and parsed.tool == '': 
+        # if parsed is not None:
+        #     if isinstance(parsed, AgentFinish):
+        #         return parsed
+        #     elif isinstance(parsed, AgentAction) and\
+        #         parsed.tool != '':
+        #         return parsed
+        #     return AgentAction(log=txt, 
+        #                        tool="Describe", 
+        #                        tool_input="format")    
         raise OutputParserException("UNABLE_TO_PARSE=" + str(txt))
 
     def get_parsed(self, inferred_txt):
+        ### is None
         parsed = self.react_single_input_output(inferred_txt)
         if parsed is None:
             parsed = self.react_json_single_input_output(inferred_txt)
@@ -43,9 +47,14 @@ class OptimisticParser(AgentOutputParser):
                 'Action: ' not in inferred_txt:
             inferred_txt = inferred_txt.replace("Thought: ", '')
             parsed = self.get_finish(inferred_txt, inferred_txt) 
+        ### is NOT None
         if isinstance(parsed, AgentAction) and\
                 parsed.tool == 'Message':
             parsed = self.get_finish(parsed.tool_input, inferred_txt)
+        if parsed is not None and parsed.tool == '':
+            parsed =  AgentAction(tool="Describe", 
+                                  tool_input="format",
+                                  log=inferred_txt)           
         return parsed         
 
     def get_finish(self, tool_input, inferred_txt):
