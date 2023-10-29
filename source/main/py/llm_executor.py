@@ -59,16 +59,14 @@ class FinalAnswer():
         self.answer = answer
         self.steps = steps
         self.exception = exception
-        self.is_success = True
+        self.is_success = False
+        self.log = ''
         if isinstance(answer, AgentAction):
             self.answer = answer.log
-            self.is_success = False
-            self.log = ''
         if isinstance(answer, AgentFinish):
             self.answer = answer.return_values['output']
             self.log = answer.log
-        if answer is None:
-            self.is_success = False
+            self.is_success = True
 
     def get_answer(self):
         return self.answer
