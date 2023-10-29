@@ -25,13 +25,6 @@ class OptimisticParser(AgentOutputParser):
                                tool="Describe", 
                                tool_input="format")    
         raise OutputParserException("UNABLE_TO_PARSE=" + str(txt))
-        #     return AgentAction(log=txt, 
-        #                     tool="Describe", 
-        #                     tool_input="tools")            
-        # return AgentAction(log=txt, 
-        #                    tool="Describe", 
-        #                    tool_input="format")    
-        #   
 
     def get_parsed(self, inferred_txt):
         parsed = self.react_single_input_output(inferred_txt)
@@ -44,6 +37,11 @@ class OptimisticParser(AgentOutputParser):
         if parsed is None and\
                 'Thought: ' not in inferred_txt and\
                 'Action: ' not in inferred_txt:
+            parsed = self.get_finish(inferred_txt, inferred_txt) 
+        if parsed is None and\
+                'Thought: ' in inferred_txt and\
+                'Action: ' not in inferred_txt:
+            inferred_txt = inferred_txt.replace("Thought: ", '')
             parsed = self.get_finish(inferred_txt, inferred_txt) 
         if isinstance(parsed, AgentAction) and\
                 parsed.tool == 'Message':
