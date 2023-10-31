@@ -6,57 +6,11 @@ from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
 
-
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/integrations/toolkits/
 # https://github.com/langchain-ai/langchain/tree/master/cookbook
-class ExecutorInput():
 
-    def __init__(self):
-        self.template_vars = {}
-        self.agent_scratchpad = []
-        self.chat_history = ''
-
-    def template_values(self, template_vars):
-        for key, value in template_vars.items():
-          self.template_vars[key] = value
-
-    def template_value(self, key, value):
-        self.template_vars[key] = value
-
-    def add_step(self, agent_action, step_observation):
-        if isinstance(step_observation, str):
-            step_observation = step_observation.strip()
-        step = (agent_action, step_observation)
-        self.agent_scratchpad.append(step)
-
-    def get_scratchpad(self):
-        return self.agent_scratchpad
-    
-    def set_history(self, chat_history):
-        self.chat_history = chat_history
-
-    def str_values(self):
-        template_settings = self.template_vars.copy()
-        template_settings["chat_history"] = self.chat_history
-        template_settings["agent_scratchpad"] = self.format_log_to_str()
-        return template_settings
-
-    def format_log_to_str(self, observation_prefix="Observation: "):
-        thoughts = ""
-        for thought_action, observation in self.agent_scratchpad:
-            thought_action = thought_action.log.strip()
-            thoughts += f"{thought_action}" + "\n"
-            thoughts += f"{observation_prefix}" + str(observation) + "\n"
-        return thoughts
-
-    def __str__(self):
-        s = ""
-        for k, v in self.str_values().items():
-            s += "- " + str(k.upper()) + ": " + "\n" + str(v) + "\n"
-        return s
-        
 
 class FinalAnswer():
 
@@ -97,9 +51,69 @@ class FinalAnswer():
           s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
         for error, input in self.execution_error.get_error_input():
-          s += "\t" + "executor_input: " + str(input) + "\n"
+          s += "\t" + "template_input: " + str(input) + "\n"
           s += "\t" + "exception: " + str(error) + "\n"
-        return s    
+        return s
+    
+
+class TemplateInput():
+
+    def __init__(self):
+        self.template_vars = {}
+        # self.chat_history = ''
+
+    def template_values(self, template_vars):
+        for key, value in template_vars.items():
+            self.template_vars[key] = value
+
+    def template_value(self, key, value):
+        self.template_vars[key] = value
+
+    def set_scratchpad(self, execution_journey):
+        self.template_vars["agent_scratchpad"] = execution_journey.__str__()
+
+    def get_scratchpad(self):
+        return self.template_vars["agent_scratchpad"]
+    
+    def set_history(self, chat_history):
+        self.template_vars["chat_history"] = chat_history
+        # self.chat_history = chat_history
+
+    def get_history(self):
+        return self.template_vars["chat_history"]
+
+    # def str_values(self):
+    #     template_settings = self.template_vars.copy()
+    #     template_settings["chat_history"] = self.chat_history
+    #     template_settings["agent_scratchpad"] = self.format_log_to_str()
+    #     return template_settings
+
+    # def __str__(self):
+    #     s = ""
+    #     for k, v in self.str_values().items():
+    #         s += "- " + str(k.upper()) + ": " + "\n" + str(v) + "\n"
+    #     return s
+        
+
+class ExecutionJourney():
+
+    def __init__(self):
+        self.agent_scratchpad = []
+
+    def add_step(self, agent_action, step_observation):
+        if isinstance(step_observation, str):
+            step_observation = step_observation.strip()
+        step = (agent_action, step_observation)
+        self.agent_scratchpad.append(step)
+
+    def __str__(self, observation_prefix="Observation: "):
+    # def format_log_to_str(self, observation_prefix="Observation: "):
+        thoughts = ""
+        for thought_action, observation in self.agent_scratchpad:
+            thought_action = thought_action.log.strip()
+            thoughts += f"{thought_action}" + "\n"
+            thoughts += f"{observation_prefix}" + str(observation) + "\n"
+        return thoughts
     
 
 class ExecutionError():
@@ -113,6 +127,7 @@ class ExecutionError():
     def get_error_input(self):
         return self.error_log
     
+
 
 class PipelinedExecutor():
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
@@ -131,20 +146,22 @@ class PipelinedExecutor():
         self.max_execution_time = max_execution_time
         self.is_verbose = is_verbose
         # input
-        self.executor_input = ExecutorInput()
-        self.executor_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
-        # error
+        self.template_input = TemplateInput()
+        self.template_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
+        # journey
+        self.execution_journey = ExecutionJourney()
         self.execution_error = ExecutionError()
 
     def invoke(self, user_query):
-        self.executor_input.template_value("input_question", user_query)
+        self.template_input.template_value("input_question", user_query)
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:
             try:
-                self.executor_input.set_history(self.llm_agent.get_memory().__str__())
                 agent_step, observation = None, None
-                agent_step = self.llm_agent.invoke(self.executor_input)
+                self.template_input.set_history(self.llm_agent.get_memory().__str__())
+                self.template_input.set_scratchpad(self.execution_journey)
+                agent_step = self.llm_agent.invoke(self.template_input)
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
@@ -165,12 +182,12 @@ class PipelinedExecutor():
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
                 if isinstance(agent_step, AgentFinish):
-                        self.executor_input.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.executor_input.get_scratchpad(), self.execution_error)
+                        self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
+                        final = FinalAnswer(agent_step, self.template_input.get_scratchpad(), self.execution_error)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.executor_input.add_step(agent_step, observation)                
+                self.execution_journey.add_step(agent_step, observation)                
 
             except Exception as e:
                 self.execution_error.error_input(str(e), input)
@@ -179,7 +196,7 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.executor_input.get_scratchpad(), self.execution_error)
+                return FinalAnswer(None, self.template_input.get_scratchpad(), self.execution_error)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
