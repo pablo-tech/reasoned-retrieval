@@ -3,6 +3,9 @@ from langchain.schema import AgentAction, AgentFinish
 from llm_template import TemplateBank
 from llm_tool import ToolFactory
 from llm_template import ReactDescribe
+from llm_memory import LlmMemory
+from llm_agent import AgentFactory
+
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
@@ -178,3 +181,35 @@ class PipelinedExecutor():
     
     def get_agent(self):
         return self.llm_agent
+
+
+class ExecutorFactory():
+
+    def __init__(self,
+                 agent_llm,
+                 is_verbose=True):
+        self.is_verbose = is_verbose
+        self.agent_llm = agent_llm
+        self.agent_factory = AgentFactory(self.agent_llm,
+                                          is_verbose=is_verbose)
+
+    def llm_executor(self):
+        ''' Direct Inference '''
+        return self.agent_llm
+
+    def cot_executor(self):
+        ''' Chain of Thought '''
+        return self.agent_llm
+
+    def react_executor(self,
+                       tool_factory_func,
+                       agent_memory=LlmMemory(),
+                       max_iterations=10,
+                       max_execution_time=None):
+        ''' ReAct Inference Solve '''
+        react_agent = self.agent_factory.react_agent(tool_factory_func=tool_factory_func,
+                                                     agent_memory=agent_memory)
+        return PipelinedExecutor(llm_agent=react_agent,
+                                 max_iterations=max_iterations,
+                                 max_execution_time=max_execution_time,
+                                 is_verbose=self.is_verbose)
