@@ -47,13 +47,8 @@ class FinalAnswer():
         s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
         s += " - EXECUTOR_STEPS: " + "\n"
         s += self.executor_steps.__str__() + "\n"
-        # for step in self.executor_steps:
-        #   s += "\t" + "parsed: " + str(step[0]) + "\n"
-        #   s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
-        for error, input in self.execution_error.get_error_input():
-          s += "\t" + "context_values: " + str(input) + "\n"
-          s += "\t" + "exception: " + str(error) + "\n"
+        s += self.execution_error.__str__() + "\n"
         return s
     
 
@@ -85,13 +80,7 @@ class ContextValues():
 
     def get_values(self):
         return self.template_vars
-    
-    # def __str__(self):
-    #     s = ""
-    #     for k, v in self.str_values().items():
-    #         s += "- " + str(k.upper()) + ": " + "\n" + str(v) + "\n"
-    #     return s
-        
+            
 
 class ExecutionJourney():
 
@@ -124,7 +113,10 @@ class ExecutionError():
     def get_error_input(self):
         return self.error_log
     
-
+    def __str__(self):
+        for error, input in self.error_log:
+          s += "\t" + "context_values: " + str(input) + "\n"
+          s += "\t" + "exception: " + str(error) + "\n"
 
 class PipelinedExecutor():
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
