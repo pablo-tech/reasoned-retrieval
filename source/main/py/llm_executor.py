@@ -179,7 +179,7 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.executor_input.get_steps(), self.execution_error)
+                return FinalAnswer(None, self.executor_input.get_scratchpad(), self.execution_error)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
