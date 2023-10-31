@@ -51,12 +51,12 @@ class FinalAnswer():
           s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
         for error, input in self.execution_error.get_error_input():
-          s += "\t" + "template_input: " + str(input) + "\n"
+          s += "\t" + "input_template: " + str(input) + "\n"
           s += "\t" + "exception: " + str(error) + "\n"
         return s
     
 
-class TemplateInput():
+class InputTemplate():
 
     def __init__(self):
         self.template_vars = {}
@@ -146,22 +146,22 @@ class PipelinedExecutor():
         self.max_execution_time = max_execution_time
         self.is_verbose = is_verbose
         # input
-        self.template_input = TemplateInput()
-        self.template_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
+        self.input_template = InputTemplate()
+        self.input_template.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
         # journey
         self.execution_journey = ExecutionJourney()
         self.execution_error = ExecutionError()
 
     def invoke(self, user_query):
-        self.template_input.template_value("input_question", user_query)
+        self.input_template.template_value("input_question", user_query)
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:
             try:
                 agent_step, observation = None, None
-                self.template_input.set_history(self.llm_agent.get_memory().__str__())
-                self.template_input.set_scratchpad(self.execution_journey)
-                agent_step = self.llm_agent.invoke(self.template_input)
+                self.input_template.set_history(self.llm_agent.get_memory().__str__())
+                self.input_template.set_scratchpad(self.execution_journey)
+                agent_step = self.llm_agent.invoke(self.input_template)
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
@@ -183,7 +183,7 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.template_input.get_scratchpad(), self.execution_error)
+                        final = FinalAnswer(agent_step, self.input_template.get_scratchpad(), self.execution_error)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
@@ -196,7 +196,7 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.template_input.get_scratchpad(), self.execution_error)
+                return FinalAnswer(None, self.input_template.get_scratchpad(), self.execution_error)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
