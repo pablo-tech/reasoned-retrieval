@@ -111,7 +111,7 @@ class ExecutionJourney():
             thought_action = thought_action.log.strip()
             thoughts += f"{thought_action}" + "\n"
             thoughts += f"{observation_prefix}" + str(observation) + "\n"
-        return thoughts
+        return thoughts.strip()
     
 
 class ExecutionError():
