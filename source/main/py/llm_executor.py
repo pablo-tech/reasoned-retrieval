@@ -31,7 +31,7 @@ class ExecutorInput():
         step = (agent_action, step_observation)
         self.agent_scratchpad.append(step)
 
-    def get_steps(self):
+    def get_scratchpad(self):
         return self.agent_scratchpad
     
     def set_history(self, chat_history):
@@ -43,8 +43,7 @@ class ExecutorInput():
         template_settings["agent_scratchpad"] = self.format_log_to_str()
         return template_settings
 
-    def format_log_to_str(self,
-                          observation_prefix="Observation: "):
+    def format_log_to_str(self, observation_prefix="Observation: "):
         thoughts = ""
         for thought_action, observation in self.agent_scratchpad:
             thought_action = thought_action.log.strip()
@@ -61,10 +60,10 @@ class ExecutorInput():
 
 class FinalAnswer():
 
-    def __init__(self, answer, steps, exception):
+    def __init__(self, answer, executor_steps, execution_error):
         self.answer = answer
-        self.steps = steps
-        self.exception = exception
+        self.executor_steps = executor_steps
+        self.execution_error = execution_error
         self.is_success = False
         self.log = ''
         if isinstance(answer, AgentAction):
@@ -78,7 +77,7 @@ class FinalAnswer():
         return self.answer
     
     def get_steps(self):
-        return self.steps
+        return self.executor_steps
     
     def get_success(self):
         return self.is_success
@@ -93,14 +92,26 @@ class FinalAnswer():
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
         s += "\t" + "Thought-Action..." + str(self.get_thought_action()) + "\n"
         s += " - STEPS: " + "\n"
-        for step in self.steps:
+        for step in self.executor_steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
           s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCEPTION => " + "\n"
-        for entry in self.exception:
-          s += "\t" + "input: " + str(entry[0]) + "\n"
-          s += "\t" + "exception: " + str(entry[1]) + "\n"
+        for error, input in self.execution_error.get_error_input():
+          s += "\t" + "executor_input: " + str(input) + "\n"
+          s += "\t" + "exception: " + str(error) + "\n"
         return s    
+    
+
+class ExecutionError():
+
+    def __init__(self):
+        self.error_log = []
+
+    def error_input(self, error, input):
+        self.error_log.append((error, input))
+
+    def get_error_input(self):
+        return self.error_log
     
 
 class PipelinedExecutor():
@@ -123,7 +134,7 @@ class PipelinedExecutor():
         self.executor_input = ExecutorInput()
         self.executor_input.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
         # error
-        self.error_log = []
+        self.execution_error = ExecutionError()
 
     def invoke(self, user_query):
         self.executor_input.template_value("input_question", user_query)
@@ -155,21 +166,20 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, AgentFinish):
                         self.executor_input.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.executor_input.get_steps(), self.error_log)
+                        final = FinalAnswer(agent_step, self.executor_input.get_scratchpad(), self.error_log)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
                 self.executor_input.add_step(agent_step, observation)                
 
             except Exception as e:
-                error = str(e)
-                self.error_log.append((self.executor_input.str_values(), error))
+                self.execution_error.error_input(str(e), input)
 
             remain_iterations-=1
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.executor_input.get_steps(), self.error_log)
+                return FinalAnswer(None, self.executor_input.get_steps(), self.execution_error)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
