@@ -48,8 +48,8 @@ class PipelinedAgent():
             print("\nPARSED=>"+str(parsed)+"\n\n")
         return parsed
 
-    def filled_prompt(self, incomplete_prompt, executor_input):
-        return incomplete_prompt.invoke(executor_input.str_values())
+    def filled_prompt(self, incomplete_prompt, context_values):
+        return incomplete_prompt.invoke(context_values.get_values())
 
     def set_stop(self, stop_txts=["\nObservation"]):
         self.agent_llm = self.agent_llm.bind(stop=stop_txts)
