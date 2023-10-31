@@ -171,8 +171,8 @@ class PipelinedExecutor():
                     if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
-                        if self.is_verbose:
-                            print(self.tool_observation(tool_name, tool_input, observation))
+                        # if self.is_verbose:
+                        #     print(self.tool_observation(tool_name, tool_input, observation))
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
                         observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
