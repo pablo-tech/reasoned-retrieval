@@ -260,19 +260,6 @@ class PromptFactory(CompleteTemplate):
         if isinstance(self.agent_llm, ChatOpenAI):            
             prompt_template = self.chat_template()
         return prompt_template
-        # return prompt_template.partial(tool_names=tool_names,
-        #                                tool_summaries=tool_summaries)       
-        # return self.prompt_tools(tool_set, react_prompt)
-
-    # def prompt_tools(self, tool_set, prompt_template):
-    #     summaries = ToolFactory().tool_summaries(tool_set)
-    #     names = ToolFactory().tool_names(tool_set)
-    #     return prompt_template.partial(tool_summaries=summaries,
-    #                                    tool_names=names)
-
-    # def tool_set(self, tool_name):
-    #     tool_factory = ToolFactory(self.agent_llm)
-    #     return tool_factory.tool_set(tool_name)  
 
   
 class ReactDescribe():

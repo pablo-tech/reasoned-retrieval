@@ -44,7 +44,7 @@ class FinalAnswer():
         s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
         s += " - FULL_RESPONSE: " + "\n" 
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
-        s += "\t" + "Thought-Action..." + str(self.get_thought_action()) + "\n"
+        s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
         s += " - EXECUTOR_STEPS: " + "\n"
         # for step in self.executor_steps:
         #   s += "\t" + "parsed: " + str(step[0]) + "\n"
@@ -62,7 +62,6 @@ class ContextValues():
         self.template_vars = {}
         self.set_scratchpad("")
         self.set_history("")
-        # self.chat_history = ''
 
     def template_values(self, key_values):
         for key, value in key_values.items():
@@ -78,8 +77,7 @@ class ContextValues():
         return self.template_vars["agent_scratchpad"]
     
     def set_history(self, chat_history):
-        self.template_vars["chat_history"] = chat_history
-        # self.chat_history = chat_history
+        self.template_vars["chat_history"] = chat_history.__str__()
 
     def get_history(self):
         return self.template_vars["chat_history"]
@@ -87,12 +85,6 @@ class ContextValues():
     def get_values(self):
         return self.template_vars
     
-    # def str_values(self):
-    #     template_settings = self.template_vars.copy()
-    #     template_settings["chat_history"] = self.chat_history
-    #     template_settings["agent_scratchpad"] = self.format_log_to_str()
-    #     return template_settings
-
     # def __str__(self):
     #     s = ""
     #     for k, v in self.str_values().items():
@@ -112,7 +104,6 @@ class ExecutionJourney():
         self.agent_scratchpad.append(step)
 
     def __str__(self, observation_prefix="Observation: "):
-    # def format_log_to_str(self, observation_prefix="Observation: "):
         thoughts = ""
         for thought_action, observation in self.agent_scratchpad:
             thought_action = thought_action.log.strip()
@@ -165,7 +156,7 @@ class PipelinedExecutor():
             try:
                 agent_step, observation = None, None
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.execution_journey.__str__())
+                self.context_values.set_scratchpad(self.execution_journey)
                 agent_step = self.llm_agent.invoke(self.context_values)
 
                 if isinstance(agent_step, AgentAction):
