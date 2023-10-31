@@ -14,9 +14,9 @@ from llm_agent import AgentFactory
 
 class FinalAnswer():
 
-    def __init__(self, agent_step, executor_steps, execution_error):
+    def __init__(self, agent_step, execution_journey, execution_error):
         self.agent_answer = None
-        self.executor_steps = executor_steps
+        self.execution_journey = execution_journey
         self.execution_error = execution_error
         self.is_finish = False
         self.log = ''
@@ -44,9 +44,9 @@ class FinalAnswer():
         s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
         s += " - FULL_RESPONSE: " + "\n" 
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
-        s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
-        s += " - EXECUTOR_STEPS: " + "\n"
-        s += self.executor_steps.__str__() + "\n"
+        # s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
+        s += " - EXECUTION_JOURNEY: " + "\n"
+        s += self.execution_journey.__str__() + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
         s += self.execution_error.__str__() + "\n"
         return s
@@ -186,13 +186,14 @@ class PipelinedExecutor():
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
-                self.execution_journey.add_step(agent_step, observation)                
-
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.context_values.get_scratchpad(), self.execution_error)
+                        final = FinalAnswer(agent_step, self.execution_journey, self.execution_error) 
+                        # final = FinalAnswer(agent_step, self.context_values.get_scratchpad(), self.execution_error)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
+
+                self.execution_journey.add_step(agent_step, observation)                
 
             except Exception as e:
                 self.execution_error.error_input(str(e), input)
