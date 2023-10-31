@@ -60,6 +60,8 @@ class ContextValues():
 
     def __init__(self):
         self.template_vars = {}
+        self.set_scratchpad("")
+        self.set_history("")
         # self.chat_history = ''
 
     def template_values(self, key_values):
@@ -163,7 +165,7 @@ class PipelinedExecutor():
             try:
                 agent_step, observation = None, None
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.execution_journey)
+                self.context_values.set_scratchpad(self.execution_journey.__str__())
                 agent_step = self.llm_agent.invoke(self.context_values)
 
                 if isinstance(agent_step, AgentAction):
