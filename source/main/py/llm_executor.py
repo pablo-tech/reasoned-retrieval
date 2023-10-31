@@ -114,9 +114,11 @@ class ExecutionError():
         return self.error_log
     
     def __str__(self):
+        s = ""
         for error, input in self.error_log:
           s += "\t" + "context_values: " + str(input) + "\n"
           s += "\t" + "exception: " + str(error) + "\n"
+        return s
 
 class PipelinedExecutor():
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
