@@ -46,9 +46,9 @@ class FinalAnswer():
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
         s += "\t" + "Thought-Action..." + str(self.get_thought_action()) + "\n"
         s += " - EXECUTOR_STEPS: " + "\n"
-        for step in self.executor_steps:
-          s += "\t" + "parsed: " + str(step[0]) + "\n"
-          s += "\t" + "observation: " + str(step[1]) + "\n"
+        # for step in self.executor_steps:
+        #   s += "\t" + "parsed: " + str(step[0]) + "\n"
+        #   s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
         for error, input in self.execution_error.get_error_input():
           s += "\t" + "context_values: " + str(input) + "\n"
