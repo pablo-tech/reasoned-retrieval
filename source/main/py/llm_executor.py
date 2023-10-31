@@ -42,9 +42,7 @@ class FinalAnswer():
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
         s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
-        s += " - FULL_RESPONSE: " + "\n" 
-        s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
-        # s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
+        s += " - FULL_RESPONSE: " + str(self.get_answer()) + "\n"
         s += " - EXECUTION_JOURNEY: " + "\n"
         s += self.execution_journey.__str__() + "\n"
         s += " - EXCECUTION_EXCEPTION => " + "\n"
