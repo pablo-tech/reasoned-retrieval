@@ -83,7 +83,7 @@ class FinalAnswer():
     def get_success(self):
         return self.is_success
     
-    def get_log(self):
+    def get_thought_action(self):
         return self.log
 
     def __str__(self):
@@ -91,11 +91,11 @@ class FinalAnswer():
         s += " - SUCCESS: " + str(self.get_success()) + "\n"
         s += " - RESPONSE: " + "\n" 
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
-        s += "\t" + "Thought-Action..." + str(self.get_log()) + "\n"
+        s += "\t" + "Thought-Action..." + str(self.get_thought_action()) + "\n"
         s += " - STEPS: " + "\n"
         for step in self.steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
-          s += "\t" + "observation: " + str(step[1].replace("\n", " ")) + "\n"
+          s += "\t" + "observation: " + str(step[1]) + "\n"
         s += " - EXCEPTION => " + "\n"
         for entry in self.exception:
           s += "\t" + "input: " + str(entry[0]) + "\n"
@@ -132,11 +132,11 @@ class PipelinedExecutor():
         while remain_iterations > 0:
             try:
                 self.executor_input.set_history(self.llm_agent.get_memory().__str__())
-                thought_action, observation = None, None
-                thought_action = self.llm_agent.invoke(self.executor_input)
+                agent_step, observation = None, None
+                agent_step = self.llm_agent.invoke(self.executor_input)
 
-                if isinstance(thought_action, AgentAction):
-                    tool_name, tool_input = thought_action.tool, thought_action.tool_input
+                if isinstance(agent_step, AgentAction):
+                    tool_name, tool_input = agent_step.tool, agent_step.tool_input
                     if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
@@ -153,13 +153,13 @@ class PipelinedExecutor():
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
-                if isinstance(thought_action, AgentFinish):
-                        self.executor_input.add_step(thought_action, "EXECUTION_DONE") 
-                        final = FinalAnswer(thought_action, self.executor_input.get_steps(), self.error_log)
+                if isinstance(agent_step, AgentFinish):
+                        self.executor_input.add_step(agent_step, "EXECUTION_DONE") 
+                        final = FinalAnswer(agent_step, self.executor_input.get_steps(), self.error_log)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.executor_input.add_step(thought_action, observation)                
+                self.executor_input.add_step(agent_step, observation)                
 
             except Exception as e:
                 error = str(e)
