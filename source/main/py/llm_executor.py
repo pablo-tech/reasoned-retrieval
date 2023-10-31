@@ -46,7 +46,7 @@ class FinalAnswer():
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
         s += "\t" + "Thought-Action..." + str(self.get_thought_action().replace("\n", " ")) + "\n"
         s += " - EXECUTOR_STEPS: " + "\n"
-        s += self.executor_steps.str() + "\n"
+        s += self.executor_steps.__str__() + "\n"
         # for step in self.executor_steps:
         #   s += "\t" + "parsed: " + str(step[0]) + "\n"
         #   s += "\t" + "observation: " + str(step[1]) + "\n"
