@@ -49,6 +49,7 @@ class PipelinedAgent():
         return parsed
 
     def filled_prompt(self, incomplete_prompt, context_values):
+        print("VALUEEEES="+str(context_values.get_values()))
         return incomplete_prompt.invoke(context_values.get_values())
 
     def set_stop(self, stop_txts=["\nObservation"]):
