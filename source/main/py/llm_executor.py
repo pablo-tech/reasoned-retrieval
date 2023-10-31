@@ -60,42 +60,42 @@ class ExecutorInput():
 
 class FinalAnswer():
 
-    def __init__(self, answer, executor_steps, execution_error):
-        self.answer = answer
+    def __init__(self, agent_step, executor_steps, execution_error):
+        self.agent_answer = None
         self.executor_steps = executor_steps
         self.execution_error = execution_error
-        self.is_success = False
+        self.is_finish = False
         self.log = ''
-        if isinstance(answer, AgentAction):
-            self.answer = answer.log
-        if isinstance(answer, AgentFinish):
-            self.answer = answer.return_values['output']
-            self.log = answer.log
-            self.is_success = True
+        if isinstance(agent_step, AgentAction):
+            self.agent_answer = agent_step.log
+        if isinstance(agent_step, AgentFinish):
+            self.agent_answer = agent_step.return_values['output']
+            self.log = agent_step.log
+            self.is_finish = True
 
     def get_answer(self):
-        return self.answer
+        return self.agent_answer
     
     def get_steps(self):
         return self.executor_steps
     
-    def get_success(self):
-        return self.is_success
+    def get_finish(self):
+        return self.is_finish
     
     def get_thought_action(self):
         return self.log
 
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
-        s += " - SUCCESS: " + str(self.get_success()) + "\n"
-        s += " - RESPONSE: " + "\n" 
+        s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
+        s += " - FULL_RESPONSE: " + "\n" 
         s += "\t" + "Answer... " + str(self.get_answer()) + "\n"
         s += "\t" + "Thought-Action..." + str(self.get_thought_action()) + "\n"
-        s += " - STEPS: " + "\n"
+        s += " - EXECUTOR_STEPS: " + "\n"
         for step in self.executor_steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
           s += "\t" + "observation: " + str(step[1]) + "\n"
-        s += " - EXCEPTION => " + "\n"
+        s += " - EXCECUTION_EXCEPTION => " + "\n"
         for error, input in self.execution_error.get_error_input():
           s += "\t" + "executor_input: " + str(input) + "\n"
           s += "\t" + "exception: " + str(error) + "\n"
