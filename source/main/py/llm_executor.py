@@ -186,13 +186,13 @@ class PipelinedExecutor():
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
+                self.execution_journey.add_step(agent_step, observation)                
+
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
                         final = FinalAnswer(agent_step, self.context_values.get_scratchpad(), self.execution_error)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
-
-                self.execution_journey.add_step(agent_step, observation)                
 
             except Exception as e:
                 self.execution_error.error_input(str(e), input)
