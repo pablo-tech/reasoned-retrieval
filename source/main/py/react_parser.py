@@ -17,16 +17,6 @@ class OptimisticParser(AgentOutputParser):
         parsed = self.get_parsed(txt)
         if parsed is not None:
             return parsed
-        # if parsed is not None and parsed.tool == '': 
-        # if parsed is not None:
-        #     if isinstance(parsed, AgentFinish):
-        #         return parsed
-        #     elif isinstance(parsed, AgentAction) and\
-        #         parsed.tool != '':
-        #         return parsed
-        #     return AgentAction(log=txt, 
-        #                        tool="Describe", 
-        #                        tool_input="format")    
         raise OutputParserException("UNABLE_TO_PARSE=" + str(txt))
 
     def get_parsed(self, inferred_txt):

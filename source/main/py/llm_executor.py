@@ -77,6 +77,9 @@ class FinalAnswer():
     def get_answer(self):
         return self.answer
     
+    def get_steps(self):
+        return self.steps
+    
     def get_success(self):
         return self.is_success
     
@@ -92,7 +95,7 @@ class FinalAnswer():
         s += " - STEPS: " + "\n"
         for step in self.steps:
           s += "\t" + "parsed: " + str(step[0]) + "\n"
-          s += "\t" + "observation: " + str(step[1]) + "\n"
+          s += "\t" + "observation: " + str(step[1].replace("\n", " ")) + "\n"
         s += " - EXCEPTION => " + "\n"
         for entry in self.exception:
           s += "\t" + "input: " + str(entry[0]) + "\n"
@@ -128,15 +131,12 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
-                # print("CHAT HISTORY ;;;;; " + self.llm_agent.get_memory().__str__())
                 self.executor_input.set_history(self.llm_agent.get_memory().__str__())
-                parsed, observation = None, None
-                parsed = self.llm_agent.invoke(self.executor_input)
+                thought_action, observation = None, None
+                thought_action = self.llm_agent.invoke(self.executor_input)
 
-                if isinstance(parsed, AgentAction):
-                    # try:
-                    tool_name = parsed.tool
-                    tool_input = parsed.tool_input
+                if isinstance(thought_action, AgentAction):
+                    tool_name, tool_input = thought_action.tool, thought_action.tool_input
                     if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
@@ -153,14 +153,13 @@ class PipelinedExecutor():
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
 
-                if isinstance(parsed, AgentFinish):
-                        agent_answer = parsed
-                        self.executor_input.add_step(parsed, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_answer, self.executor_input.get_steps(), self.error_log)
+                if isinstance(thought_action, AgentFinish):
+                        self.executor_input.add_step(thought_action, "EXECUTION_DONE") 
+                        final = FinalAnswer(thought_action, self.executor_input.get_steps(), self.error_log)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.executor_input.add_step(parsed, observation)                
+                self.executor_input.add_step(thought_action, observation)                
 
             except Exception as e:
                 error = str(e)
