@@ -56,6 +56,8 @@ class ContextValues():
 
     def __init__(self):
         self.template_vars = {}
+        self.set_question("")
+        self.set_examples("")
         self.set_scratchpad("")
         self.set_history("")
 
@@ -65,6 +67,18 @@ class ContextValues():
 
     def template_value(self, key, value):
         self.template_vars[key] = value
+
+    def set_question(self, question):
+        self.template_value("input_question", question)
+
+    def get_question(self):
+        return self.template_vars["input_question"]
+                       
+    def set_examples(self, examples):
+        self.template_value("fewshot_examples", examples)  
+
+    def get_examples(self):
+        return self.template_vars["fewshot_examples"]      
 
     def set_scratchpad(self, execution_journey):
         self.template_vars["agent_scratchpad"] = execution_journey.__str__()
@@ -138,13 +152,13 @@ class PipelinedExecutor():
         self.is_verbose = is_verbose
         # input
         self.context_values = ContextValues()
-        self.context_values.template_value("fewshot_examples", TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
+        self.context_values.set_examples(TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
         # journey
         self.execution_journey = ExecutionJourney()
         self.execution_error = ExecutionError()
 
     def invoke(self, user_query):
-        self.context_values.template_value("input_question", user_query)
+        self.context_values.set_question(user_query)
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:
