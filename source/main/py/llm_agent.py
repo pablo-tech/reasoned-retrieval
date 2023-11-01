@@ -20,13 +20,11 @@ class PipelinedAgent():
 
         self.agent_llm = agent_llm
         self.agent_tools = agent_tools
-        # self.incomplete_prompt = agent_prompt
         self.agent_parser = agent_parser
         self.agent_memory = agent_memory
         self.response_template = response_template
         self.is_verbose = is_verbose
         self.prompt_factory = prompt_factory
-        # self.incomplete_prompt =  self.prompt_factory.react_fewshot(tool_set=agent_tools)
 
     def invoke(self, executor_input):
         # print("\nAGENT_LLM=>"+str(self.get_llm()))
@@ -36,17 +34,19 @@ class PipelinedAgent():
         prompt = self.prompt_factory.react_fewshot()
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
+        input_len = len(prompt)
         # if self.is_verbose:
         #     print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
             inferred = inferred.content
+        output_len = len(inferred)
         # if self.is_verbose:
         #     print("\nINFERRED=>"+"\n"+str(inferred))
-        parsed = self.agent_parser.parse(inferred)
+        agent_step = self.agent_parser.parse(inferred)
         # if self.is_verbose:
-        #     print("\nPARSED=>"+str(parsed)+"\n\n")
-        return parsed
+        #     print("\nPARSED=>"+str(agent_step)+"\n\n")
+        return agent_step, input_len, output_len
 
     def filled_prompt(self, incomplete_prompt, context_values):
         return incomplete_prompt.invoke(context_values.get_values())

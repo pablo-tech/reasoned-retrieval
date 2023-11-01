@@ -12,44 +12,6 @@ from llm_agent import AgentFactory
 # https://github.com/langchain-ai/langchain/tree/master/cookbook
 
 
-class FinalAnswer():
-
-    def __init__(self, agent_step, execution_journey, execution_error):
-        self.agent_answer = None
-        self.execution_journey = execution_journey
-        self.execution_error = execution_error
-        self.is_finish = False
-        self.log = ''
-        if isinstance(agent_step, AgentAction):
-            self.agent_answer = agent_step.log
-        if isinstance(agent_step, AgentFinish):
-            self.agent_answer = agent_step.return_values['output']
-            self.log = agent_step.log
-            self.is_finish = True
-
-    def get_answer(self):
-        return self.agent_answer
-    
-    def get_steps(self):
-        return self.executor_steps
-    
-    def get_finish(self):
-        return self.is_finish
-    
-    def get_thought_action(self):
-        return self.log
-
-    def __str__(self):
-        s = "FINAL_ANSWER=>" + "\n"
-        s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
-        s += " - FULL_RESPONSE: " + str(self.get_answer()) + "\n"
-        s += " - EXECUTION_JOURNEY: " + "\n"
-        s += self.execution_journey.__str__() + "\n"
-        s += " - EXCECUTION_EXCEPTION => " + "\n"
-        s += self.execution_error.__str__() + "\n"
-        return s
-    
-
 class ContextValues():
 
     def __init__(self):
@@ -132,6 +94,72 @@ class ExecutionError():
           s += "\t" + "exception: " + str(error) + "\n"
         return s.strip()
 
+
+class FinalAnswer():
+
+    def __init__(self, 
+                 agent_step, execution_journey, execution_error,
+                 iteration_count, hallucination_count, 
+                 max_input_len, total_input_len,
+                 max_output_len, total_output_len):
+        ### save
+        self.agent_answer = None
+        self.execution_journey = execution_journey
+        self.execution_error = execution_error
+        self.iteration_count = iteration_count
+        self.hallucination_count = hallucination_count
+        self.max_input_len = max_input_len
+        self.total_input_len = total_input_len
+        self.max_output_len = max_output_len
+        self.total_output_len = total_output_len
+        ### summarize
+        self.is_finish = False
+        self.log = ''
+        if isinstance(agent_step, AgentAction):
+            self.agent_answer = agent_step.log
+        if isinstance(agent_step, AgentFinish):
+            self.agent_answer = agent_step.return_values['output']
+            self.log = agent_step.log
+            self.is_finish = True
+
+    def get_answer(self):
+        return self.agent_answer
+    
+    def get_steps(self):
+        return self.executor_steps
+    
+    def get_finish(self):
+        return self.is_finish
+    
+    def get_thought_action(self):
+        return self.log
+    
+    def get_hallucination_count(self):
+        return self.hallucination_count
+    
+    def get_max_input_len(self):
+        return self.max_input_len
+
+    def get_total_input_len(self):
+        return self.total_input_len
+
+    def get_max_output_len(self):
+        return self.max_output_len
+
+    def get_total_output_len(self):
+        return self.total_output_len
+
+    def __str__(self):
+        s = "FINAL_ANSWER=>" + "\n"
+        s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
+        s += " - FULL_RESPONSE: " + str(self.get_answer()) + "\n"
+        s += " - EXECUTION_JOURNEY: " + "\n"
+        s += self.execution_journey.__str__() + "\n"
+        s += " - EXCECUTION_EXCEPTION => " + "\n"
+        s += self.execution_error.__str__() + "\n"
+        return s
+    
+
 class PipelinedExecutor():
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
 
@@ -154,6 +182,10 @@ class PipelinedExecutor():
         # journey
         self.execution_journey = ExecutionJourney()
         self.execution_error = ExecutionError()
+        # summary
+        self.iteration_count = 0
+        self.hallucination_count = 0
+        self.context_size = 0
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
@@ -161,18 +193,21 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
+                self.iteration_count += 1
                 agent_step, observation = None, None
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.execution_journey)
-                agent_step = self.llm_agent.invoke(self.context_values)
+                agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
+                self.total_input_len += input_len 
+                self.total_output_len += output_len  
+                self.max_input_len = max(input_len, self.max_input_len) 
+                self.max_output_len = max(output_len, self.max_output_len) 
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
                     if tool_name in ToolFactory().tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         observation = tool.func(tool_input)
-                        # if self.is_verbose:
-                        #     print(self.tool_observation(tool_name, tool_input, observation))
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
                         observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
@@ -183,11 +218,15 @@ class PipelinedExecutor():
                     elif tool_name not in ToolFactory().tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
+                    else:
+                        self.hallucination_count +=1
 
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.execution_journey, self.execution_error) 
-                        # final = FinalAnswer(agent_step, self.context_values.get_scratchpad(), self.execution_error)
+                        final = FinalAnswer(agent_step, self.execution_journey, self.execution_error,
+                                            self.iteration_count, self.hallucination_count, 
+                                            self.max_input_len, self.total_input_len,
+                                            self.max_output_len, self.total_output_len) 
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
@@ -200,7 +239,10 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.context_values.get_scratchpad(), self.execution_error)
+                return FinalAnswer(None, self.context_values.get_scratchpad(), self.execution_error,
+                                   self.iteration_count, self.hallucination_count, 
+                                   self.max_input_len, self.total_input_len,
+                                   self.max_output_len, self.total_output_len)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
