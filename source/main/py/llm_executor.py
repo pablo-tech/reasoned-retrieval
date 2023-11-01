@@ -203,10 +203,10 @@ class PipelinedExecutor():
         while remain_iterations > 0:
             try:
                 agent_step, observation = None, None
+                is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.execution_journey)
                 agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
-                self.execution_measure.add_iteration(input_len, output_len)
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
@@ -224,7 +224,9 @@ class PipelinedExecutor():
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                     else:
-                        self.hallucination_count +=1
+                        is_hallucination = True
+
+                self.execution_measure.add_iteration(is_hallucination, input_len, output_len)
 
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
