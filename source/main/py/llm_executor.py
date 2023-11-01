@@ -205,10 +205,7 @@ class FinalAnswer():
 
     def get_answer(self):
         return self.agent_answer
-    
-    def get_steps(self):
-        return self.executor_steps
-    
+        
     def get_finish(self):
         return self.is_finish
     
