@@ -316,7 +316,6 @@ class PipelinedExecutor():
                     elif tool_name not in ToolFactory().tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
-                    else:
                         is_hallucination = True
 
                 self.execution_measure.add_iteration(is_hallucination, input_len, output_len,
