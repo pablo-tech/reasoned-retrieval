@@ -175,7 +175,7 @@ class ExecutionMeasure():
         s += "\t max_input_len: " + str(self.get_max_input_len()) + "\n"
         s += "\t total_input_len: " + str(self.get_total_input_len()) + "\n"
         s += "\t max_output_len: " + str(self.get_max_output_len()) + "\n"
-        s += "\t total_output_len: " + str(self.get_total_output_len())
+        s += "\t total_output_len: " + str(self.get_total_output_len()) + "\n"
         s += "\t max_agent_time: " + str(self.get_max_agent_time()) + "\n"
         s += "\t total_agent_time: " + str(self.get_total_agent_time()) + "\n"
         s += "\t max_tool_time: " + str(self.get_max_tool_time()) + "\n"
