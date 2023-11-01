@@ -268,6 +268,7 @@ class PipelinedExecutor():
                 agent_start = time.time()
                 agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 agent_end = time.time()
+                tool_start, tool_end = 0, 0
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
