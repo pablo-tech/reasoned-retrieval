@@ -114,16 +114,28 @@ class ExecutionMeasure():
         return self.hallucination_count
     
     def get_max_input_len(self):
-        return max(self.input_len)
+        try:
+            return max(self.input_len)
+        except:
+            return 0
 
     def get_total_input_len(self):
-        return sum(self.input_len)
+        try:
+            return sum(self.input_len)
+        except:
+            return 0
 
     def get_max_output_len(self):
-        return max(self.output_len)
+        try:
+            return max(self.output_len)
+        except:
+            return 0
 
     def get_total_output_len(self):
-        return sum(self.output_len)
+        try:
+            return sum(self.output_len)
+        except:
+            return 0
     
     def __str__(self):
         s = ""
