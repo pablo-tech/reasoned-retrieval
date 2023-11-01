@@ -124,7 +124,7 @@ class ExecutionMeasure():
     def get_hallucination_count(self):
         return self.hallucination_count
 
-    def get_minx_input_len(self):
+    def get_min_input_len(self):
         try:
             return min(self.input_len)
         except:
