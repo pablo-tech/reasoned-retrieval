@@ -114,16 +114,25 @@ class ExecutionMeasure():
         return self.hallucination_count
     
     def get_max_input_len(self):
-        return self.max_input_len
+        return max(self.input_len)
 
     def get_total_input_len(self):
-        return self.total_input_len
+        return sum(self.input_len)
 
     def get_max_output_len(self):
-        return self.max_output_len
+        return max(self.output_len)
 
     def get_total_output_len(self):
-        return self.total_output_len
+        return sum(self.output_len)
+    
+    def __str__(self):
+        s = ""
+        s += "- hallucination_count: " + self.get_hallucination_count() + "\n"
+        s += "- max_input_len: " + self.get_max_input_len() + "\n"
+        s += "- total_input_len: " + self.get_total_input_len() + "\n"
+        s += "- max_output_len: " + self.get_max_output_len() + "\n"
+        s += "- total_output_len: " + self.get_total_output_len() + "\n"                
+        return s
     
 
 class FinalAnswer():
@@ -167,6 +176,8 @@ class FinalAnswer():
         s += " - FULL_RESPONSE: " + str(self.get_answer()) + "\n"
         s += " - EXECUTION_JOURNEY: " + "\n"
         s += self.execution_journey.__str__() + "\n"
+        s += " - EXCECUTION_MEASURE => " + "\n"
+        s += self.execution_measure.__str__() + "\n"        
         s += " - EXCECUTION_EXCEPTION => " + "\n"
         s += self.execution_error.__str__() + "\n"
         return s
