@@ -93,25 +93,49 @@ class ExecutionError():
           s += "\t" + "context_values: " + str(input) + "\n"
           s += "\t" + "exception: " + str(error) + "\n"
         return s.strip()
+    
 
+class ExecutionMeasure():
+
+    def __init__(self):
+        self.iteration_count = 0
+        self.hallucination_count = 0
+        self.input_len = []
+        self.output_len = []
+
+    def add_iteration(self, is_hallucination, input_len, output_len):
+        self.iteration_count += 1
+        if is_hallucination:
+            self.hallucination_count += 1
+        self.input_len.append(input_len)
+        self.output_len.append(output_len)
+
+    def get_hallucination_count(self):
+        return self.hallucination_count
+    
+    def get_max_input_len(self):
+        return self.max_input_len
+
+    def get_total_input_len(self):
+        return self.total_input_len
+
+    def get_max_output_len(self):
+        return self.max_output_len
+
+    def get_total_output_len(self):
+        return self.total_output_len
+    
 
 class FinalAnswer():
 
     def __init__(self, 
-                 agent_step, execution_journey, execution_error,
-                 iteration_count, hallucination_count, 
-                 max_input_len, total_input_len,
-                 max_output_len, total_output_len):
+                 agent_step, execution_journey, 
+                 execution_error, execution_measure):
         ### save
         self.agent_answer = None
         self.execution_journey = execution_journey
         self.execution_error = execution_error
-        self.iteration_count = iteration_count
-        self.hallucination_count = hallucination_count
-        self.max_input_len = max_input_len
-        self.total_input_len = total_input_len
-        self.max_output_len = max_output_len
-        self.total_output_len = total_output_len
+        self.execution_measure = execution_measure
         ### summarize
         self.is_finish = False
         self.log = ''
@@ -134,20 +158,8 @@ class FinalAnswer():
     def get_thought_action(self):
         return self.log
     
-    def get_hallucination_count(self):
-        return self.hallucination_count
-    
-    def get_max_input_len(self):
-        return self.max_input_len
-
-    def get_total_input_len(self):
-        return self.total_input_len
-
-    def get_max_output_len(self):
-        return self.max_output_len
-
-    def get_total_output_len(self):
-        return self.total_output_len
+    def get_execution_measure(self):
+        return self.execution_measure
 
     def __str__(self):
         s = "FINAL_ANSWER=>" + "\n"
@@ -182,13 +194,7 @@ class PipelinedExecutor():
         # journey
         self.execution_journey = ExecutionJourney()
         self.execution_error = ExecutionError()
-        # summary
-        self.iteration_count = 0
-        self.hallucination_count = 0
-        self.total_input_len = 0
-        self.total_output_len = 0
-        self.max_input_len = 0
-        self.max_output_len = 0
+        self.execution_measure = ExecutionMeasure()
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
@@ -196,15 +202,11 @@ class PipelinedExecutor():
 
         while remain_iterations > 0:
             try:
-                self.iteration_count += 1
                 agent_step, observation = None, None
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.execution_journey)
                 agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
-                self.total_input_len += input_len 
-                self.total_output_len += output_len  
-                self.max_input_len = max(input_len, self.max_input_len) 
-                self.max_output_len = max(output_len, self.max_output_len) 
+                self.execution_measure.add_iteration(input_len, output_len)
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
@@ -226,10 +228,8 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, AgentFinish):
                         self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.execution_journey, self.execution_error,
-                                            self.iteration_count, self.hallucination_count, 
-                                            self.max_input_len, self.total_input_len,
-                                            self.max_output_len, self.total_output_len) 
+                        final = FinalAnswer(agent_step, self.execution_journey, 
+                                            self.execution_error, self.execution_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
@@ -242,10 +242,8 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.context_values.get_scratchpad(), self.execution_error,
-                                   self.iteration_count, self.hallucination_count, 
-                                   self.max_input_len, self.total_input_len,
-                                   self.max_output_len, self.total_output_len)
+                return FinalAnswer(None, self.context_values.get_scratchpad(), 
+                                   self.execution_error, self.execution_measure)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
