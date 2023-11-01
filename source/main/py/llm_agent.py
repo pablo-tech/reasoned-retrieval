@@ -34,7 +34,7 @@ class PipelinedAgent():
         prompt = self.prompt_factory.react_fewshot()
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
-        input_len = len(prompt)
+        input_len = len(prompt.to_string())
         # if self.is_verbose:
         #     print("\nFILLED_PROMPT=>"+self.filled_str(prompt))
         inferred = self.agent_llm.invoke(prompt)
