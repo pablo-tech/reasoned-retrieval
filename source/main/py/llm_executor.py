@@ -185,7 +185,10 @@ class PipelinedExecutor():
         # summary
         self.iteration_count = 0
         self.hallucination_count = 0
-        self.context_size = 0
+        self.total_input_len = 0
+        self.total_output_len = 0
+        self.max_input_len = 0
+        self.max_output_len = 0
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
