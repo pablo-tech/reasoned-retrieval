@@ -118,6 +118,9 @@ class ExecutionMeasure():
         self.agent_time.append(agent_time)
         self.tool_time.append(tool_time)        
 
+    def get_iteration_count(self):
+        return self.iteration_count
+    
     def get_hallucination_count(self):
         return self.hallucination_count
     
@@ -171,6 +174,7 @@ class ExecutionMeasure():
 
     def __str__(self):
         s = ""
+        s += "\t iteration_count: " + str(self.get_iteration_count()) + "\n"
         s += "\t hallucination_count: " + str(self.get_hallucination_count()) + "\n"
         s += "\t max_input_len: " + str(self.get_max_input_len()) + "\n"
         s += "\t total_input_len: " + str(self.get_total_input_len()) + "\n"
