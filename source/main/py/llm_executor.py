@@ -127,11 +127,11 @@ class ExecutionMeasure():
     
     def __str__(self):
         s = ""
-        s += "- hallucination_count: " + self.get_hallucination_count() + "\n"
-        s += "- max_input_len: " + self.get_max_input_len() + "\n"
-        s += "- total_input_len: " + self.get_total_input_len() + "\n"
-        s += "- max_output_len: " + self.get_max_output_len() + "\n"
-        s += "- total_output_len: " + self.get_total_output_len() + "\n"                
+        s += "- hallucination_count: " + str(self.get_hallucination_count()) + "\n"
+        s += "- max_input_len: " + str(self.get_max_input_len()) + "\n"
+        s += "- total_input_len: " + str(self.get_total_input_len()) + "\n"
+        s += "- max_output_len: " + str(self.get_max_output_len()) + "\n"
+        s += "- total_output_len: " + str(self.get_total_output_len()) + "\n"                
         return s
     
 
