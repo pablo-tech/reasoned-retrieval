@@ -131,7 +131,7 @@ class ExecutionMeasure():
         s += "- max_input_len: " + str(self.get_max_input_len()) + "\n"
         s += "- total_input_len: " + str(self.get_total_input_len()) + "\n"
         s += "- max_output_len: " + str(self.get_max_output_len()) + "\n"
-        s += "- total_output_len: " + str(self.get_total_output_len()) + "\n"                
+        s += "- total_output_len: " + str(self.get_total_output_len())
         return s
     
 
