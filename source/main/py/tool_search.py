@@ -17,7 +17,7 @@ class SearchEngine(SerpAPIWrapper):
 
     def configurable_results(self, query):
         params = self.configurable_params(query)
-        engine = GoogleSearch(params)
+        engine = GoogleSearch(params_dict=params)
         results = engine.get_dict()
         # results = self.results(query)
         return results 
