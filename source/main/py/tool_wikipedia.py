@@ -3,9 +3,12 @@ from langchain import Wikipedia
 from langchain.agents.react.base import DocstoreExplorer
 
 
-class EncyclopediaFactory():
+class EncyclopediaToolFactory():
 
-    def wikipedia_tools(completion_llm=None):
+    def __init__(self, is_verbose=False):
+        self.is_verbose = is_verbose
+
+    def wikipedia_tools(self, completion_llm=None):
         doc_store = DocstoreExplorer(Wikipedia())
         return [
           Tool(

@@ -12,9 +12,12 @@ class ConversationAnswer():
         return txt
     
 
-class ConversationFactory():
+class ConversationToolFactory():
 
-    def conversation_tools(completion_llm):
+    def __init__(self, is_verbose=False):
+        self.is_verbose = is_verbose
+
+    def conversation_tools(self, completion_llm):
         conversation_api = ConversationAnswer()        
         return [
             Tool(

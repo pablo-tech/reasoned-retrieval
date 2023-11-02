@@ -29,9 +29,12 @@ class MathAnswer():
             return result
         
 
-class MathFactory():
+class MathToolFactory():
 
-    def math_tools(completion_llm):
+    def __init__(self, is_verbose=False):
+        self.is_verbose = is_verbose
+
+    def math_tools(self, completion_llm):
         math_api = MathAnswer(completion_llm) 
         return [
             Tool(
