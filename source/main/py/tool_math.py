@@ -31,7 +31,7 @@ class MathAnswer():
 
 class PythonMathFactory():
 
-    def math_tool(completion_llm):
+    def math_tools(completion_llm):
         math_api = MathAnswer(completion_llm) 
         return [
             Tool(

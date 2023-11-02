@@ -68,7 +68,7 @@ class SearchAnswer(SearchEngine):
 
 class SerpSearchFactory():
 
-    def search_tool(completion_llm=None):
+    def search_tools(completion_llm=None):
         search_api = SearchAnswer()
         return [
             Tool(

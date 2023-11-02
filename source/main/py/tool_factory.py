@@ -25,8 +25,8 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        math_tools = PythonMathFactory.math_tool(completion_llm)
-        search_tools = SerpSearchFactory.search_tool(completion_llm)
+        math_tools = PythonMathFactory.math_tools(completion_llm)
+        search_tools = SerpSearchFactory.search_tools(completion_llm)
         conversation_tools = self.conversation_tools()
         return math_tools + search_tools + conversation_tools
                 
