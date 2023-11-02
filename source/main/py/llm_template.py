@@ -69,19 +69,16 @@ Action: Search[First for Women]
 Observation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.
 Thought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.
 Action: Finish[Arthur’s Magazine]
-
-Question: Were Pavel Urysohn and Leonid Levin known for the same type of work?
-Thought: I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.
-Action: Search[Pavel Urysohn]
-Observation: Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet mathematician who is best known for his contributions in dimension theory.
-Thought: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and find its type of work.
-Action: Search[Leonid Levin]
-Observation: Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.
-Thought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.
-Action: Finish[yes]
 """
-# Question: {input}
-# {agent_scratchpad}
+# Question: Were Pavel Urysohn and Leonid Levin known for the same type of work?
+# Thought: I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.
+# Action: Search[Pavel Urysohn]
+# Observation: Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet mathematician who is best known for his contributions in dimension theory.
+# Thought: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and find its type of work.
+# Action: Search[Leonid Levin]
+# Observation: Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.
+# Thought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.
+# Action: Finish[yes]
 
 
     REACT_DOC_STORE_SPLIT_ACTION = """
@@ -192,6 +189,9 @@ class CompleteTemplate(TemplateBank):
     def instruction_template(self):
         return """
 YOU ARE AN AI AGENT THAT ANSWERS QUESTIONS BY THINKING STEP-BY-STEP.
+PLEASE FOLLOW THE REASON-ACTION (REACT) FRAMEWORK.
+THAT IS AN ITERATIVE FORMAT: THOUGHT, ACTION, OBSERVATION.
+FINAL ACTION SHOULD NOT BE YES/NO, SHOULD ALWAYS INCLUDE A THOUGHT.
 """
 #     def tool_template(self):
 #         return """
