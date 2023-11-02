@@ -7,10 +7,9 @@ from langchain.agents.react.base import DocstoreExplorer
 from langchain.agents import tool
 from langchain.tools.render import render_text_description
 
-from tool_search import SearchAnswer
+from tool_search import SerpSearchFactory
 from tool_math import MathAnswer
 from tool_conversation import ConversationAnswer
-
 
 class ToolFactory():
     # https://python.langchain.com/docs/modules/agents/tools/custom_tools
@@ -27,9 +26,12 @@ class ToolFactory():
 
     def basic_tools(self, completion_llm):
         math_tools = [self.math_tool(completion_llm)]
-        search_tools = [self.search_tool()]
+        search_tools = self.search_tools(completion_llm)
         conversation_tools = self.conversation_tools()
         return math_tools + search_tools + conversation_tools
+    
+    def search_tools(self, completion_llm):
+        return [SerpSearchFactory.search_tool(completion_llm)]
 
     def math_tool(self, completion_llm):
         math_api = MathAnswer(completion_llm) 
@@ -37,14 +39,6 @@ class ToolFactory():
               name="Calculate",
               func=math_api.run,
               description="useful to answer math questions"
-        )
-        
-    def search_tool(self, completion_llm=None):
-        search_api = SearchAnswer()
-        return Tool(
-              name="Search",
-              func=search_api.run,
-              description="useful to answer questions about current events or the current state of the world"
         )
         
     def conversation_tools(self, completion_llm=None):

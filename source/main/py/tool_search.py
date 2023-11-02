@@ -66,3 +66,13 @@ class SearchAnswer(SearchEngine):
         return self.configurable_results(query)
     
 
+class SerpSearchFactory():
+
+    def search_tool(completion_llm=None):
+        search_api = SearchAnswer()
+        return Tool(
+              name="Search",
+              func=search_api.run,
+              description="useful to answer questions about current events or the current state of the world"
+        )
+
