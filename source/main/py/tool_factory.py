@@ -44,7 +44,7 @@ class ToolFactory():
 
     def search_tools(self, completion_llm=None):
         search_api = SearchAnswer()
-        return [search_api.search_engine()]
+        return [search_api.search_engine]
         
     def conversation_tools(self, completion_llm=None):
         return [self.conversation_engine()]
