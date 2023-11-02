@@ -3,7 +3,7 @@ from langchain import Wikipedia
 from langchain.agents.react.base import DocstoreExplorer
 
 
-class EncyclopediaTools():
+class EncyclopediaFactory():
 
     def wikipedia_tools(completion_llm=None):
         doc_store = DocstoreExplorer(Wikipedia())
