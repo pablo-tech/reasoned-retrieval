@@ -1,9 +1,5 @@
 import os
 
-from langchain import Wikipedia
-from langchain.agents import Tool
-from langchain.agents.react.base import DocstoreExplorer
-
 from langchain.agents import tool
 from langchain.tools.render import render_text_description
 
@@ -17,7 +13,6 @@ class ToolFactory():
 
     def __init__(self, is_verbose=True):
         self.is_verbose = is_verbose
-        self.doc_store = DocstoreExplorer(Wikipedia())
 
     def tool_summaries(cls, tool_set):
         return render_text_description(tool_set)
@@ -29,21 +24,7 @@ class ToolFactory():
         return MathFactory.math_tools(completion_llm) +\
             SearchFactory.serp_search_tools(completion_llm) +\
             ConversationFactory.conversation_tools(completion_llm)
-                
-    def wikipedia_tools(self, completion_llm=None):
-        return [
-          Tool(
-              name="Search",
-              func=self.doc_store.search,
-              description="useful to search for the truth"
-          ),
-          Tool(
-              name="Lookup",
-              func=self.doc_store.lookup,
-              description="useful to lookup facts"
-          )
-        ]
-    
+                    
     @tool
     def get_word_length(word):
         """Returns the length of a word."""
