@@ -26,25 +26,26 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        math_tools = self.math_tools(completion_llm)
-        search_tools = self.search_tools()
+        math_tools = [self.math_tool(completion_llm)]
+        search_tools = [self.search_tool()]
         conversation_tools = self.conversation_tools()
         return math_tools + search_tools + conversation_tools
 
-    def math_tools(self, completion_llm):
-        return [self.math_engine(completion_llm)]
-    
-    def math_engine(self, completion_llm):
-        math_api = MathAnswer(completion_llm)
+    def math_tool(self, completion_llm):
+        math_api = MathAnswer(completion_llm) 
         return Tool(
               name="Calculate",
               func=math_api.run,
               description="useful to answer math questions"
         )
-
-    def search_tools(self, completion_llm=None):
+        
+    def search_tool(self, completion_llm=None):
         search_api = SearchAnswer()
-        return [search_api.search_engine()]
+        return Tool(
+              name="Search",
+              func=search_api.run,
+              description="useful to answer questions about current events or the current state of the world"
+        )
         
     def conversation_tools(self, completion_llm=None):
         return [self.conversation_engine()]

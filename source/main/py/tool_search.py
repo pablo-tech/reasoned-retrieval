@@ -17,7 +17,7 @@ class SearchEngine(SerpAPIWrapper):
 
     def configurable_results(self, query):
         params = self.configurable_params(query)
-        engine = GoogleSearch.new(params)
+        engine = GoogleSearch(params)
         results = engine.get_dict()
         # results = self.results(query)
         return results 
@@ -38,13 +38,6 @@ class SearchAnswer(SearchEngine):
 
     def __init__(self):
         super().__init__()
-
-    def search_engine(self):
-        return Tool(
-              name="Search",
-              func=self.run,
-              description="useful to answer questions about current events or the current state of the world"
-        )
 
     def run(self, query):
         return self.summarize(self.organic(self.select(query)))
