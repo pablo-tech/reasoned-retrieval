@@ -3,7 +3,7 @@ import time
 from langchain.schema import AgentAction, AgentFinish
 
 from llm_template import TemplateBank
-from llm_tool import ToolFactory
+from tool_factory import ToolFactory
 from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory

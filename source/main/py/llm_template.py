@@ -8,8 +8,6 @@ from langchain.chat_models import ChatOpenAI
 
 from langchain import hub
 
-from llm_tool import ToolFactory
-
 
 class TemplateBank():
 

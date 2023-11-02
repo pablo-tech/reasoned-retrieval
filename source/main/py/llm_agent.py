@@ -4,7 +4,7 @@ from langchain.prompts.base import StringPromptValue
 from llm_memory import LlmMemory
 from llm_template import PromptFactory
 from react_parser import OptimisticParser
-from llm_tool import ToolFactory
+from tool_factory import ToolFactory
 
 
 class PipelinedAgent():
