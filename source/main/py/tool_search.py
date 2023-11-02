@@ -1,5 +1,7 @@
 import os
 
+from langchain.agents import Tool
+
 from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
@@ -36,6 +38,13 @@ class SearchAnswer(SearchEngine):
 
     def __init__(self):
         super().__init__()
+
+    def search_engine(self):
+        return Tool(
+              name="Search",
+              func=self.run,
+              description="useful to answer questions about current events or the current state of the world"
+        )
 
     def run(self, query):
         return self.summarize(self.organic(self.select(query)))

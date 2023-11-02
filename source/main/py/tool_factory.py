@@ -43,16 +43,9 @@ class ToolFactory():
         )
 
     def search_tools(self, completion_llm=None):
-        return [self.search_engine()]
-    
-    def search_engine(self):
-        search_api = SearchAnswer()        
-        return Tool(
-              name="Search",
-              func=search_api.run,
-              description="useful to answer questions about current events or the current state of the world"
-        )
-    
+        search_api = SearchAnswer()
+        return [search_api.search_engine()]
+        
     def conversation_tools(self, completion_llm=None):
         return [self.conversation_engine()]
     
