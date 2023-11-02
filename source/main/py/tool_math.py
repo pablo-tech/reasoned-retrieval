@@ -27,4 +27,16 @@ class MathAnswer():
             return eval(result.replace('Answer: ', ''))
         except:
             return result
+        
+
+class PythonMathFactory():
+
+    def math_tool(completion_llm):
+        math_api = MathAnswer(completion_llm) 
+        return Tool(
+              name="Calculate",
+              func=math_api.run,
+              description="useful to answer math questions"
+        )
+
             
