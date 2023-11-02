@@ -13,11 +13,12 @@ class OptimisticParser(AgentOutputParser):
     def __init__(self):
         pass
 
-    def parse(self, txt):
-        parsed = self.get_parsed(txt)
-        if parsed is not None:
-            return parsed
-        raise OutputParserException("UNABLE_TO_PARSE=" + str(txt))
+    def parse(self, inferred_txt):
+        if inferred_txt != "":            
+            parsed = self.get_parsed(inferred_txt)
+            if parsed is not None:
+                return parsed
+        raise OutputParserException("UNABLE_TO_PARSE=" + str(inferred_txt))
 
     def get_parsed(self, inferred_txt):
         ### is None
