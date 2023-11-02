@@ -26,14 +26,14 @@ class ToolFactory():
 
     def basic_tools(self, completion_llm):
         math_tools = [self.math_tool(completion_llm)]
-        search_tools = [self.serp_search_tools(completion_llm)]
+        search_tools = [self.serp_search_tool(completion_llm)]
         conversation_tools = self.conversation_tools()
         return math_tools + search_tools + conversation_tools
     
     def math_tool(self, completion_llm):
         return PythonMathFactory.math_tool(completion_llm)
             
-    def serp_search_tools(self, completion_llm):
+    def serp_search_tool(self, completion_llm):
         return SerpSearchFactory.search_tool(completion_llm)
         
     def conversation_tools(self, completion_llm=None):
