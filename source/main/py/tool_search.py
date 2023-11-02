@@ -66,9 +66,12 @@ class SearchAnswer(SearchEngine):
         return self.configurable_results(query)
     
 
-class SearchFactory():
+class SearchToolFactory():
 
-    def serp_search_tools(completion_llm=None):
+    def __init__(self, is_verbose):
+        self.is_verbose = is_verbose
+
+    def serp_search_tools(self, completion_llm=None):
         search_api = SearchAnswer()
         return [
             Tool(
