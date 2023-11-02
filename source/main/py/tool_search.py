@@ -66,9 +66,9 @@ class SearchAnswer(SearchEngine):
         return self.configurable_results(query)
     
 
-class SerpSearchFactory():
+class SearchFactory():
 
-    def search_tools(completion_llm=None):
+    def serp_search_tools(completion_llm=None):
         search_api = SearchAnswer()
         return [
             Tool(

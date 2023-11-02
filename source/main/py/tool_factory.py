@@ -7,8 +7,8 @@ from langchain.agents.react.base import DocstoreExplorer
 from langchain.agents import tool
 from langchain.tools.render import render_text_description
 
-from tool_search import SerpSearchFactory
-from tool_math import PythonMathFactory
+from tool_search import SearchFactory
+from tool_math import MathFactory
 from tool_conversation import ConversationAnswer
 
 class ToolFactory():
@@ -25,8 +25,8 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        math_tools = PythonMathFactory.math_tools(completion_llm)
-        search_tools = SerpSearchFactory.search_tools(completion_llm)
+        math_tools = MathFactory.math_tools(completion_llm)
+        search_tools = SearchFactory.serp_search_tools(completion_llm)
         conversation_tools = self.conversation_tools()
         return math_tools + search_tools + conversation_tools
                 

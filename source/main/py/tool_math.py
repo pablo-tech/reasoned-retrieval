@@ -29,7 +29,7 @@ class MathAnswer():
             return result
         
 
-class PythonMathFactory():
+class MathFactory():
 
     def math_tools(completion_llm):
         math_api = MathAnswer(completion_llm) 
