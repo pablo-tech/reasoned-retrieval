@@ -9,7 +9,8 @@ from langchain.tools.render import render_text_description
 
 from tool_search import SearchFactory
 from tool_math import MathFactory
-from tool_conversation import ConversationAnswer
+from tool_conversation import ConversationFactory
+
 
 class ToolFactory():
     # https://python.langchain.com/docs/modules/agents/tools/custom_tools
@@ -25,22 +26,10 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self, completion_llm):
-        math_tools = MathFactory.math_tools(completion_llm)
-        search_tools = SearchFactory.serp_search_tools(completion_llm)
-        conversation_tools = self.conversation_tools()
-        return math_tools + search_tools + conversation_tools
+        return MathFactory.math_tools(completion_llm) +\
+               SearchFactory.serp_search_tools(completion_llm) +\
+               ConversationFactory.conversation_tools(completion_llm)
                 
-    def conversation_tools(self, completion_llm=None):
-        return [self.conversation_engine()]
-    
-    def conversation_engine(self):
-        conversation_api = ConversationAnswer()        
-        return Tool(
-              name="Message",
-              func=conversation_api.send_message,
-              description="useful to send a message to the user"
-        )
-    
     def wikipedia_tools(self, completion_llm=None):
         return [
           Tool(
