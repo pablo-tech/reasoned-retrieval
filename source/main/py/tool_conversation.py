@@ -14,7 +14,7 @@ class ConversationAnswer():
 
 class ConversationFactory():
 
-    def conversation_tools(self, completion_llm):
+    def conversation_tools(completion_llm):
         conversation_api = ConversationAnswer()        
         return [
             Tool(
