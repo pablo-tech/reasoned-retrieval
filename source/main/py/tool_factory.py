@@ -7,9 +7,9 @@ from langchain.agents.react.base import DocstoreExplorer
 from langchain.agents import tool
 from langchain.tools.render import render_text_description
 
-from search_tool import SearchAnswer
-from math_tool import MathAnswer
-from conversation_tool import ConversationAnswer
+from tool_search import SearchAnswer
+from tool_math import MathAnswer
+from tool_conversation import ConversationAnswer
 
 
 class ToolFactory():

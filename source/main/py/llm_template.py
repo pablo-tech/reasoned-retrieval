@@ -6,8 +6,6 @@ from langchain.prompts import PromptTemplate
 
 from langchain.chat_models import ChatOpenAI
 
-from langchain import hub
-
 
 class TemplateBank():
 
