@@ -248,9 +248,9 @@ class FinalAnswer():
         return self.execution_measure
 
     def __str__(self):
-        s = "FINAL_ANSWER=>" + "\n"
+        s = "EXECUTION_DETAIL=>" + "\n"
         s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
-        s += " - FULL_RESPONSE: " + str(self.get_answer()) + "\n"
+        s += " - FINAL_ANSWER: " + str(self.get_answer()) + "\n"
         s += " - EXECUTION_JOURNEY: " + "\n"
         s += self.execution_journey.__str__() + "\n"
         s += " - EXCECUTION_MEASURE => " + "\n"

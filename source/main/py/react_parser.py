@@ -50,6 +50,7 @@ class OptimisticParser(AgentOutputParser):
 
     def get_finish(self, tool_input, inferred_txt):
         return_values={}
+        print("... interpreted finish for -> " + "tool_input=" + str(tool_input) + " inferred_txt=" + str(inferred_txt))
         return_values['output']=tool_input
         return AgentFinish(return_values=return_values,
                            log=inferred_txt) 
