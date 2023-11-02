@@ -27,8 +27,8 @@ class ToolFactory():
 
     def basic_tools(self, completion_llm):
         return MathFactory.math_tools(completion_llm) +\
-               SearchFactory.serp_search_tools(completion_llm) +\
-               ConversationFactory.conversation_tools(completion_llm)
+            SearchFactory.serp_search_tools(completion_llm) +\
+            ConversationFactory.conversation_tools(completion_llm)
                 
     def wikipedia_tools(self, completion_llm=None):
         return [
