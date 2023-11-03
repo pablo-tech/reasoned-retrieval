@@ -22,13 +22,19 @@ class WikipediaSearch(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        return self.invoke(query, self.answer())
+        return self.invoke(query, self.select)
 
-    def answer(self):
-        return self.doc_store.search
-    
-    def summarize(self, query):
-        pass
+    def select(self, query):
+        return self.answer(self.summarize(self.subquery(query)))
+
+    def answer(self, results):
+        return [result for result in results]
+
+    def summarize(self, results):
+        return [result for result in results]
+
+    def subquery(self, query):
+        return self.doc_store.search(query)
 
 
 class WikipediaLookup(WikipediaExplorer):
@@ -37,14 +43,19 @@ class WikipediaLookup(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        return self.invoke(query, self.answer())
+        return self.invoke(query, self.select)
 
-    def answer(self):
-        return self.doc_store.lookup
+    def select(self, query):
+        return self.answer(self.summarize(self.subquery(query)))
+
+    def answer(self, results):
+        return [result for result in results]
 
     def summarize(self, results):
-        pass
+        return [result for result in results]
 
+    def subquery(self, query):
+        return self.doc_store.lookup(query)
 
 class EncyclopediaToolFactory():
 
