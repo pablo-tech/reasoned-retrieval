@@ -1,3 +1,5 @@
+import time
+
 from langchain.agents import Tool
 from langchain import Wikipedia
 from langchain.agents.react.base import DocstoreExplorer

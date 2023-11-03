@@ -89,18 +89,17 @@ class PipelinedExecutor(ModelRun):
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.run_journey)
-                agent_start = time.time()
+                model_start = time.time()
                 model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
-                agent_end = time.time()
+                model_end = time.time()
                 tool_start, tool_end = 0, 0
 
                 if isinstance(model_step, InterimStep):
                     tool_name, tool_input = model_step.get_tool(), model_step.get_input()
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
-                        tool_start = time.time()
-                        observation = tool.func(tool_input).get_answer()
-                        tool_end = time.time()                        
+                        run_answer = tool.func(tool_input)
+                        observation = run_answer.get_answer()
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
                         observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
@@ -114,7 +113,7 @@ class PipelinedExecutor(ModelRun):
                         is_hallucination = True
 
                 self.run_measure.add_iteration(is_hallucination, input_len, output_len,
-                                                     agent_end-agent_start, tool_end-tool_start)
+                                               model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
                         self.run_journey.add_step(model_step, "EXECUTION_DONE") 

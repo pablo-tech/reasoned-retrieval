@@ -1,4 +1,4 @@
-import os
+import time
 
 from langchain.agents import Tool
 
@@ -72,7 +72,14 @@ class SearchSerpResult(ModelRun):
         self.is_verbose = is_verbose
 
     def run(self, query):
-        model_step = FinishStep(self.answer(query), action_log="")
+        is_hallucination = False
+        model_start = time.time()
+        answer = self.answer(query)
+        input_len, output_len = len(query), len(answer)
+        model_step = FinishStep(answer, action_log="")
+        model_end = time.time()        
+        self.run_measure.add_iteration(is_hallucination, input_len, output_len, 
+                                       model_end-model_start)
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)

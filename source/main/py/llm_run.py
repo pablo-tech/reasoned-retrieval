@@ -47,19 +47,18 @@ class RunMeasure():
         self.hallucination_count = 0
         self.input_len = []
         self.output_len = []
-        self.agent_time = []
+        self.model_time = []
         self.tool_time = []
 
     def add_iteration(self, is_hallucination, 
                       input_len, output_len,
-                      agent_time, tool_time):
+                      model_time):
         self.iteration_count += 1
         if is_hallucination:
             self.hallucination_count += 1
         self.input_len.append(input_len)
         self.output_len.append(output_len)
-        self.agent_time.append(agent_time)
-        self.tool_time.append(tool_time)        
+        self.model_time.append(model_time)
 
     def get_iteration_count(self):
         return self.iteration_count
@@ -103,39 +102,21 @@ class RunMeasure():
         except:
             return 0
 
-    def get_min_agent_time(self):
+    def get_min_model_time(self):
         try:
-            return min(self.agent_time)
+            return min(self.model_time)
         except:
             return 0
 
-    def get_max_agent_time(self):
+    def get_max_model_time(self):
         try:
-            return max(self.agent_time)
+            return max(self.model_time)
         except:
             return 0
 
-    def get_total_agent_time(self):
+    def get_total_model_time(self):
         try:
-            return sum(self.agent_time)
-        except:
-            return 0 
-
-    def get_min_tool_time(self):
-        try:
-            return min(self.tool_time)
-        except:
-            return 0
-
-    def get_max_tool_time(self):
-        try:
-            return max(self.tool_time)
-        except:
-            return 0
-
-    def get_total_tool_time(self):
-        try:
-            return sum(self.tool_time)
+            return sum(self.model_time)
         except:
             return 0 
 
@@ -149,12 +130,9 @@ class RunMeasure():
         s += "\t min_output_len: " + str(self.get_min_output_len()) + "\n"        
         s += "\t max_output_len: " + str(self.get_max_output_len()) + "\n"
         s += "\t total_output_len: " + str(self.get_total_output_len()) + "\n"
-        s += "\t min_agent_time: " + "{:.3f}".format(self.get_min_agent_time()) + "\n"        
-        s += "\t max_agent_time: " + "{:.3f}".format(self.get_max_agent_time()) + "\n"
-        s += "\t total_agent_time: " + "{:.3f}".format(self.get_total_agent_time()) + "\n"
-        s += "\t min_tool_time: " + "{:.3f}".format(self.get_min_tool_time()) + "\n"        
-        s += "\t max_tool_time: " + "{:.3f}".format(self.get_max_tool_time()) + "\n"
-        s += "\t total_tool_time: " + "{:.3f}".format(self.get_total_tool_time())        
+        s += "\t min_model_time: " + "{:.3f}".format(self.get_min_model_time()) + "\n"        
+        s += "\t max_model_time: " + "{:.3f}".format(self.get_max_model_time()) + "\n"
+        s += "\t total_model_time: " + "{:.3f}".format(self.get_total_model_time()) + "\n"
         return s
     
     
