@@ -161,28 +161,22 @@ class RunMeasure():
 class FinalAnswer():
 
     def __init__(self, 
-                agent_step, executor_journey, 
-                executor_error, executor_measure):
+                run_step, run_journey, 
+                run_error, run_measure):
         ### save
         self.agent_answer = None
-        self.executor_journey = executor_journey
-        self.executor_error = executor_error
-        self.executor_measure = executor_measure
+        self.run_journey = run_journey
+        self.run_error = run_error
+        self.run_measure = run_measure
         ### summarize
         self.is_finish = False
         self.log = ''
-        if isinstance(agent_step, InterimStep):
-            self.agent_answer = agent_step.get_log()
-        if isinstance(agent_step, FinishStep):
-            self.agent_answer = agent_step.get_answer()
-            self.log = agent_step.get_log()
+        if isinstance(run_step, InterimStep):
+            self.agent_answer = run_step.get_log()
+        if isinstance(run_step, FinishStep):
+            self.agent_answer = run_step.get_answer()
+            self.log = run_step.get_log()
             self.is_finish = True
-        # if isinstance(agent_step, AgentAction):
-        #     self.agent_answer = agent_step.log
-        # if isinstance(agent_step, AgentFinish):
-        #     self.agent_answer = agent_step.return_values['output']
-        #     self.log = agent_step.log
-        #     self.is_finish = True
 
     def get_answer(self):
         return self.agent_answer
@@ -193,17 +187,17 @@ class FinalAnswer():
     def get_thought_action(self):
         return self.log
     
-    def get_executor_measure(self):
-        return self.executor_measure
+    def get_run_measure(self):
+        return self.run_measure
 
     def __str__(self):
-        s = "EXECUTION_DETAIL=>" + "\n"
-        s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
-        s += " - FINAL_ANSWER: " + str(self.get_answer()) + "\n"
-        s += " - executor_journey: " + "\n"
-        s += self.executor_journey.__str__() + "\n"
-        s += " - EXCECUTION_MEASURE => " + "\n"
-        s += self.executor_measure.__str__() + "\n"        
-        s += " - EXCECUTION_EXCEPTION => " + "\n"
-        s += self.executor_error.__str__() + "\n"
+        s = "RUN_DETAIL=>" + "\n"
+        s += " - RUN_NORMAL: " + str(self.get_finish()) + "\n"
+        s += " - RUN_ANSWER: " + str(self.get_answer()) + "\n"
+        s += " - RUN_JOURNEY: " + "\n"
+        s += self.run_journey.__str__() + "\n"
+        s += " - RUN_MEASURE => " + "\n"
+        s += self.run_measure.__str__() + "\n"        
+        s += " - RUN_EXCEPTION => " + "\n"
+        s += self.run_error.__str__() + "\n"
         return s

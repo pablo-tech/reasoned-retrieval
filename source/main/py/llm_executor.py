@@ -101,8 +101,6 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, InterimStep):
                     tool_name, tool_input = agent_step.get_tool(), agent_step.get_input()
-                # if isinstance(agent_step, AgentAction):
-                #     tool_name, tool_input = agent_step.tool, agent_step.tool_input
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         tool_start = time.time()
@@ -124,7 +122,6 @@ class PipelinedExecutor():
                                                      agent_end-agent_start, tool_end-tool_start)
 
                 if isinstance(agent_step, FinishStep):
-                # if isinstance(agent_step, AgentFinish):
                         self.executor_journey.add_step(agent_step, "EXECUTION_DONE") 
                         final = FinalAnswer(agent_step, self.executor_journey, 
                                             self.executor_error, self.executor_measure)

@@ -45,5 +45,4 @@ class StepTransformer():
             return FinishStep(langchain_step.return_values['output'],
                                 langchain_step.log)
         return None
-        # raise ValueError("LANGHCHAIN_STEP_ERROR") 
     
