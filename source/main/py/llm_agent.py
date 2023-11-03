@@ -94,11 +94,10 @@ class AgentFactory():
         self.is_verbose = is_verbose
 
     def react_agent(self,
-                    tool_factory_func,
+                    agent_tools,
                     agent_memory=LlmMemory(),
                     agent_parser=OptimisticParser()):
 
-        agent_tools = tool_factory_func()
         return PipelinedAgent(agent_llm=self.agent_llm,
                               agent_tools=agent_tools,
                               prompt_factory=self.prompt_factory,
