@@ -69,15 +69,19 @@ class SearchSerpResult(ToolRun):
 
     def run(self, query):
         return self.invoke(query, self.answer)
+    
+    def select(self, query):
+        return self.answer(self.summarize(self.subquery(query)))
             
-    def answer(self, query):
-        selected = self.search_engine.select(query)
-        selected = self.search_engine.organic(selected)
-        return self.summarize(selected)
+    def answer(self, results):
+        return [result for result in results]
 
     def summarize(self, results):
         return [result['snippet'] for result in results]
 
+    def subquery(self, query):
+        selected = self.search_engine.select(query)
+        return self.search_engine.organic(selected)
 
 class SearchToolFactory():
 
