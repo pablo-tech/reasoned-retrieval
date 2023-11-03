@@ -63,6 +63,7 @@ class SerpSearch(SerpEngine):
 class SearchSerpResult(SerpSearch):
 
     def __init__(self, completion_llm, is_verbose):
+        super().__init__()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
