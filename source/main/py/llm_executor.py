@@ -92,7 +92,6 @@ class PipelinedExecutor(ModelRun):
                 model_start = time.time()
                 model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 model_end = time.time()
-                tool_start, tool_end = 0, 0
 
                 if isinstance(model_step, InterimStep):
                     tool_name, tool_input = model_step.get_tool(), model_step.get_input()
@@ -125,7 +124,7 @@ class PipelinedExecutor(ModelRun):
                 self.run_journey.add_run(model_step, observation)                
 
             except Exception as e:
-                self.run_error.error_input(str(e), input)
+                self.run_error.error_input(str(e), observation)
 
             remain_iterations-=1
             if remain_iterations == 0:
