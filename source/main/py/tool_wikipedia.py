@@ -34,7 +34,7 @@ class WikipediaSearch(WikipediaExplorer):
         return [result for result in results]
 
     def subquery(self, query):
-        return self.doc_store.search(query)
+        return eval(self.doc_store.search(query))
 
 
 class WikipediaLookup(WikipediaExplorer):
@@ -55,7 +55,7 @@ class WikipediaLookup(WikipediaExplorer):
         return [result for result in results]
 
     def subquery(self, query):
-        return self.doc_store.lookup(query)
+        return eval(self.doc_store.lookup(query))
 
 class EncyclopediaToolFactory():
 
