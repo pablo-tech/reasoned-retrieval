@@ -22,7 +22,7 @@ class WikipediaSearch(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        model_step = FinishStep(self.doc_store.search(query), log="")
+        model_step = FinishStep(self.doc_store.search(query), action_log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
@@ -33,7 +33,7 @@ class WikipediaLookup(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        model_step = FinishStep(self.doc_store.lookup(query), log="")
+        model_step = FinishStep(self.doc_store.lookup(query), action_log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
