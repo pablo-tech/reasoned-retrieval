@@ -187,7 +187,7 @@ class FinalAnswer():
     def get_answer(self):
         return self.agent_answer
         
-    def get_fiblnish(self):
+    def get_finish(self):
         return self.is_finish
     
     def get_thought_action(self):
