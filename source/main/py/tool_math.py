@@ -32,7 +32,7 @@ class MathAnswer(ModelRun):
             result = eval(result.replace('Answer: ', ''))
         except:
             pass
-        model_step = FinishStep(result, log="")
+        model_step = FinishStep(result, action_log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)

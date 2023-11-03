@@ -72,7 +72,7 @@ class SearchSerpResult(ModelRun):
         self.is_verbose = is_verbose
 
     def run(self, query):
-        model_step = FinishStep(self.answer(query), log="")
+        model_step = FinishStep(self.answer(query), action_log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
