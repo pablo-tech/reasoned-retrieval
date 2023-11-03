@@ -35,7 +35,7 @@ class MathAnswer(ModelRun):
         except:
             pass
         model_step = FinishStep(result, action_log="")
-        self.run_journey.add_step(model_step, "EXECUTION_DONE") 
+        self.run_journey.add_run(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
         # return result
