@@ -6,7 +6,7 @@ from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
 
-class SerpSearch(SerpAPIWrapper):
+class SerpEngine(SerpAPIWrapper):
 # https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/utilities/serpapi.py
     
     def __init__(self):
@@ -34,7 +34,7 @@ class SerpSearch(SerpAPIWrapper):
                 'device': 'desktop'}
     
 
-class SearchEngine(SerpSearch):
+class SerpSearch(SerpEngine):
 
     def __init__(self):
         super().__init__()
@@ -60,7 +60,7 @@ class SearchEngine(SerpSearch):
         return self.configurable_results(query)
     
 
-class SearchAnswer():
+class SearchSerpResult(SerpSearch):
 
     def __init__(self, completion_llm, is_verbose):
         self.completion_llm = completion_llm
@@ -82,7 +82,7 @@ class SearchToolFactory():
         self.is_verbose = is_verbose
 
     def serp_search_tools(self, completion_llm=None):
-        search_api = SearchAnswer(completion_llm, self.is_verbose)
+        search_api = SearchSerpResult(completion_llm, self.is_verbose)
         return [
             Tool(
               name="Search",
