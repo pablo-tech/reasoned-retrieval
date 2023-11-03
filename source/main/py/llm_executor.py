@@ -301,7 +301,7 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, AgentAction):
                     tool_name, tool_input = agent_step.tool, agent_step.tool_input
-                    if tool_name in ToolFactory().tool_names(self.agent_tools):
+                    if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         tool_start = time.time()
                         observation = tool.func(tool_input)
@@ -313,7 +313,7 @@ class PipelinedExecutor():
                         observation = ReactDescribe().name_template(self.llm_agent.get_tool_names())
                     elif tool_name == "Describe" and tool_input == 'tools':
                         observation = ReactDescribe().summary_template(self.llm_agent.get_tool_summaries())
-                    elif tool_name not in ToolFactory().tool_names(self.agent_tools):
+                    elif tool_name not in ToolFactory.tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
