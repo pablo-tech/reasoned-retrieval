@@ -7,31 +7,36 @@ from llm_run import ModelRun, RunAnswer
 from llm_step import FinishStep
 
 
-class WikipediaSearch(ModelRun):
+class WikipediaExplorer(ModelRun):
 
-    def __init__(self):
+    def __init__(self, completion_llm, is_verbose=False):
         super().__init__()
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
         self.doc_store = DocstoreExplorer(Wikipedia())
+
+
+class WikipediaSearch(WikipediaExplorer):
+
+    def __init__(self, completion_llm, is_verbose=False):
+        super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
         model_step = FinishStep(self.doc_store.search(query), log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
-        # return self.doc_store.search(query)
 
-class WikipediaLookup(ModelRun):
+class WikipediaLookup(WikipediaExplorer):
 
-    def __init__(self):
-        super().__init__()
-        self.doc_store = DocstoreExplorer(Wikipedia())
+    def __init__(self, completion_llm, is_verbose=False):
+        super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
         model_step = FinishStep(self.doc_store.lookup(query), log="")
         self.run_journey.add_step(model_step, "EXECUTION_DONE") 
         return RunAnswer(model_step, self.run_journey, 
                          self.run_error, self.run_measure)
-        # return self.doc_store.lookup(query)
 
 
 class EncyclopediaToolFactory():
