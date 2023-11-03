@@ -34,7 +34,8 @@ class WikipediaSearch(WikipediaExplorer):
         return [result for result in results]
 
     def subquery(self, query):
-        return eval(self.doc_store.search(query))
+        # TODO Could not find [Rodriguez]. Similar: ['Rodriguez', 'Alex Rodriguez', 'Iván Rodríguez', 'Adam Rodriguez', 'Michelle Rodriguez', 'Robert Rodriguez', 'Eduardo Rodríguez', 'Michaela Jaé Rodriguez', 'Georgina Rodríguez', 'Gina Rodriguez']
+        return [str(self.doc_store.search(query))]
 
 
 class WikipediaLookup(WikipediaExplorer):
@@ -55,7 +56,8 @@ class WikipediaLookup(WikipediaExplorer):
         return [result for result in results]
 
     def subquery(self, query):
-        return eval(self.doc_store.lookup(query))
+        return [str(self.doc_store.lookup(query))]
+
 
 class EncyclopediaToolFactory():
 
