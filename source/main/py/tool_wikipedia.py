@@ -4,12 +4,10 @@ from langchain.agents import Tool
 from langchain import Wikipedia
 from langchain.agents.react.base import DocstoreExplorer
 
-from llm_run import ModelRun
-from llm_run import ModelRun, RunAnswer
-from llm_step import FinishStep
+from llm_run import ToolRun
 
 
-class WikipediaExplorer(ModelRun):
+class WikipediaExplorer(ToolRun):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__()
@@ -43,7 +41,7 @@ class WikipediaLookup(WikipediaExplorer):
     def answer(self):
         return self.doc_store.lookup
 
-    def summarize(self, query):
+    def summarize(self, results):
         pass
 
 class EncyclopediaToolFactory():

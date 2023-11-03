@@ -5,16 +5,14 @@ from langchain.agents import Tool
 
 from pydantic import BaseModel, Field
 
-from llm_run import ModelRun
-from llm_run import ModelRun, RunAnswer
-from llm_step import FinishStep
+from llm_run import ToolRun
 
 
 class CalculatorInput(BaseModel):
     question: str = Field()
 
 
-class MathAnswer(ModelRun):
+class MathAnswer(ToolRun):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__()
