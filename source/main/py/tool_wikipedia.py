@@ -22,7 +22,7 @@ class WikipediaSearch(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        return self.invoke(query, self.answer)
+        return self.invoke(query, self.answer())
 
     def answer(self):
         return self.doc_store.search
@@ -30,19 +30,21 @@ class WikipediaSearch(WikipediaExplorer):
     def summarize(self, query):
         pass
 
+
 class WikipediaLookup(WikipediaExplorer):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        return self.invoke(query, self.answer)
+        return self.invoke(query, self.answer())
 
     def answer(self):
         return self.doc_store.lookup
 
     def summarize(self, results):
         pass
+
 
 class EncyclopediaToolFactory():
 
