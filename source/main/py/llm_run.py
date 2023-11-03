@@ -160,29 +160,29 @@ class RunMeasure():
 
 class FinalAnswer():
 
-        def __init__(self, 
-                    agent_step, executor_journey, 
-                    executor_error, executor_measure):
-            ### save
-            self.agent_answer = None
-            self.executor_journey = executor_journey
-            self.executor_error = executor_error
-            self.executor_measure = executor_measure
-            ### summarize
-            self.is_finish = False
-            self.log = ''
-            if isinstance(agent_step, InterimStep):
-                self.agent_answer = agent_step.get_log()
-            if isinstance(agent_step, FinishStep):
-                self.agent_answer = agent_step.get_answer()
-                self.log = agent_step.get_log()
-                self.is_finish = True
-            # if isinstance(agent_step, AgentAction):
-            #     self.agent_answer = agent_step.log
-            # if isinstance(agent_step, AgentFinish):
-            #     self.agent_answer = agent_step.return_values['output']
-            #     self.log = agent_step.log
-            #     self.is_finish = True
+    def __init__(self, 
+                agent_step, executor_journey, 
+                executor_error, executor_measure):
+        ### save
+        self.agent_answer = None
+        self.executor_journey = executor_journey
+        self.executor_error = executor_error
+        self.executor_measure = executor_measure
+        ### summarize
+        self.is_finish = False
+        self.log = ''
+        if isinstance(agent_step, InterimStep):
+            self.agent_answer = agent_step.get_log()
+        if isinstance(agent_step, FinishStep):
+            self.agent_answer = agent_step.get_answer()
+            self.log = agent_step.get_log()
+            self.is_finish = True
+        # if isinstance(agent_step, AgentAction):
+        #     self.agent_answer = agent_step.log
+        # if isinstance(agent_step, AgentFinish):
+        #     self.agent_answer = agent_step.return_values['output']
+        #     self.log = agent_step.log
+        #     self.is_finish = True
 
     def get_answer(self):
         return self.agent_answer
