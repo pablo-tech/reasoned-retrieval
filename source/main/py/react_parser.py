@@ -22,6 +22,10 @@ class OptimisticParser(AgentOutputParser):
         raise OutputParserException("UNABLE_TO_PARSE=" + str(inferred_txt))
 
     def get_parsed(self, inferred_txt):
+        ### missing
+        if 'Thought: ' in inferred_txt and\
+           'Action: ' not in inferred_txt:
+            inferred_txt = inferred_txt.strip().replace("Thought: ", '')        
         ### conversation
         if 'Thought: ' not in inferred_txt and\
            'Action: ' not in inferred_txt:
@@ -29,7 +33,6 @@ class OptimisticParser(AgentOutputParser):
             completed_txt = f"Thought: {stripped_txt}\n"
             completed_txt += f"Action: Finish[{stripped_txt}]"
             inferred_txt = completed_txt
-            print("MADE UP " + str(inferred_txt))
         ### is None
         parsed = self.react_single_input_output(inferred_txt)
         if parsed is None:
@@ -39,14 +42,10 @@ class OptimisticParser(AgentOutputParser):
         if parsed is None:
             parsed = self.react_output(inferred_txt)
         # if parsed is None and\
-        #         'Thought: ' not in inferred_txt and\
+        #         'Thought: ' in inferred_txt and\
         #         'Action: ' not in inferred_txt:
+        #     inferred_txt = inferred_txt.replace("Thought: ", '')
         #     parsed = self.get_finish(inferred_txt, inferred_txt) 
-        if parsed is None and\
-                'Thought: ' in inferred_txt and\
-                'Action: ' not in inferred_txt:
-            inferred_txt = inferred_txt.replace("Thought: ", '')
-            parsed = self.get_finish(inferred_txt, inferred_txt) 
         ### is NOT None
         if isinstance(parsed, AgentAction) and\
                 parsed.tool == 'Message':
