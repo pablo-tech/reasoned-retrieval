@@ -14,10 +14,10 @@ class ToolFactory():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def tool_summaries(cls, tool_set):
+    def tool_summaries(tool_set):
         return render_text_description(tool_set)
 
-    def tool_names(cls, tool_set):
+    def tool_names(tool_set):
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self):
