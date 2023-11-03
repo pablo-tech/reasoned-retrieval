@@ -35,7 +35,7 @@ class MathToolFactory():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def math_tools(self, ):
+    def math_tools(self):
         math_api = MathAnswer(self.completion_llm, self.is_verbose) 
         return [
             Tool(

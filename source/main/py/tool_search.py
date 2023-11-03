@@ -82,7 +82,7 @@ class SearchSerpResult():
 
 class SearchToolFactory():
 
-    def __init__(self, completion_llm, is_verbose):
+    def __init__(self, completion_llm, is_verbose=False):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
