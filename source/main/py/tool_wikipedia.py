@@ -24,13 +24,13 @@ class WikipediaSearch(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        return self.invoke(query, self.doc_store.search)
+        return self.invoke(query, self.answer)
 
-    # def run(self, query):
-    #     model_step = FinishStep(self.doc_store.search(query), action_log="")
-    #     self.run_journey.add_run(model_step, "EXECUTION_DONE") 
-    #     return RunAnswer(model_step, self.run_journey, 
-    #                      self.run_error, self.run_measure)
+    def answer(self):
+        return self.doc_store.search
+    
+    def summarize(self, query):
+        pass
 
 class WikipediaLookup(WikipediaExplorer):
 
@@ -38,11 +38,13 @@ class WikipediaLookup(WikipediaExplorer):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, query):
-        model_step = FinishStep(self.doc_store.lookup(query), action_log="")
-        self.run_journey.add_run(model_step, "EXECUTION_DONE") 
-        return RunAnswer(model_step, self.run_journey, 
-                         self.run_error, self.run_measure)
+        return self.invoke(query, self.answer)
 
+    def answer(self):
+        return self.doc_store.lookup
+
+    def summarize(self, query):
+        pass
 
 class EncyclopediaToolFactory():
 
