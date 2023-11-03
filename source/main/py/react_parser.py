@@ -25,8 +25,9 @@ class OptimisticParser(AgentOutputParser):
         ### conversation
         if 'Thought: ' not in inferred_txt and\
            'Action: ' not in inferred_txt:
-                inferred_txt = f"Thought: {inferred_txt}\n"
-                inferred_txt += f"Action: Finish[{inferred_txt}]"
+            inferred_txt = f"Thought: {inferred_txt}\n"
+            inferred_txt += f"Action: Finish[{inferred_txt}]"
+            print("MADE UP " + str(inferred_txt))
         ### is None
         parsed = self.react_single_input_output(inferred_txt)
         if parsed is None:
