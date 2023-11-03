@@ -115,7 +115,7 @@ class PipelinedExecutor(ModelRun):
                                          model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
-                        self.run_journey.add_run(model_step, "EXECUTION_DONE") 
+                        self.run_journey.add_run(model_step, model_step.get_answer()) 
                         final = RunAnswer(model_step, self.run_journey, 
                                           self.run_error, self.run_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             

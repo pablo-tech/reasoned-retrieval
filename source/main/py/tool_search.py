@@ -72,6 +72,7 @@ class SearchSerpResult(ModelRun):
         self.is_verbose = is_verbose
 
     def run(self, query):
+        model_step = None
         try:
             is_hallucination = False
             model_start = time.time()
