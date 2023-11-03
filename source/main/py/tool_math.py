@@ -10,9 +10,9 @@ class CalculatorInput(BaseModel):
 
 class MathAnswer():
 
-    def __init__(self, completion_llm):
+    def __init__(self, completion_llm, is_verbose):
         self.math_engine = LLMMathChain(llm=completion_llm, 
-                                        verbose=True)
+                                        verbose=is_verbose)
         self.math_tool = Tool.from_function(
                 func=self.math_engine.run,
                 name="Calculator",
@@ -32,10 +32,11 @@ class MathAnswer():
 class MathToolFactory():
 
     def __init__(self, completion_llm, is_verbose=False):
+        self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
     def math_tools(self, ):
-        math_api = MathAnswer(self.completion_llm) 
+        math_api = MathAnswer(self.completion_llm, self.is_verbose) 
         return [
             Tool(
               name="Calculate",
