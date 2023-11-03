@@ -5,8 +5,7 @@ from langchain.agents import Tool
 from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
-from llm_run import ModelRun, RunAnswer
-from llm_step import FinishStep
+from llm_run import ToolRun
 
 
 class SerpEngine(SerpAPIWrapper):
@@ -63,7 +62,7 @@ class SerpSearch(SerpEngine):
         return self.configurable_results(query)
     
 
-class SearchSerpResult(ModelRun):
+class SearchSerpResult(ToolRun):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__()
