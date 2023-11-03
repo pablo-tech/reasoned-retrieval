@@ -370,12 +370,12 @@ class ExecutorFactory():
         return self.agent_llm
 
     def react_executor(self,
-                       tool_factory_func,
+                       agent_tools,
                        agent_memory=LlmMemory(),
                        max_iterations=10,
                        max_execution_time=None):
         ''' ReAct Inference Solve '''
-        react_agent = self.agent_factory.react_agent(tool_factory_func=tool_factory_func,
+        react_agent = self.agent_factory.react_agent(agent_tools=agent_tools,
                                                      agent_memory=agent_memory)
         return PipelinedExecutor(llm_agent=react_agent,
                                  max_iterations=max_iterations,
