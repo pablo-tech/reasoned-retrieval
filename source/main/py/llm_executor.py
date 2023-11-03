@@ -7,9 +7,9 @@ from tool_factory import ToolFactory
 from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
-from llm_run import ExecutionJourney
-from llm_run import ExecutionError
-from llm_run import ExecutionMeasure
+from llm_run import RunJourney
+from llm_run import RunError
+from llm_run import RunMeasure
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
@@ -45,8 +45,8 @@ class ContextValues():
     def get_examples(self):
         return self.template_vars["fewshot_examples"]      
 
-    def set_scratchpad(self, execution_journey):
-        self.template_vars["agent_scratchpad"] = execution_journey.__str__()
+    def set_scratchpad(self, executor_journey):
+        self.template_vars["agent_scratchpad"] = executor_journey.__str__()
 
     def get_scratchpad(self):
         return self.template_vars["agent_scratchpad"]
@@ -64,13 +64,13 @@ class ContextValues():
 class FinalAnswer():
 
     def __init__(self, 
-                 agent_step, execution_journey, 
-                 execution_error, execution_measure):
+                 agent_step, executor_journey, 
+                 executor_error, executor_measure):
         ### save
         self.agent_answer = None
-        self.execution_journey = execution_journey
-        self.execution_error = execution_error
-        self.execution_measure = execution_measure
+        self.executor_journey = executor_journey
+        self.executor_error = executor_error
+        self.executor_measure = executor_measure
         ### summarize
         self.is_finish = False
         self.log = ''
@@ -90,19 +90,19 @@ class FinalAnswer():
     def get_thought_action(self):
         return self.log
     
-    def get_execution_measure(self):
-        return self.execution_measure
+    def get_executor_measure(self):
+        return self.executor_measure
 
     def __str__(self):
         s = "EXECUTION_DETAIL=>" + "\n"
         s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
         s += " - FINAL_ANSWER: " + str(self.get_answer()) + "\n"
-        s += " - EXECUTION_JOURNEY: " + "\n"
-        s += self.execution_journey.__str__() + "\n"
+        s += " - executor_journey: " + "\n"
+        s += self.executor_journey.__str__() + "\n"
         s += " - EXCECUTION_MEASURE => " + "\n"
-        s += self.execution_measure.__str__() + "\n"        
+        s += self.executor_measure.__str__() + "\n"        
         s += " - EXCECUTION_EXCEPTION => " + "\n"
-        s += self.execution_error.__str__() + "\n"
+        s += self.executor_error.__str__() + "\n"
         return s
     
 
@@ -126,9 +126,9 @@ class PipelinedExecutor():
         self.context_values = ContextValues()
         self.context_values.set_examples(TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
         # journey
-        self.execution_journey = ExecutionJourney()
-        self.execution_error = ExecutionError()
-        self.execution_measure = ExecutionMeasure()
+        self.executor_journey = RunJourney()
+        self.executor_error = RunError()
+        self.executor_measure = RunMeasure()
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
@@ -139,7 +139,7 @@ class PipelinedExecutor():
                 agent_step, observation = None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.execution_journey)
+                self.context_values.set_scratchpad(self.executor_journey)
                 agent_start = time.time()
                 agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 agent_end = time.time()
@@ -164,27 +164,27 @@ class PipelinedExecutor():
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
-                self.execution_measure.add_iteration(is_hallucination, input_len, output_len,
+                self.executor_measure.add_iteration(is_hallucination, input_len, output_len,
                                                      agent_end-agent_start, tool_end-tool_start)
 
                 if isinstance(agent_step, AgentFinish):
-                        self.execution_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.execution_journey, 
-                                            self.execution_error, self.execution_measure)
+                        self.executor_journey.add_step(agent_step, "EXECUTION_DONE") 
+                        final = FinalAnswer(agent_step, self.executor_journey, 
+                                            self.executor_error, self.executor_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.execution_journey.add_step(agent_step, observation)                
+                self.executor_journey.add_step(agent_step, observation)                
 
             except Exception as e:
-                self.execution_error.error_input(str(e), input)
+                self.executor_error.error_input(str(e), input)
 
             remain_iterations-=1
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
                 return FinalAnswer(None, self.context_values.get_scratchpad(), 
-                                   self.execution_error, self.execution_measure)
+                                   self.executor_error, self.executor_measure)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"

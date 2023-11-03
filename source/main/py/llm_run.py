@@ -1,4 +1,4 @@
-class ExecutionJourney():
+class RunJourney():
 
     def __init__(self):
         self.agent_scratchpad = []
@@ -18,7 +18,7 @@ class ExecutionJourney():
         return thoughts.strip()
     
 
-class ExecutionError():
+class RunError():
 
     def __init__(self):
         self.error_log = []
@@ -37,7 +37,7 @@ class ExecutionError():
         return s.strip()
     
 
-class ExecutionMeasure():
+class RunMeasure():
 
     def __init__(self):
         self.iteration_count = 0
