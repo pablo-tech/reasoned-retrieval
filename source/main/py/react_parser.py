@@ -6,6 +6,7 @@ from langchain.agents.agent import AgentOutputParser
 from langchain.schema import OutputParserException
 from langchain.schema import AgentAction, AgentFinish
 
+from llm_step import StepTransformer
 
 
 class OptimisticParser(AgentOutputParser):
@@ -17,7 +18,7 @@ class OptimisticParser(AgentOutputParser):
         if inferred_txt != "":            
             parsed = self.get_parsed(inferred_txt)
             if parsed is not None:
-                return parsed
+                return StepTransformer.get_step(parsed)
         raise OutputParserException("UNABLE_TO_PARSE=" + str(inferred_txt))
 
     def get_parsed(self, inferred_txt):

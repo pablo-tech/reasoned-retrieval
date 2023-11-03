@@ -7,9 +7,8 @@ from tool_factory import ToolFactory
 from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
-from llm_run import RunJourney
-from llm_run import RunError
-from llm_run import RunMeasure
+from llm_run import RunJourney, RunError, RunMeasure, FinalAnswer
+from llm_step import InterimStep, FinishStep
 
 # https://python.langchain.com/docs/modules/agents/
 # https://python.langchain.com/docs/modules/agents/
@@ -61,51 +60,6 @@ class ContextValues():
         return self.template_vars
     
 
-class FinalAnswer():
-
-    def __init__(self, 
-                 agent_step, executor_journey, 
-                 executor_error, executor_measure):
-        ### save
-        self.agent_answer = None
-        self.executor_journey = executor_journey
-        self.executor_error = executor_error
-        self.executor_measure = executor_measure
-        ### summarize
-        self.is_finish = False
-        self.log = ''
-        if isinstance(agent_step, AgentAction):
-            self.agent_answer = agent_step.log
-        if isinstance(agent_step, AgentFinish):
-            self.agent_answer = agent_step.return_values['output']
-            self.log = agent_step.log
-            self.is_finish = True
-
-    def get_answer(self):
-        return self.agent_answer
-        
-    def get_finish(self):
-        return self.is_finish
-    
-    def get_thought_action(self):
-        return self.log
-    
-    def get_executor_measure(self):
-        return self.executor_measure
-
-    def __str__(self):
-        s = "EXECUTION_DETAIL=>" + "\n"
-        s += " - NORMAL_FINISH: " + str(self.get_finish()) + "\n"
-        s += " - FINAL_ANSWER: " + str(self.get_answer()) + "\n"
-        s += " - executor_journey: " + "\n"
-        s += self.executor_journey.__str__() + "\n"
-        s += " - EXCECUTION_MEASURE => " + "\n"
-        s += self.executor_measure.__str__() + "\n"        
-        s += " - EXCECUTION_EXCEPTION => " + "\n"
-        s += self.executor_error.__str__() + "\n"
-        return s
-    
-
 class PipelinedExecutor():
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
 
@@ -145,8 +99,10 @@ class PipelinedExecutor():
                 agent_end = time.time()
                 tool_start, tool_end = 0, 0
 
-                if isinstance(agent_step, AgentAction):
-                    tool_name, tool_input = agent_step.tool, agent_step.tool_input
+                if isinstance(agent_step, InterimStep):
+                    tool_name, tool_input = agent_step.get_tool(), agent_step.get_input()
+                # if isinstance(agent_step, AgentAction):
+                #     tool_name, tool_input = agent_step.tool, agent_step.tool_input
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         tool_start = time.time()
@@ -167,7 +123,8 @@ class PipelinedExecutor():
                 self.executor_measure.add_iteration(is_hallucination, input_len, output_len,
                                                      agent_end-agent_start, tool_end-tool_start)
 
-                if isinstance(agent_step, AgentFinish):
+                if isinstance(agent_step, FinishStep):
+                # if isinstance(agent_step, AgentFinish):
                         self.executor_journey.add_step(agent_step, "EXECUTION_DONE") 
                         final = FinalAnswer(agent_step, self.executor_journey, 
                                             self.executor_error, self.executor_measure)
