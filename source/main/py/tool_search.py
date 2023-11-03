@@ -14,14 +14,11 @@ class SerpEngine(SerpAPIWrapper):
     def __init__(self):
         # https://serpapi.com/dashboard
         super().__init__(serpapi_api_key = '2c24c5acccd4ab1f8644348773293cac5aa6907314eb0685ab2d8ad3d75e528d')
-        # self.serpapi_api_key = '2c24c5acccd4ab1f8644348773293cac5aa6907314eb0685ab2d8ad3d75e528d'
-        # os.environ["SERPAPI_API_KEY"] = self.serpapi_api_key
 
     def configurable_results(self, query):
         params = self.configurable_params(query)
         engine = GoogleSearch(params)
         results = engine.get_dict()
-        # results = self.results(query)
         return results 
 
     def configurable_params(self, query, k=15):

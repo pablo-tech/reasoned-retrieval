@@ -196,12 +196,12 @@ class ToolRun(ModelRun):
     def __init__(self):
         super().__init__()
 
-    def run(self, query, func):
+    def invoke(self, query, func):
         model_step = None
         try:
             is_hallucination = False
             model_start = time.time()
-            answer = self.func(query)
+            answer = func(query)
             input_len, output_len = len(query), len(answer)
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()        
