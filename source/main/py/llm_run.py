@@ -157,7 +157,7 @@ class RunMeasure():
         s += "\t total_tool_time: " + "{:.3f}".format(self.get_total_tool_time())        
         return s
     
-
+    
 class FinalAnswer():
 
     def __init__(self, 
@@ -187,7 +187,7 @@ class FinalAnswer():
     def get_answer(self):
         return self.agent_answer
         
-    def get_finish(self):
+    def get_fiblnish(self):
         return self.is_finish
     
     def get_thought_action(self):

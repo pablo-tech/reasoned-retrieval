@@ -28,7 +28,7 @@ class FinishStep():
         return self.action_answer
 
     def get_log(self):
-        return self.log
+        return self.action_log
 
 
 class StepTransformer():
@@ -39,8 +39,8 @@ class StepTransformer():
     def get_step(langchain_step):
         if isinstance(langchain_step, AgentAction):
             return InterimStep(langchain_step.tool,
-                                 langchain_step.tool_input, 
-                                 langchain_step.log)
+                               langchain_step.tool_input, 
+                               langchain_step.log)
         if isinstance(langchain_step, AgentFinish):
             return FinishStep(langchain_step.return_values['output'],
                                 langchain_step.log)
