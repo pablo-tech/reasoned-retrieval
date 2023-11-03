@@ -22,6 +22,11 @@ class OptimisticParser(AgentOutputParser):
         raise OutputParserException("UNABLE_TO_PARSE=" + str(inferred_txt))
 
     def get_parsed(self, inferred_txt):
+        ### conversation
+        if 'Thought: ' not in inferred_txt and\
+           'Action: ' not in inferred_txt:
+                inferred_txt = f"Thought: {inferred_txt}\n"
+                inferred_txt += f"Action: Finish[{inferred_txt}]"
         ### is None
         parsed = self.react_single_input_output(inferred_txt)
         if parsed is None:
@@ -30,10 +35,10 @@ class OptimisticParser(AgentOutputParser):
             parsed = self.json_output(inferred_txt)
         if parsed is None:
             parsed = self.react_output(inferred_txt)
-        if parsed is None and\
-                'Thought: ' not in inferred_txt and\
-                'Action: ' not in inferred_txt:
-            parsed = self.get_finish(inferred_txt, inferred_txt) 
+        # if parsed is None and\
+        #         'Thought: ' not in inferred_txt and\
+        #         'Action: ' not in inferred_txt:
+        #     parsed = self.get_finish(inferred_txt, inferred_txt) 
         if parsed is None and\
                 'Thought: ' in inferred_txt and\
                 'Action: ' not in inferred_txt:
@@ -52,7 +57,7 @@ class OptimisticParser(AgentOutputParser):
 
     def get_finish(self, tool_input, inferred_txt):
         return_values={}
-        print("... interpreted finish for -> " + "tool_input=" + str(tool_input) + " inferred_txt=" + str(inferred_txt))
+        # print("... interpreted finish for -> " + "tool_input=" + str(tool_input) + " inferred_txt=" + str(inferred_txt))
         return_values['output']=tool_input
         return AgentFinish(return_values=return_values,
                            log=inferred_txt) 
