@@ -6,7 +6,7 @@ class RunJourney():
     def __init__(self):
         self.agent_scratchpad = []
 
-    def add_step(self, agent_action, step_observation):
+    def add_run(self, agent_action, step_observation):
         if isinstance(step_observation, str):
             step_observation = step_observation.strip()
         step = (agent_action, step_observation)
@@ -50,9 +50,9 @@ class RunMeasure():
         self.model_time = []
         self.tool_time = []
 
-    def add_iteration(self, is_hallucination, 
-                      input_len, output_len,
-                      model_time):
+    def add_run(self, is_hallucination, 
+                input_len, output_len,
+                model_time):
         self.iteration_count += 1
         if is_hallucination:
             self.hallucination_count += 1

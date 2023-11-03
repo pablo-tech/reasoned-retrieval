@@ -112,17 +112,17 @@ class PipelinedExecutor(ModelRun):
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
-                self.run_measure.add_iteration(is_hallucination, input_len, output_len,
-                                               model_end-model_start)
+                self.run_measure.add_run(is_hallucination, input_len, output_len,
+                                         model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
-                        self.run_journey.add_step(model_step, "EXECUTION_DONE") 
+                        self.run_journey.add_run(model_step, "EXECUTION_DONE") 
                         final = RunAnswer(model_step, self.run_journey, 
                                           self.run_error, self.run_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.run_journey.add_step(model_step, observation)                
+                self.run_journey.add_run(model_step, observation)                
 
             except Exception as e:
                 self.run_error.error_input(str(e), input)
