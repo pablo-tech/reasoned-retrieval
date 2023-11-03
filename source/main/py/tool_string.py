@@ -1,5 +1,13 @@
 from langchain.agents import tool
 
+from llm_run import ModelRun
+
+
+class StringAnswer(ModelRun):
+
+    def __init__(self):
+        super().__init__()
+
 
 @tool
 def get_word_length(word):

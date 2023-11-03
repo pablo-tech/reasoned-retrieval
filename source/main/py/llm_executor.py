@@ -85,21 +85,21 @@ class PipelinedExecutor(ModelRun):
 
         while remain_iterations > 0:
             try:
-                agent_step, observation = None, None
+                model_step, observation = None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.run_journey)
                 agent_start = time.time()
-                agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
+                model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 agent_end = time.time()
                 tool_start, tool_end = 0, 0
 
-                if isinstance(agent_step, InterimStep):
-                    tool_name, tool_input = agent_step.get_tool(), agent_step.get_input()
+                if isinstance(model_step, InterimStep):
+                    tool_name, tool_input = model_step.get_tool(), model_step.get_input()
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         tool_start = time.time()
-                        observation = tool.func(tool_input)
+                        observation = tool.func(tool_input).get_answer()
                         tool_end = time.time()                        
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
@@ -116,14 +116,14 @@ class PipelinedExecutor(ModelRun):
                 self.run_measure.add_iteration(is_hallucination, input_len, output_len,
                                                      agent_end-agent_start, tool_end-tool_start)
 
-                if isinstance(agent_step, FinishStep):
-                        self.run_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = RunAnswer(agent_step, self.run_journey, 
-                                            self.run_error, self.run_measure)
+                if isinstance(model_step, FinishStep):
+                        self.run_journey.add_step(model_step, "EXECUTION_DONE") 
+                        final = RunAnswer(model_step, self.run_journey, 
+                                          self.run_error, self.run_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.run_journey.add_step(agent_step, observation)                
+                self.run_journey.add_step(model_step, observation)                
 
             except Exception as e:
                 self.run_error.error_input(str(e), input)

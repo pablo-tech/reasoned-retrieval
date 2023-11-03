@@ -3,14 +3,19 @@ from langchain.agents import Tool
 
 from pydantic import BaseModel, Field
 
+from llm_run import ModelRun
+from llm_run import ModelRun, RunAnswer
+from llm_step import FinishStep
+
 
 class CalculatorInput(BaseModel):
     question: str = Field()
 
 
-class MathAnswer():
+class MathAnswer(ModelRun):
 
     def __init__(self, completion_llm, is_verbose):
+        super().__init__()
         self.math_engine = LLMMathChain(llm=completion_llm, 
                                         verbose=is_verbose)
         self.math_tool = Tool.from_function(
@@ -24,9 +29,14 @@ class MathAnswer():
     def run(self, query):
         result = self.math_tool.run(query)
         try:
-            return eval(result.replace('Answer: ', ''))
+            result = eval(result.replace('Answer: ', ''))
         except:
-            return result
+            pass
+        model_step = FinishStep(result, log="")
+        self.run_journey.add_step(model_step, "EXECUTION_DONE") 
+        return RunAnswer(model_step, self.run_journey, 
+                         self.run_error, self.run_measure)
+        # return result
         
 
 class MathToolFactory():
