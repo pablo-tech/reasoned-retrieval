@@ -6,7 +6,7 @@ from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
 
-class SearchEngine(SerpAPIWrapper):
+class SerpSearch(SerpAPIWrapper):
 # https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/utilities/serpapi.py
     
     def __init__(self):
@@ -34,16 +34,10 @@ class SearchEngine(SerpAPIWrapper):
                 'device': 'desktop'}
     
 
-class SearchAnswer(SearchEngine):
+class SearchEngine(SerpSearch):
 
     def __init__(self):
         super().__init__()
-
-    def run(self, query):
-        return self.summarize(self.organic(self.select(query)))
-
-    def summarize(self, results):
-        return [result['snippet'] for result in results]
 
     def organic(self, results):
         try:
@@ -66,13 +60,29 @@ class SearchAnswer(SearchEngine):
         return self.configurable_results(query)
     
 
+class SearchAnswer():
+
+    def __init__(self, completion_llm, is_verbose):
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
+
+    def run(self, query):
+        return self.answer(query)
+        
+    def answer(self, query):
+        return self.summarize(self.organic(self.select(query)))
+
+    def summarize(self, results):
+        return [result['snippet'] for result in results]
+
+
 class SearchToolFactory():
 
     def __init__(self, is_verbose):
         self.is_verbose = is_verbose
 
     def serp_search_tools(self, completion_llm=None):
-        search_api = SearchAnswer()
+        search_api = SearchAnswer(completion_llm, self.is_verbose)
         return [
             Tool(
               name="Search",
