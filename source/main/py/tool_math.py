@@ -27,20 +27,25 @@ class MathAnswer(ToolRun):
         )
 
     def run(self, query):
-        return self.invoke(query, self.answer)
+        return self.invoke(query, self.select)
+    
+    def select(self, query):
+        return self.answer(self.summarize(self.subquery(query)))
 
-    def answer(self, query):
-        result = self.math_tool.run(query)
-        try:
-            result = eval(result.replace('Answer: ', ''))
-        except:
-            pass
-        return result
+    def answer(self, results):
+        return [result for result in results]
     
     def summarize(self, results):
-        pass
-        
+        try:
+            return [eval(result.replace('Answer: ', '')) for result in results]
+        except:
+            pass
+        return []
 
+    def subquery(self, query):
+        return [self.math_tool.run(query)]
+
+        
 class MathToolFactory():
 
     def __init__(self, completion_llm, is_verbose=False):
