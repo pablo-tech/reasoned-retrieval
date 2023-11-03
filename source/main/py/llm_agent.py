@@ -98,7 +98,7 @@ class AgentFactory():
                     agent_memory=LlmMemory(),
                     agent_parser=OptimisticParser()):
 
-        agent_tools = tool_factory_func(self.agent_llm)
+        agent_tools = tool_factory_func()
         return PipelinedAgent(agent_llm=self.agent_llm,
                               agent_tools=agent_tools,
                               prompt_factory=self.prompt_factory,
