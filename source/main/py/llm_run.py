@@ -158,7 +158,7 @@ class RunMeasure():
         return s
     
     
-class FinalAnswer():
+class RunAnswer():
 
     def __init__(self, 
                 run_step, run_journey, 

@@ -7,7 +7,7 @@ from tool_factory import ToolFactory
 from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
-from llm_run import RunJourney, RunError, RunMeasure, FinalAnswer
+from llm_run import RunJourney, RunError, RunMeasure, RunAnswer
 from llm_step import InterimStep, FinishStep
 
 # https://python.langchain.com/docs/modules/agents/
@@ -123,7 +123,7 @@ class PipelinedExecutor():
 
                 if isinstance(agent_step, FinishStep):
                         self.executor_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = FinalAnswer(agent_step, self.executor_journey, 
+                        final = RunAnswer(agent_step, self.executor_journey, 
                                             self.executor_error, self.executor_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
@@ -137,7 +137,7 @@ class PipelinedExecutor():
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
-                return FinalAnswer(None, self.context_values.get_scratchpad(), 
+                return RunAnswer(None, self.context_values.get_scratchpad(), 
                                    self.executor_error, self.executor_measure)
 
     def tool_observation(self, tool, input, observation):
