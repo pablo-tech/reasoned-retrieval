@@ -15,7 +15,7 @@ class RunJourney():
     def __str__(self, observation_prefix="Observation: "):
         thoughts = ""
         for thought_action, observation in self.agent_scratchpad:
-            thought_action = thought_action.log.strip()
+            thought_action = thought_action.get_log().strip()
             thoughts += f"{thought_action}" + "\n"
             thoughts += f"{observation_prefix}" + str(observation) + "\n"
         return thoughts.strip()
