@@ -68,7 +68,7 @@ class SearchSerpResult(ToolRun):
         self.is_verbose = is_verbose
 
     def run(self, query):
-        return self.invoke(query, self.answer)
+        return self.invoke(query, self.select)
     
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))
@@ -82,6 +82,7 @@ class SearchSerpResult(ToolRun):
     def subquery(self, query):
         selected = self.search_engine.select(query)
         return self.search_engine.organic(selected)
+    
 
 class SearchToolFactory():
 
