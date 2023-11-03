@@ -201,3 +201,12 @@ class RunAnswer():
         s += " - RUN_EXCEPTION => " + "\n"
         s += self.run_error.__str__() + "\n"
         return s
+    
+
+class ModelRun():
+
+    def __init__(self):
+        self.run_journey = RunJourney()
+        self.run_error = RunError()
+        self.run_measure = RunMeasure()
+

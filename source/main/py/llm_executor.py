@@ -1,13 +1,11 @@
 import time
 
-from langchain.schema import AgentAction, AgentFinish
-
 from llm_template import TemplateBank
 from tool_factory import ToolFactory
 from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
-from llm_run import RunJourney, RunError, RunMeasure, RunAnswer
+from llm_run import RunAnswer, ModelRun
 from llm_step import InterimStep, FinishStep
 
 # https://python.langchain.com/docs/modules/agents/
@@ -44,8 +42,8 @@ class ContextValues():
     def get_examples(self):
         return self.template_vars["fewshot_examples"]      
 
-    def set_scratchpad(self, executor_journey):
-        self.template_vars["agent_scratchpad"] = executor_journey.__str__()
+    def set_scratchpad(self, run_journey):
+        self.template_vars["agent_scratchpad"] = run_journey.__str__()
 
     def get_scratchpad(self):
         return self.template_vars["agent_scratchpad"]
@@ -58,9 +56,9 @@ class ContextValues():
 
     def get_values(self):
         return self.template_vars
-    
 
-class PipelinedExecutor():
+
+class PipelinedExecutor(ModelRun):
 # https://api.python.langchain.com/en/latest/_modules/langchain/agents/agent.html#AgentExecutor
 
     def __init__(self,
@@ -69,6 +67,7 @@ class PipelinedExecutor():
                  max_execution_time,
                  agent_stop=["Observation"],
                  is_verbose=True):
+        super().__init__()
         # save
         self.llm_agent = llm_agent
         self.llm_agent.set_stop(agent_stop)
@@ -79,10 +78,6 @@ class PipelinedExecutor():
         # input
         self.context_values = ContextValues()
         self.context_values.set_examples(TemplateBank.REACT_DOC_STORE_JOINT_ACTION)
-        # journey
-        self.executor_journey = RunJourney()
-        self.executor_error = RunError()
-        self.executor_measure = RunMeasure()
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
@@ -93,7 +88,7 @@ class PipelinedExecutor():
                 agent_step, observation = None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.executor_journey)
+                self.context_values.set_scratchpad(self.run_journey)
                 agent_start = time.time()
                 agent_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 agent_end = time.time()
@@ -118,27 +113,27 @@ class PipelinedExecutor():
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
-                self.executor_measure.add_iteration(is_hallucination, input_len, output_len,
+                self.run_measure.add_iteration(is_hallucination, input_len, output_len,
                                                      agent_end-agent_start, tool_end-tool_start)
 
                 if isinstance(agent_step, FinishStep):
-                        self.executor_journey.add_step(agent_step, "EXECUTION_DONE") 
-                        final = RunAnswer(agent_step, self.executor_journey, 
-                                            self.executor_error, self.executor_measure)
+                        self.run_journey.add_step(agent_step, "EXECUTION_DONE") 
+                        final = RunAnswer(agent_step, self.run_journey, 
+                                            self.run_error, self.run_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
                         return final
 
-                self.executor_journey.add_step(agent_step, observation)                
+                self.run_journey.add_step(agent_step, observation)                
 
             except Exception as e:
-                self.executor_error.error_input(str(e), input)
+                self.run_error.error_input(str(e), input)
 
             remain_iterations-=1
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
                 return RunAnswer(None, self.context_values.get_scratchpad(), 
-                                   self.executor_error, self.executor_measure)
+                                   self.run_error, self.run_measure)
 
     def tool_observation(self, tool, input, observation):
         s = "\n\nTOOL_INVOCATION=>" + "\n"
