@@ -60,10 +60,11 @@ class SerpSearch(SerpEngine):
         return self.configurable_results(query)
     
 
-class SearchSerpResult(SerpSearch):
+class SearchSerpResult():
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__()
+        self.search_engine = SerpSearch()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
@@ -71,7 +72,9 @@ class SearchSerpResult(SerpSearch):
         return self.answer(query)
         
     def answer(self, query):
-        return self.summarize(self.organic(self.select(query)))
+        selected = self.search_engine.select(query)
+        selected = self.search_engine.organic(selected)
+        return self.summarize(selected)
 
     def summarize(self, results):
         return [result['snippet'] for result in results]
