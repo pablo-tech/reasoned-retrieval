@@ -72,21 +72,24 @@ class SearchSerpResult(ModelRun):
         self.is_verbose = is_verbose
 
     def run(self, query):
-        model_step = None
-        try:
-            is_hallucination = False
-            model_start = time.time()
-            answer = self.answer(query)
-            input_len, output_len = len(query), len(answer)
-            model_step = FinishStep(answer, action_log="")
-            model_end = time.time()        
-            self.run_measure.add_run(is_hallucination, input_len, output_len, 
-                                    model_end-model_start)
-            self.run_journey.add_run(model_step, "EXECUTION_DONE") 
-        except Exception as e:
-                self.run_error.error_input(str(e), query)
-        return RunAnswer(model_step, self.run_journey, 
-                         self.run_error, self.run_measure)
+        return self.invoke(query, self.answer)
+    
+    # def run(self, query):
+    #     model_step = None
+    #     try:
+    #         is_hallucination = False
+    #         model_start = time.time()
+    #         answer = self.answer(query)
+    #         input_len, output_len = len(query), len(answer)
+    #         model_step = FinishStep(answer, action_log="")
+    #         model_end = time.time()        
+    #         self.run_measure.add_run(is_hallucination, input_len, output_len, 
+    #                                  model_end-model_start)
+    #         self.run_journey.add_run(model_step, model_step.get_answer()) 
+    #     except Exception as e:
+    #             self.run_error.error_input(str(e), query)
+    #     return RunAnswer(model_step, self.run_journey, 
+    #                      self.run_error, self.run_measure)
         
     def answer(self, query):
         selected = self.search_engine.select(query)
