@@ -82,11 +82,12 @@ class SearchSerpResult():
 
 class SearchToolFactory():
 
-    def __init__(self, is_verbose):
+    def __init__(self, completion_llm, is_verbose):
+        self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def serp_search_tools(self, completion_llm):
-        search_api = SearchSerpResult(completion_llm, self.is_verbose)
+    def serp_search_tools(self):
+        search_api = SearchSerpResult(self.completion_llm, self.is_verbose)
         return [
             Tool(
               name="Search",

@@ -10,7 +10,8 @@ from tool_conversation import ConversationToolFactory
 class ToolFactory():
     # https://python.langchain.com/docs/modules/agents/tools/custom_tools
 
-    def __init__(self, is_verbose=True):
+    def __init__(self, completion_llm, is_verbose=True):
+        self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
     def tool_summaries(cls, tool_set):
@@ -19,9 +20,9 @@ class ToolFactory():
     def tool_names(cls, tool_set):
         return ", ".join([t.name for t in tool_set])
 
-    def basic_tools(self, completion_llm):
-        return MathToolFactory(self.is_verbose).math_tools(completion_llm) +\
-            SearchToolFactory(self.is_verbose).serp_search_tools(completion_llm) +\
-            ConversationToolFactory(self.is_verbose).conversation_tools(completion_llm)
+    def basic_tools(self):
+        return MathToolFactory(self.completion_llm, self.is_verbose).math_tools() +\
+            SearchToolFactory(self.completion_llm, self.is_verbose).serp_search_tools() +\
+            ConversationToolFactory(self.completion_llm, self.is_verbose).conversation_tools()
                     
 
