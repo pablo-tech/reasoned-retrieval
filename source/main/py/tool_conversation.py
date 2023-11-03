@@ -14,10 +14,11 @@ class ConversationAnswer():
 
 class ConversationToolFactory():
 
-    def __init__(self, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose=False):
+        self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def conversation_tools(self, completion_llm):
+    def conversation_tools(self):
         conversation_api = ConversationAnswer()        
         return [
             Tool(

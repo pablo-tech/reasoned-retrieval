@@ -31,11 +31,11 @@ class MathAnswer():
 
 class MathToolFactory():
 
-    def __init__(self, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose=False):
         self.is_verbose = is_verbose
 
-    def math_tools(self, completion_llm):
-        math_api = MathAnswer(completion_llm) 
+    def math_tools(self, ):
+        math_api = MathAnswer(self.completion_llm) 
         return [
             Tool(
               name="Calculate",
