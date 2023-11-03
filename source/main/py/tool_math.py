@@ -29,15 +29,26 @@ class MathAnswer(ModelRun):
         )
 
     def run(self, query):
+        return self.invoke(query, self.calculate)
+
+    def calculate(self, query):
         result = self.math_tool.run(query)
         try:
             result = eval(result.replace('Answer: ', ''))
         except:
             pass
-        model_step = FinishStep(result, action_log="")
-        self.run_journey.add_run(model_step, "EXECUTION_DONE") 
-        return RunAnswer(model_step, self.run_journey, 
-                         self.run_error, self.run_measure)
+        return result
+
+    # def run(self, query):
+    #     result = self.math_tool.run(query)
+    #     try:
+    #         result = eval(result.replace('Answer: ', ''))
+    #     except:
+    #         pass
+    #     model_step = FinishStep(result, action_log="")
+    #     self.run_journey.add_run(model_step, "EXECUTION_DONE") 
+    #     return RunAnswer(model_step, self.run_journey, 
+    #                      self.run_error, self.run_measure)
         # return result
         
 
