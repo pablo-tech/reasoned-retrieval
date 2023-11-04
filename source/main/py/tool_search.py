@@ -91,11 +91,11 @@ class SearchToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        search_api = SearchSerpResult(self.completion_llm, self.is_verbose)
+        api = SearchSerpResult(self.completion_llm, self.is_verbose)
         return [
             Tool(
               name="Search",
-              func=search_api.run,
+              func=api.run,
               description="useful to answer questions about current events or the current state of the world"
         )]
 

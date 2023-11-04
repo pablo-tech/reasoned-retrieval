@@ -86,20 +86,20 @@ class EncyclopediaToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        wiki_search = WikipediaSearch(self.completion_llm, self.is_verbose)
-        wiki_lookup = WikipediaLookup(self.completion_llm, self.is_verbose)
+        search = WikipediaSearch(self.completion_llm, self.is_verbose)
+        lookup = WikipediaLookup(self.completion_llm, self.is_verbose)
         # wiki_search = WikipediaDocstoreSearch(self.completion_llm, self.is_verbose)
         # wiki_lookup = WikipediaDocstoreLookup(self.completion_llm, self.is_verbose)
 
         return [
           Tool(
               name="Search",
-              func=wiki_search.run,
+              func=search.run,
               description="useful to search for the truth"
           ),
           Tool(
               name="Lookup",
-              func=wiki_lookup.run,
+              func=lookup.run,
               description="useful to lookup named entity facts"
           )
         ]

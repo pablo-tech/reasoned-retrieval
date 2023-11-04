@@ -61,11 +61,11 @@ class HotpotToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        wiki_search = HotpotExample(self.completion_llm, self.is_verbose)
+        api = HotpotExample(self.completion_llm, self.is_verbose)
         return [
           Tool(
               name="Search",
-              func=wiki_search.run,
+              func=api.run,
               description="useful to search for the truth"
           )
         ]

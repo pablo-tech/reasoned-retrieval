@@ -53,11 +53,11 @@ class MathToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        math_api = MathAnswer(self.completion_llm, self.is_verbose) 
+        api = MathAnswer(self.completion_llm, self.is_verbose) 
         return [
             Tool(
               name="Calculate",
-              func=math_api.run,
+              func=api.run,
               description="useful to answer math questions"
         )]
 
