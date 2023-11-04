@@ -16,6 +16,12 @@ class InterimStep():
 
     def get_log(self):
         return self.action_log
+    
+    def __str__(self):
+        s = "interim_step=> "
+        s += "action_tool=" + self.action_tool + " "
+        s += "tool_input=" + self.tool_input + " "
+        s += "action_log=" + self.action_log + " "
 
 
 class FinishStep():
@@ -29,6 +35,11 @@ class FinishStep():
 
     def get_log(self):
         return self.action_log
+
+    def __str__(self):
+        s = "finish_step=> "
+        s += "action_answer=" + self.action_answer + " "
+        s += "action_log=" + self.action_log + " "
 
 
 class StepTransformer():
