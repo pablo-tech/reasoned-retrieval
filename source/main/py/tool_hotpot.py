@@ -50,7 +50,9 @@ class HotpotExample(HotpotStore):
         try:
           return self.doc_store[query]
         except Exception as e:
-          return ["HOTPOT_SUBQUERY_ERROR="+str(e)]
+          error = "HOTPOT_SUBQUERY_ERROR="+str(e)
+          print(error)
+          return [error]
 
 
 class HotpotToolFactory():
