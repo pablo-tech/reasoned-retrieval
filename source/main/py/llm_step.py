@@ -22,7 +22,7 @@ class InterimStep():
         s += "action_tool=" + self.action_tool + " "
         s += "tool_input=" + self.tool_input + " "
         s += "action_log=" + self.action_log + " "
-
+        return s
 
 class FinishStep():
 
@@ -40,7 +40,7 @@ class FinishStep():
         s = "finish_step=> "
         s += "action_answer=" + self.action_answer + " "
         s += "action_log=" + self.action_log + " "
-
+        return s
 
 class StepTransformer():
 
