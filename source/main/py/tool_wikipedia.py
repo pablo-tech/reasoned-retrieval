@@ -4,62 +4,9 @@ from langchain.agents.react.base import DocstoreExplorer
 
 from llm_run import ToolRun
 
-import wikipedia
+import wikipedia    
 
-
-class WikipediaExplorer(ToolRun):
-
-    def __init__(self, completion_llm, is_verbose=False):
-        super().__init__()
-        self.completion_llm = completion_llm
-        self.is_verbose = is_verbose
-        self.doc_store = DocstoreExplorer(Wikipedia())
-
-
-class WikipediaDocstoreSearch(WikipediaExplorer):
-
-    def __init__(self, completion_llm, is_verbose=False):
-        super().__init__(completion_llm, is_verbose)
-
-    def run(self, query):
-        return self.invoke(query, self.select)
-
-    def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
-
-    def answer(self, results):
-        return [result for result in results]
-
-    def summarize(self, results):
-        return [result for result in results]
-
-    def subquery(self, query):
-        # TODO Could not find [Rodriguez]. Similar: ['Rodriguez', 'Alex Rodriguez', 'Iván Rodríguez', 'Adam Rodriguez', 'Michelle Rodriguez', 'Robert Rodriguez', 'Eduardo Rodríguez', 'Michaela Jaé Rodriguez', 'Georgina Rodríguez', 'Gina Rodriguez']
-        return [str(self.doc_store.search(query))]
-
-
-class WikipediaDocstoreLookup(WikipediaExplorer):
-
-    def __init__(self, completion_llm, is_verbose=False):
-        super().__init__(completion_llm, is_verbose)
-
-    def run(self, query):
-        return self.invoke(query, self.select)
-
-    def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
-
-    def answer(self, results):
-        return [result for result in results]
-
-    def summarize(self, results):
-        return [result for result in results]
-
-    def subquery(self, query):
-        return [str(self.doc_store.lookup(query))]
-    
-
-class WikipediaWrapper(ToolRun):
+class WikipediaStore(ToolRun):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -69,13 +16,13 @@ class WikipediaWrapper(ToolRun):
         self.doc_store = wikipedia
 
 
-class WikipediaSearch(WikipediaWrapper):
+class WikipediaSearch(WikipediaStore):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, query):
-        return self.invoke(query, self.select)
+    def run(self, tool_input, user_query):
+        return self.invoke(tool_input, self.select)
 
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))
@@ -104,13 +51,13 @@ class WikipediaSearch(WikipediaWrapper):
           return [str(e)]
 
 
-class WikipediaLookup(WikipediaWrapper):
+class WikipediaLookup(WikipediaStore):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, query):
-        return self.invoke(query, self.select)
+    def run(self, tool_input, user_query):
+        return self.invoke(tool_input, self.select)
 
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))

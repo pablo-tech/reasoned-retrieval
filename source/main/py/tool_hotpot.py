@@ -34,8 +34,8 @@ class HotpotExample(HotpotStore):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, query):
-        return self.invoke(query, self.select)
+    def run(self, tool_input, user_query):
+        return self.invoke(user_query, self.select)
 
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))
