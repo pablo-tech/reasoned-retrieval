@@ -26,7 +26,7 @@ class HotpotStore(HotpotDataset):
         for example in self.data:
             contexts = example['context']
             contexts = ["".join(context[1]) for context in contexts]
-            self.doc_store[example['question']] = contexts        
+            self.doc_store[example['question'].strip()] = contexts        
 
 
 class HotpotExample(HotpotStore):
