@@ -1,3 +1,5 @@
+import json
+
 from langchain.agents import Tool
 
 from llm_run import ToolRun
@@ -11,7 +13,19 @@ class HotpotDataset(ToolRun):
         super().__init__()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        self.doc_store = wikipedia
+        hotpot_train = '/content/drive/MyDrive/StanfordLLM/hotpot_qa/hotpot_train_v1.1.json'
+        with open(hotpot_train) as json_file:
+            self.data = json.load(json_file) 
+
+class HotpotStore(HotpotDataset):
+
+    def __init__(self, completion_llm, is_verbose=False):
+        super().__init__(completion_llm, is_verbose)
+        self.doc_store = {}
+        for example in self.data:
+            contexts = example['context']
+            contexts = ["".join(context[1]) for context in contexts]
+            self.doc_store[example['question']] = contexts        
 
 
 class HotpotExample(HotpotDataset):
@@ -28,29 +42,18 @@ class HotpotExample(HotpotDataset):
     def answer(self, results):
         return [result for result in results]
 
-    def summarize(self, results, k=5, n=5):
-        snippet = []
-        for result in results:
-          try:
-            snippet.append(self.doc_store.summary(result,
-                                                  sentences=n))
-          except Exception as e:
-            # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
-            pass
-          if len(snippet) >= k:
-            return snippet
-        return snippet
+    def summarize(self, results):
+        return [result for result in results]
 
     def subquery(self, query):
         try:
-          return self.doc_store.search(query)
+          return self.doc_store[query]
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
 
 
-
-class EncyclopediaToolFactory():
+class HotpotToolFactory():
 
     def __init__(self, completion_llm, is_verbose=False):
         self.completion_llm = completion_llm
@@ -58,7 +61,6 @@ class EncyclopediaToolFactory():
 
     def get_tools(self):
         wiki_search = HotpotExample(self.completion_llm, self.is_verbose)
-
         return [
           Tool(
               name="Search",
