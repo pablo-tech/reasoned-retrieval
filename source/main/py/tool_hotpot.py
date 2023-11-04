@@ -17,6 +17,7 @@ class HotpotDataset(ToolRun):
         with open(hotpot_train) as json_file:
             self.data = json.load(json_file) 
 
+
 class HotpotStore(HotpotDataset):
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -28,7 +29,7 @@ class HotpotStore(HotpotDataset):
             self.doc_store[example['question']] = contexts        
 
 
-class HotpotExample(HotpotDataset):
+class HotpotExample(HotpotStore):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
