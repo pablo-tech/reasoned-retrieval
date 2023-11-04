@@ -93,7 +93,7 @@ class PipelinedExecutor(ModelRun):
                 model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 model_end = time.time()
 
-                print(model_step)
+                print(model_step.__str__().replace("\n", "\t"))
 
                 if isinstance(model_step, InterimStep):
                     tool_name, tool_input = model_step.get_tool(), model_step.get_input()
