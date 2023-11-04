@@ -67,8 +67,8 @@ class SearchSerpResult(ToolRun):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def run(self, query):
-        return self.invoke(query, self.select)
+    def run(self, tool_input, user_query=""):
+        return self.invoke(tool_input, self.select)
     
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))

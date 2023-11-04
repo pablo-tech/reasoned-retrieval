@@ -26,8 +26,8 @@ class MathAnswer(ToolRun):
                 # coroutine= ... <- you can specify an async method if desired as well
         )
 
-    def run(self, query):
-        return self.invoke(query, self.select)
+    def run(self, tool_input, user_query=""):
+        return self.invoke(tool_input, self.select)
     
     def select(self, query):
         return self.answer(self.summarize(self.subquery(query)))

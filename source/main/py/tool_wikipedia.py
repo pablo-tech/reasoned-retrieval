@@ -21,7 +21,7 @@ class WikipediaSearch(WikipediaStore):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, tool_input, user_query):
+    def run(self, tool_input, user_query=""):
         return self.invoke(tool_input, self.select)
 
     def select(self, query):
@@ -56,7 +56,7 @@ class WikipediaLookup(WikipediaStore):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, tool_input, user_query):
+    def run(self, tool_input, user_query=""):
         return self.invoke(tool_input, self.select)
 
     def select(self, query):
