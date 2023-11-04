@@ -41,11 +41,6 @@ class OptimisticParser(AgentOutputParser):
             parsed = self.json_output(inferred_txt)
         if parsed is None:
             parsed = self.react_output(inferred_txt)
-        # if parsed is None and\
-        #         'Thought: ' in inferred_txt and\
-        #         'Action: ' not in inferred_txt:
-        #     inferred_txt = inferred_txt.replace("Thought: ", '')
-        #     parsed = self.get_finish(inferred_txt, inferred_txt) 
         ### is NOT None
         if isinstance(parsed, AgentAction) and\
                 parsed.tool == 'Message':
