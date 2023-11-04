@@ -17,5 +17,5 @@ def get_word_length(word):
 
 class StringToolFactory():
 
-    def string_tools():
+    def get_tools():
         return [get_word_length]

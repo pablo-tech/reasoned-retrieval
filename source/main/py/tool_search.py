@@ -90,7 +90,7 @@ class SearchToolFactory():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def serp_search_tools(self):
+    def get_tools(self):
         search_api = SearchSerpResult(self.completion_llm, self.is_verbose)
         return [
             Tool(

@@ -21,8 +21,8 @@ class ToolFactory():
         return ", ".join([t.name for t in tool_set])
 
     def basic_tools(self):
-        return MathToolFactory(self.completion_llm, self.is_verbose).math_tools() +\
-            SearchToolFactory(self.completion_llm, self.is_verbose).serp_search_tools() +\
-            ConversationToolFactory(self.completion_llm, self.is_verbose).conversation_tools()
+        return MathToolFactory(self.completion_llm, self.is_verbose).get_tools() +\
+            SearchToolFactory(self.completion_llm, self.is_verbose).get_tools() +\
+            ConversationToolFactory(self.completion_llm, self.is_verbose).get_tools()
                     
 

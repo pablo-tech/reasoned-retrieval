@@ -138,7 +138,7 @@ class EncyclopediaToolFactory():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def wikipedia_tools(self):
+    def get_tools(self):
         wiki_search = WikipediaSearch(self.completion_llm, self.is_verbose)
         wiki_lookup = WikipediaLookup(self.completion_llm, self.is_verbose)
         # wiki_search = WikipediaDocstoreSearch(self.completion_llm, self.is_verbose)

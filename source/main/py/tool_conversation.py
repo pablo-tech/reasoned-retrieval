@@ -18,7 +18,7 @@ class ConversationToolFactory():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def conversation_tools(self):
+    def get_tools(self):
         conversation_api = ConversationAnswer()        
         return [
             Tool(
