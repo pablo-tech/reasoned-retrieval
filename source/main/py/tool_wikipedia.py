@@ -82,16 +82,25 @@ class WikipediaSearch(WikipediaWrapper):
     def answer(self, results):
         return [result for result in results]
 
-    def summarize(self, results):
-        return [result for result in results]
+    def summarize(self, results, k=5, n=5):
+        snippet = []
+        for result in results:
+          try:
+            snippet.append(self.doc_store.summary(result,
+                                                  sentences=n))
+          except Exception as e:
+            # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
+            pass
+          if len(snippet) >= k:
+            return snippet
+        return snippet
 
     def subquery(self, query):
-        response = []
         try:
-          response = str(self.doc_store.search(query))
+          return self.doc_store.search(query)
         except Exception as e:
-          response = str(e)
-        return [response]
+          # print("SEARCH_SUBQUERY_ERROR=" + str(e))
+          return [str(e)]
 
 
 class WikipediaLookup(WikipediaWrapper):
@@ -117,6 +126,7 @@ class WikipediaLookup(WikipediaWrapper):
         try:
           response = self.doc_store.page(query).content
         except Exception as e:
+          # print("LOOKUP_SUBQUERY_ERROR=" + str(e))
           response = str(e)
         return ["".join(response)]
 
@@ -132,7 +142,7 @@ class EncyclopediaToolFactory():
         wiki_lookup = WikipediaLookup(self.completion_llm, self.is_verbose)
         # wiki_search = WikipediaDocstoreSearch(self.completion_llm, self.is_verbose)
         # wiki_lookup = WikipediaDocstoreLookup(self.completion_llm, self.is_verbose)
-        
+
         return [
           Tool(
               name="Search",
