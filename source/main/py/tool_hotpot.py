@@ -9,7 +9,7 @@ from llm_run import ToolRun
 class HotpotDataset(ToolRun):
     # https://pypi.org/project/wikipedia/
 
-    def __init__(self, completion_llm, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose):
         super().__init__()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -20,7 +20,7 @@ class HotpotDataset(ToolRun):
 
 class HotpotStore(HotpotDataset):
 
-    def __init__(self, completion_llm, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose):
         super().__init__(completion_llm, is_verbose)
         self.doc_store = {}
         for example in self.data:
@@ -31,7 +31,7 @@ class HotpotStore(HotpotDataset):
 
 class HotpotExample(HotpotStore):
 
-    def __init__(self, completion_llm, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, tool_input, user_query):
