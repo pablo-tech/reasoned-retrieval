@@ -175,11 +175,11 @@ class RunAnswer():
         s += " - RUN_ANSWER: " + str(self.get_answer()) + "\n"
         s += " - RUN_NORMAL: " + str(self.get_finish()) + "\n"
         s += " - RUN_JOURNEY: " + "\n"
-        s += self.run_journey.__str__().strip() + "\n"
+        s += self.run_journey.__str__() + "\n"
         s += " - RUN_MEASURE => " + "\n"
-        s += self.run_measure.__str__().strip() + "\n"        
+        s += self.run_measure.__str__() + "\n"        
         s += " - RUN_EXCEPTION => " + "\n"
-        s += self.run_error.__str__().strip() + "\n"
+        s += self.run_error.__str__() + "\n"
         return s.strip()
     
 
@@ -205,7 +205,6 @@ class ToolRun(ModelRun):
             input_len, output_len = len(str(query)), len(str(answer))
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()
-            print(str(model_end) + " " + str(model_start))        
             self.run_measure.add_run(is_hallucination, input_len, output_len, 
                                      model_end-model_start)
             self.run_journey.add_run(model_step, model_step.get_answer()) 
