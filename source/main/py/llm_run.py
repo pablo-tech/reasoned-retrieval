@@ -180,7 +180,7 @@ class RunAnswer():
         s += self.run_measure.__str__().strip() + "\n"        
         s += " - RUN_EXCEPTION => " + "\n"
         s += self.run_error.__str__().strip() + "\n"
-        return s
+        return s.strip()
     
 
 class ModelRun():

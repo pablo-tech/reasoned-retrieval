@@ -100,9 +100,10 @@ class PipelinedExecutor(ModelRun):
                     tool_name, tool_input = model_step.get_tool(), model_step.get_input()
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
-                        run_answer = tool.func(tool_input, user_query)
-                        print(run_answer)
-                        observation = run_answer.get_answer()
+                        tool_run = tool.func(tool_input, user_query)
+                        if self.is_verbose:
+                            print("TOOL_" + tool_run)
+                        observation = tool_run.get_answer()
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
                         observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
@@ -120,10 +121,12 @@ class PipelinedExecutor(ModelRun):
 
                 if isinstance(model_step, FinishStep):
                         self.run_journey.add_run(model_step, model_step.get_answer()) 
-                        final = RunAnswer(model_step, self.run_journey, 
+                        final_run = RunAnswer(model_step, self.run_journey, 
                                           self.run_error, self.run_measure)
-                        self.llm_agent.get_memory().message_exchange(user_query, final.get_answer())             
-                        return final
+                        self.llm_agent.get_memory().message_exchange(user_query, final_run.get_answer())             
+                        if self.is_verbose:
+                            print("FINAL_" + final_run)
+                        return final_run
 
                 self.run_journey.add_run(model_step, observation)                
 
