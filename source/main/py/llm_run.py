@@ -202,7 +202,7 @@ class ToolRun(ModelRun):
             is_hallucination = False
             model_start = time.time()
             answer = func(query)
-            input_len, output_len = len(query), len(answer)
+            input_len, output_len = len(str(query)), len(str(answer))
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()        
             self.run_measure.add_run(is_hallucination, input_len, output_len, 
