@@ -177,7 +177,7 @@ class RunAnswer():
         s += " - RUN_JOURNEY: " + "\n"
         s += self.run_journey.__str__() + "\n"
         s += " - RUN_MEASURE => " + "\n"
-        s += self.run_measure.__str__() + "\n"        
+        s += self.run_measure.__str__() 
         s += " - RUN_EXCEPTION => " + "\n"
         s += self.run_error.__str__() + "\n"
         return s.strip()
