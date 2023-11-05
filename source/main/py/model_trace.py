@@ -4,14 +4,14 @@ from model_bot import ChatBot
 import textwrap
 
 
-class ThoughtTrace():
+class ThoughtTracer():
 
     def __init__(self, completion_llm, is_verbose):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def hotpot_trace(self, data, n):
-        trace = {}
+    def thought_traces(self, tools, data, n):
+        traces = {}
 
         for i in range(n):
             example = data[i]
@@ -19,12 +19,11 @@ class ThoughtTrace():
             about = example['context'][0][0]
             correct_answer = example['answer'] 
             try:
-                tools = HotpotToolFactory(self.completion_llm).get_tools()
                 bot = ChatBot(agent_llm=self.completion_llm,
-                            agent_tools=tools,
-                            is_verbose=True)
+                              agent_tools=tools,
+                              is_verbose=self.is_verbose)
                 inferred_response = bot.invoke(question)
-                trace[question] = inferred_response
+                traces[question] = inferred_response
                 width=75  
                 print(textwrap.fill(str(question), width))
                 print(textwrap.fill("CORRECT=" + correct_answer, width)) 
@@ -33,4 +32,9 @@ class ThoughtTrace():
             except Exception as e:
                 print("QUESTIONER_ERROR="+str(e)+"..."+str(question))
                 print("\n")
-        return trace        
+                pass
+        return traces  
+
+    def hotpot_traces(self, data, n):
+        tools = HotpotToolFactory(self.completion_llm).get_tools()
+        return self.thought_traces(tools, data, n)
