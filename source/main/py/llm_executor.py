@@ -102,7 +102,7 @@ class PipelinedExecutor(ModelRun):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         tool_run = tool.func(tool_input, user_query)
                         if self.is_verbose:
-                            print("TOOL_" + tool_run)
+                            print("TOOL_" + str(tool_run))
                         observation = tool_run.get_answer()
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
@@ -125,7 +125,7 @@ class PipelinedExecutor(ModelRun):
                                           self.run_error, self.run_measure)
                         self.llm_agent.get_memory().message_exchange(user_query, final_run.get_answer())             
                         if self.is_verbose:
-                            print("FINAL_" + final_run)
+                            print("FINAL_" + str(final_run))
                         return final_run
 
                 self.run_journey.add_run(model_step, observation)                
