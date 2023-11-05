@@ -101,6 +101,7 @@ class PipelinedExecutor(ModelRun):
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
                         run_answer = tool.func(tool_input, user_query)
+                        print(run_answer)
                         observation = run_answer.get_answer()
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 

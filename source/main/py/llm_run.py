@@ -172,8 +172,8 @@ class RunAnswer():
 
     def __str__(self):
         s = "RUN_DETAIL=>" + "\n"
-        s += " - RUN_NORMAL: " + str(self.get_finish()).strip() + "\n"
         s += " - RUN_ANSWER: " + str(self.get_answer()).strip() + "\n"
+        s += " - RUN_NORMAL: " + str(self.get_finish()).strip() + "\n"
         s += " - RUN_JOURNEY: " + "\n"
         s += self.run_journey.__str__().strip() + "\n"
         s += " - RUN_MEASURE => " + "\n"
