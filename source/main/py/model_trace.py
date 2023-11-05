@@ -1,5 +1,5 @@
 from tool_hotpot import HotpotToolFactory
-from llm_bot import ChatBot
+from model_bot import ChatBot
 
 import textwrap
 
@@ -10,10 +10,10 @@ class ThoughtTrace():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def hotpot_trace(self, data):
+    def hotpot_trace(self, data, n):
         trace = {}
 
-        for i in range(10):
+        for i in range(n):
             example = data[i]
             question = example['question'].strip()
             about = example['context'][0][0]
