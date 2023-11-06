@@ -162,27 +162,3 @@ class PromptFactory(CompleteTemplate):
         return prompt_template
 
   
-class ReactDescribe():
-
-    def __init__(self):
-        pass
-
-    def name_template(cls, tool_names): 
-        return f"""
-AGENT ONLY HAS ACCESS TO THESE TOOLS: {tool_names}.  
-"""
-
-    def summary_template(cls, tool_summaries): 
-        return f"""
-AGENT TOOL DESCRIPTION:
-{tool_summaries}
-"""
-    
-#     def react_format(cls): 
-#         template = """
-# AGENT MUST SPECIFY BOTH 'Thought: ' AND 'Action: ', AS FOLLOWS:
-# 1. 'Thought: ' explains step-by-step the agent's reasoning
-# 2. 'Action: ' indicates what tool action to take to fulfill the thought
-# """ 
-#         return template
-    
