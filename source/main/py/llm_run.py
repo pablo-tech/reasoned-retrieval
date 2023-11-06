@@ -201,8 +201,7 @@ class ModelRun():
         self.new_journey()
 
     def new_journey(self):
-        journey = RunJourney()
-        self.run_journeys.append(journey)
+        self.run_journeys.append(RunJourney())
 
     def get_journey(self):
         return self.run_journeys[-1]

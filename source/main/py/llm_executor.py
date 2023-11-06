@@ -140,6 +140,9 @@ class PipelinedExecutor(ModelRun):
             except Exception as e:
                 self.get_error().error_input(str(e), observation)
 
+
+            remain_iterations-=1
+
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
@@ -150,7 +153,6 @@ class PipelinedExecutor(ModelRun):
                 return timeout_run
             
             ### iterate
-            remain_iterations-=1
             self.new_journey()
 
 
