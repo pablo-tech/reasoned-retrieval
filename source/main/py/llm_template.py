@@ -10,22 +10,6 @@ from langchain.chat_models import ChatOpenAI
 class TemplateBank():
 
     REACT_DOC_STORE_JOINT_ACTION = """
-Question: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
-Thought: I need to search Colorado orogeny, find the area that the eastern sector of the Colorado orogeny extends into, then find the elevation range of the area.
-Action: Search[Colorado orogeny]
-Observation: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado and surrounding areas.
-Thought: It does not mention the eastern sector. So I need to look up eastern sector.
-Action: Lookup[eastern sector]
-Observation: (Result 1 / 1) The eastern sector extends into the High Plains and is called the Central Plains orogeny.
-Thought: The eastern sector of Colorado orogeny extends into the High Plains. So I need to search High Plains and find its elevation range.
-Action: Search[High Plains]
-Observation: High Plains refers to one of two distinct land regions
-Thought: I need to instead search High Plains (United States).
-Action: Search[High Plains (United States)]
-Observation: The High Plains are a subregion of the Great Plains. From east to west, the High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130 m).[3]
-Thought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer is 1,800 to 7,000 ft.
-Action: Finish[1,800 to 7,000 ft]
-
 Question: Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?
 Thought: The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after.
 Action: Search[Milhouse]
@@ -66,6 +50,22 @@ Observation: First for Women is a woman’s magazine published by Bauer Media Gr
 Thought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.
 Action: Finish[Arthur’s Magazine]
 """
+# Question: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
+# Thought: I need to search Colorado orogeny, find the area that the eastern sector of the Colorado orogeny extends into, then find the elevation range of the area.
+# Action: Search[Colorado orogeny]
+# Observation: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado and surrounding areas.
+# Thought: It does not mention the eastern sector. So I need to look up eastern sector.
+# Action: Lookup[eastern sector]
+# Observation: (Result 1 / 1) The eastern sector extends into the High Plains and is called the Central Plains orogeny.
+# Thought: The eastern sector of Colorado orogeny extends into the High Plains. So I need to search High Plains and find its elevation range.
+# Action: Search[High Plains]
+# Observation: High Plains refers to one of two distinct land regions
+# Thought: I need to instead search High Plains (United States).
+# Action: Search[High Plains (United States)]
+# Observation: The High Plains are a subregion of the Great Plains. From east to west, the High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130 m).[3]
+# Thought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer is 1,800 to 7,000 ft.
+# Action: Finish[1,800 to 7,000 ft]
+
 
     def template_tool(self):
         return """TOOL RESPONSE:
