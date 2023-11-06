@@ -123,8 +123,8 @@ class PipelinedExecutor(ModelRun):
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
-                self.run_measure.add_run(is_hallucination, input_len, output_len,
-                                         model_end-model_start)
+                self.run_measure().add_run(is_hallucination, input_len, output_len,
+                                           model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
                         self.run_journey().add_run(model_step, model_step.get_answer()) 
