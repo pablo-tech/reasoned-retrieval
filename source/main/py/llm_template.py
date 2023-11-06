@@ -100,14 +100,14 @@ YOU ARE A DETAILED-ORIENTED AI AGENT THAT ANSWERS QUESTIONS BY THINKING STEP-BY-
 # FINAL ACTION SHOULD NOT BE YES/NO, SHOULD ALWAYS INCLUDE A THOUGHT.
 
     def example_template(self):
-        # FEW-SHOT EXAMPLES:
         return """
+FEW-SHOT EXAMPLES:        
 {fewshot_examples}
 """
 
     def history_template(self):
-        # CONVERSATION HISTORY:
         return """
+CONVERSATION HISTORY:
 {chat_history}
 """
 
