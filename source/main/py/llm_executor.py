@@ -95,7 +95,7 @@ class PipelinedExecutor(ModelRun):
                 model_step, observation = None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.run_journey)
+                self.context_values.set_scratchpad(self.get_journey())
                 model_start = time.time()
                 model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 model_end = time.time()
@@ -123,29 +123,29 @@ class PipelinedExecutor(ModelRun):
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
-                self.run_measure().add_run(is_hallucination, input_len, output_len,
+                self.get_measure().add_run(is_hallucination, input_len, output_len,
                                            model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
-                        self.run_journey().add_run(model_step, model_step.get_answer()) 
-                        final_run = RunAnswer(model_step, self.run_journey(), 
-                                              self.run_error(), self.run_measure())
+                        self.get_journey().add_run(model_step, model_step.get_answer()) 
+                        final_run = RunAnswer(model_step, self.get_journey(), 
+                                              self.get_error(), self.get_measure())
                         self.llm_agent.get_memory().message_exchange(user_query, final_run.get_answer())             
                         if self.is_verbose:
                             print("\n\n" + "FINAL_" + str(final_run) + "\n\n")
                         return final_run
 
-                self.run_journey().add_run(model_step, observation)                
+                self.get_journey().add_run(model_step, observation)                
 
             except Exception as e:
-                self.run_error().error_input(str(e), observation)
+                self.get_error().error_input(str(e), observation)
 
             remain_iterations-=1
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
                 timeout_run = RunAnswer(None, self.context_values.get_scratchpad(), 
-                                        self.run_error(), self.run_measure())
+                                        self.get_error(), self.get_measure())
                 if self.is_verbose:
                     print("\n\n" + "FINAL_" + str(timeout_run) + "\n\n")                
                 return timeout_run

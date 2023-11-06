@@ -169,17 +169,26 @@ class RunAnswer():
     
     def get_run_measure(self):
         return self.run_measure
+    
+    def get_journey(self):
+        return self.run_journey
+    
+    def get_measure(self):
+        return self.run_measure
+    
+    def get_error(self):
+        return self.run_error
 
     def __str__(self):
         s = "RUN_DETAIL=>" + "\n"
         s += " - RUN_ANSWER: " + str(self.get_answer()) + "\n"
         s += " - RUN_NORMAL: " + str(self.get_finish()) + "\n"
         s += " - RUN_JOURNEY: " + "\n"
-        s += self.run_journey().__str__().strip() + "\n"
+        s += self.get_journey().__str__().strip() + "\n"
         s += " - RUN_MEASURE => " + "\n"
-        s += self.run_measure().__str__() 
+        s += self.get_measure().__str__() 
         s += " - RUN_EXCEPTION => " + "\n"
-        s += self.run_error().__str__() + "\n"
+        s += self.get_error().__str__() + "\n"
         return s.strip()
     
 
@@ -190,13 +199,13 @@ class ModelRun():
         self.current_error = RunError()
         self.current_measure = RunMeasure()
 
-    def run_journey(self):
+    def get_journey(self):
         return self.current_journey
 
-    def run_error(self):
+    def get_error(self):
         return self.current_error
 
-    def run_measure(self):
+    def get_measure(self):
         return self.current_measure
 
 
@@ -214,10 +223,10 @@ class ToolRun(ModelRun):
             input_len, output_len = len(str(query)), len(str(answer))
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()
-            self.run_measure().add_run(is_hallucination, input_len, output_len, 
+            self.get_measure().add_run(is_hallucination, input_len, output_len, 
                                        model_end-model_start)
-            self.run_journey().add_run(model_step, model_step.get_answer()) 
+            self.get_journey().add_run(model_step, model_step.get_answer()) 
         except Exception as e:
-                self.run_error().error_input(str(e), query)
-        return RunAnswer(model_step, self.run_journey(), 
-                         self.run_error(), self.run_measure())        
+                self.get_error().error_input(str(e), query)
+        return RunAnswer(model_step, self.get_journey(), 
+                         self.get_error(), self.get_measure())        
