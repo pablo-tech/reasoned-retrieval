@@ -198,7 +198,6 @@ class ModelRun():
         self.current_error = RunError()
         self.current_measure = RunMeasure()
         self.run_journeys = []
-        self.new_journey()
 
     def new_journey(self):
         self.run_journeys.append(RunJourney())
@@ -217,6 +216,7 @@ class ToolRun(ModelRun):
 
     def __init__(self):
         super().__init__()
+        self.new_journey()
 
     def invoke(self, query, func):
         model_step = None
