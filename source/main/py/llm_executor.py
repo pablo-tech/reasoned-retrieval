@@ -88,7 +88,6 @@ class PipelinedExecutor(ModelRun):
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
         self.new_journey()        
-        # self.context_values.set_scratchpad(self.get_journey())
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:

@@ -122,29 +122,6 @@ Observation: Adam Clayton Powell is a 1989 American documentary film directed by
 Thought: Adam Clayton Powell (film) is a documentary about an African-American politician, not Finnish rock groups. So the documentary about Finnish rock groups must instead be The Saimaa Gesture.
 Final Answer: The Saimaa Gesture
 
-Question: What profession does Nicholas Ray and Elia Kazan have in common?
-Thought: I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.
-Action: Search
-Action Input: Nicholas Ray
-Observation: Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.
-Thought: Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.
-Action: Search
-Action Input: Elia Kazan
-Observation: Elia Kazan was an American film and theatre director, producer, screenwriter and actor.
-Thought: Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.
-Action: Finish[director, screenwriter, actor]
-Question: Which magazine was started first Arthur’s Magazine or First for Women?
-Thought: I need to search Arthur’s Magazine and First for Women, and find which was started first.
-Action: Search
-Action Input: Arthur’s Magazine
-Observation: Arthur’s Magazine (1844-1846) was an American literary periodical published in Philadelphia in the 19th century.
-Thought: Arthur’s Magazine was started in 1844. I need to search First for Women next.
-Action: Search
-Action Input: First for Women
-Observation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.
-Thought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.
-Final Answer: Arthur’s Magazine
-
 Question: Were Pavel Urysohn and Leonid Levin known for the same type of work?
 Thought: I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.
 Action: Search
@@ -157,6 +134,28 @@ Observation: Leonid Anatolievich Levin is a Soviet-American mathematician and co
 Thought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.
 Final Answer: yes
 """
+# Question: What profession does Nicholas Ray and Elia Kazan have in common?
+# Thought: I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.
+# Action: Search
+# Action Input: Nicholas Ray
+# Observation: Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.
+# Thought: Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.
+# Action: Search
+# Action Input: Elia Kazan
+# Observation: Elia Kazan was an American film and theatre director, producer, screenwriter and actor.
+# Thought: Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.
+# Action: Finish[director, screenwriter, actor]
+# Question: Which magazine was started first Arthur’s Magazine or First for Women?
+# Thought: I need to search Arthur’s Magazine and First for Women, and find which was started first.
+# Action: Search
+# Action Input: Arthur’s Magazine
+# Observation: Arthur’s Magazine (1844-1846) was an American literary periodical published in Philadelphia in the 19th century.
+# Thought: Arthur’s Magazine was started in 1844. I need to search First for Women next.
+# Action: Search
+# Action Input: First for Women
+# Observation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.
+# Thought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.
+# Final Answer: Arthur’s Magazine
 
     def template_tool(self):
         return """TOOL RESPONSE:
@@ -191,14 +190,14 @@ YOU ARE A DETAILED-ORIENTED AI AGENT THAT ANSWERS QUESTIONS BY THINKING STEP-BY-
 # FINAL ACTION SHOULD NOT BE YES/NO, SHOULD ALWAYS INCLUDE A THOUGHT.
 
     def example_template(self):
+        # FEW-SHOT EXAMPLES:
         return """
-FEW-SHOT EXAMPLES:
 {fewshot_examples}
 """
 
     def history_template(self):
+        # CONVERSATION HISTORY:
         return """
-CONVERSATION HISTORY:
 {chat_history}
 """
 
