@@ -195,12 +195,17 @@ class RunAnswer():
 class ModelRun():
 
     def __init__(self):
-        self.current_journey = RunJourney()
+        self.run_journeys = []
         self.current_error = RunError()
         self.current_measure = RunMeasure()
 
+    def new_journey(self):
+        journey = RunJourney()
+        self.run_journeys.append(journey)
+        return journey
+
     def get_journey(self):
-        return self.current_journey
+        return self.run_journeys[-1]
 
     def get_error(self):
         return self.current_error

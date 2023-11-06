@@ -87,7 +87,7 @@ class PipelinedExecutor(ModelRun):
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
-        # self.context_values.set_scratchpad(self.run_journey)
+        self.context_values.set_scratchpad(self.new_journey())
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:
@@ -95,7 +95,7 @@ class PipelinedExecutor(ModelRun):
                 model_step, observation = None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
-                self.context_values.set_scratchpad(self.get_journey())
+                # self.context_values.set_scratchpad(self.get_journey())
                 model_start = time.time()
                 model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 model_end = time.time()
