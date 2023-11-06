@@ -186,9 +186,18 @@ class RunAnswer():
 class ModelRun():
 
     def __init__(self):
-        self.run_journey = RunJourney()
-        self.run_error = RunError()
-        self.run_measure = RunMeasure()
+        self.current_journey = RunJourney()
+        self.current_error = RunError()
+        self.current_measure = RunMeasure()
+
+    def run_journey(self):
+        return self.current_journey
+
+    def run_error(self):
+        return self.current_error
+
+    def run_measure(self):
+        return self.current_measure
 
 
 class ToolRun(ModelRun):
@@ -205,10 +214,10 @@ class ToolRun(ModelRun):
             input_len, output_len = len(str(query)), len(str(answer))
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()
-            self.run_measure.add_run(is_hallucination, input_len, output_len, 
-                                     model_end-model_start)
-            self.run_journey.add_run(model_step, model_step.get_answer()) 
+            self.run_measure().add_run(is_hallucination, input_len, output_len, 
+                                       model_end-model_start)
+            self.run_journey().add_run(model_step, model_step.get_answer()) 
         except Exception as e:
-                self.run_error.error_input(str(e), query)
-        return RunAnswer(model_step, self.run_journey, 
-                         self.run_error, self.run_measure)        
+                self.run_error().error_input(str(e), query)
+        return RunAnswer(model_step, self.run_journey(), 
+                         self.run_error(), self.run_measure())        

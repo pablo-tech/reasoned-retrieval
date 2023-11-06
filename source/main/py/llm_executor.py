@@ -87,6 +87,7 @@ class PipelinedExecutor(ModelRun):
 
     def invoke(self, user_query):
         self.context_values.set_question(user_query)
+        # self.context_values.set_scratchpad(self.run_journey)
         remain_iterations = self.max_iterations
 
         while remain_iterations > 0:
@@ -126,25 +127,25 @@ class PipelinedExecutor(ModelRun):
                                          model_end-model_start)
 
                 if isinstance(model_step, FinishStep):
-                        self.run_journey.add_run(model_step, model_step.get_answer()) 
-                        final_run = RunAnswer(model_step, self.run_journey, 
-                                          self.run_error, self.run_measure)
+                        self.run_journey().add_run(model_step, model_step.get_answer()) 
+                        final_run = RunAnswer(model_step, self.run_journey(), 
+                                              self.run_error(), self.run_measure())
                         self.llm_agent.get_memory().message_exchange(user_query, final_run.get_answer())             
                         if self.is_verbose:
                             print("\n\n" + "FINAL_" + str(final_run) + "\n\n")
                         return final_run
 
-                self.run_journey.add_run(model_step, observation)                
+                self.run_journey().add_run(model_step, observation)                
 
             except Exception as e:
-                self.run_error.error_input(str(e), observation)
+                self.run_error().error_input(str(e), observation)
 
             remain_iterations-=1
             if remain_iterations == 0:
                 if self.is_verbose:
                     print("TIMEOUT...")
                 timeout_run = RunAnswer(None, self.context_values.get_scratchpad(), 
-                                        self.run_error, self.run_measure)
+                                        self.run_error(), self.run_measure())
                 if self.is_verbose:
                     print("\n\n" + "FINAL_" + str(timeout_run) + "\n\n")                
                 return timeout_run
