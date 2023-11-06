@@ -175,11 +175,11 @@ class RunAnswer():
         s += " - RUN_ANSWER: " + str(self.get_answer()) + "\n"
         s += " - RUN_NORMAL: " + str(self.get_finish()) + "\n"
         s += " - RUN_JOURNEY: " + "\n"
-        s += self.run_journey.__str__().strip() + "\n"
+        s += self.run_journey().__str__().strip() + "\n"
         s += " - RUN_MEASURE => " + "\n"
-        s += self.run_measure.__str__() 
+        s += self.run_measure().__str__() 
         s += " - RUN_EXCEPTION => " + "\n"
-        s += self.run_error.__str__() + "\n"
+        s += self.run_error().__str__() + "\n"
         return s.strip()
     
 
