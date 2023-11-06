@@ -2,7 +2,6 @@ import time
 
 from llm_template import TemplateBank
 from tool_factory import ToolFactory
-from llm_template import ReactDescribe
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
 from llm_run import RunAnswer, ModelRun
