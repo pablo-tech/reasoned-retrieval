@@ -56,6 +56,12 @@ class ContextValues():
 
     def get_values(self):
         return self.template_vars
+    
+
+class ReducedContext(ContextValues):
+
+    def __init__(self):
+        super().__init__()
 
 
 class PipelinedExecutor(ModelRun):
