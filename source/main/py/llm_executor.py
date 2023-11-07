@@ -137,7 +137,7 @@ class PipelinedExecutor(ModelRun):
                 self.get_journey().add_run(model_step, observation)                
 
             except Exception as e:
-                self.get_error().error_input(str(e), observation)
+                self.get_error().error_input("EXECUTOR_ERROR=" + str(e), observation)
 
 
             remain_iterations-=1
