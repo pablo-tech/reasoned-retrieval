@@ -173,7 +173,7 @@ class PromptFactory(CompleteTemplate):
         return prompt_template
 
   
-  class ReactDescribe():
+class ReactDescribe():
 
     def __init__(self):
         pass
