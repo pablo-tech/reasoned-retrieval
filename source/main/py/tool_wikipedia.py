@@ -4,7 +4,7 @@ import wikipedia
 
 from llm_select import ToolSelect
 
-class WikipediaStore(ToolSelect):
+class WikipediaRetriever(ToolSelect):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -14,7 +14,7 @@ class WikipediaStore(ToolSelect):
         self.doc_store = wikipedia
 
 
-class WikipediaSearch(WikipediaStore):
+class WikipediaSearchReader(WikipediaRetriever):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
@@ -25,22 +25,6 @@ class WikipediaSearch(WikipediaStore):
     def select(self, query):
         results = self.subquery(query)
         return self.answer(self.summarize(results, query), query)
-
-    # def answer(self, results):
-    #     return [result for result in results]
-
-    # def summarize(self, results, k=5, n=5):
-    #     snippet = []
-    #     for result in results:
-    #       try:
-    #         snippet.append(self.doc_store.summary(result,
-    #                                               sentences=n))
-    #       except Exception as e:
-    #         # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
-    #         pass
-    #       if len(snippet) >= k:
-    #         return snippet
-    #     return snippet
 
     def subquery(self, query, k=5, n=5):
         results = []
@@ -62,7 +46,7 @@ class WikipediaSearch(WikipediaStore):
         return snippets
 
 
-class WikipediaLookup(WikipediaStore):
+class WikipediaLookupReader(WikipediaRetriever):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
@@ -97,10 +81,8 @@ class EncyclopediaToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        search = WikipediaSearch(self.completion_llm, self.is_verbose)
-        lookup = WikipediaLookup(self.completion_llm, self.is_verbose)
-        # wiki_search = WikipediaDocstoreSearch(self.completion_llm, self.is_verbose)
-        # wiki_lookup = WikipediaDocstoreLookup(self.completion_llm, self.is_verbose)
+        search = WikipediaSearchReader(self.completion_llm, self.is_verbose)
+        lookup = WikipediaLookupReader(self.completion_llm, self.is_verbose)
 
         return [
           Tool(

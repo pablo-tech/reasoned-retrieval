@@ -8,7 +8,7 @@ from serpapi import GoogleSearch
 from llm_select import ToolSelect
 
 
-class SerpEngine(SerpAPIWrapper):
+class SerpRetriever(SerpAPIWrapper):
 # https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/utilities/serpapi.py
     
     def __init__(self):
@@ -33,7 +33,7 @@ class SerpEngine(SerpAPIWrapper):
                 'device': 'desktop'}
     
 
-class SerpSearch(SerpEngine):
+class SerpReader(SerpRetriever):
 
     def __init__(self):
         super().__init__()
@@ -58,12 +58,17 @@ class SerpSearch(SerpEngine):
     def select(self, query):
         return self.configurable_results(query)
     
+    def subquery(self, query):
+        results = self.search_engine.select(query)
+        results = self.search_engine.organic(results)
+        return [result['snippet'] for result in results]
 
-class SearchSerpResult(ToolSelect):
+
+class SearchSerpReader(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("SERP", completion_llm, is_verbose)
-        self.search_engine = SerpSearch()
+        self.search_engine = SerpReader()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
@@ -73,18 +78,7 @@ class SearchSerpResult(ToolSelect):
     def select(self, query):
         results = self.subquery(query), query
         return self.answer(self.summarize(results, query), query)
-            
-    # def answer(self, results, query):
-    #     return [result for result in results]
-
-    # def summarize(self, results, query):
-    #     return [result for result in results]
-
-    def subquery(self, query):
-        results = self.search_engine.select(query)
-        results = self.search_engine.organic(results)
-        return [result['snippet'] for result in results]
-    
+                
 
 class SearchToolFactory():
 
@@ -93,7 +87,7 @@ class SearchToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        api = SearchSerpResult(self.completion_llm, self.is_verbose)
+        api = SearchSerpReader(self.completion_llm, self.is_verbose)
         return [
             Tool(
               name="Search",

@@ -18,7 +18,7 @@ class HotpotDataset(ToolRun):
             self.data = json.load(json_file) 
 
 
-class HotpotStore(HotpotDataset):
+class HotpotRetriever(HotpotDataset):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__(completion_llm, is_verbose)
@@ -27,24 +27,6 @@ class HotpotStore(HotpotDataset):
             contexts = example['context']
             contexts = ["".join(context[1]) for context in contexts]
             self.doc_store[example['question'].strip()] = contexts        
-
-
-class HotpotExample(HotpotStore):
-
-    def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
-
-    def run(self, tool_input, user_query):
-        return self.invoke(user_query, self.select)
-
-    def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
-
-    def answer(self, results):
-        return [result for result in results]
-
-    def summarize(self, results):
-        return [result for result in results]
 
     def subquery(self, query):
         try:
@@ -55,6 +37,19 @@ class HotpotExample(HotpotStore):
           return [error]
 
 
+class HotpotReader(HotpotRetriever):
+
+    def __init__(self, completion_llm, is_verbose):
+        super().__init__(completion_llm, is_verbose)
+
+    def run(self, tool_input, user_query):
+        return self.invoke(user_query, self.select)
+
+    def select(self, query):
+        results = self.subquery(query)
+        return self.answer(self.summarize(results, query), query)
+
+
 class HotpotToolFactory():
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -62,7 +57,7 @@ class HotpotToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        api = HotpotExample(self.completion_llm, self.is_verbose)
+        api = HotpotReader(self.completion_llm, self.is_verbose)
         return [
           Tool(
               name="Search",

@@ -5,10 +5,19 @@ from langchain.agents import Tool
 from llm_select import ToolSelect
 
 
-class ConversationAnswer(ToolSelect):
+class ConversationRetriever(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("CONVERSATION", completion_llm, is_verbose)
+
+    def subquery(self, txt):
+        return txt
+
+
+class ConversationReader(ConversationRetriever):
+
+    def __init__(self, completion_llm, is_verbose):
+        super().__init__(completion_llm, is_verbose)
 
     def run(self, tool_input):
         return self.invoke(tool_input, self.select)
@@ -17,9 +26,6 @@ class ConversationAnswer(ToolSelect):
         results = self.subquery(query)
         return self.answer(self.summarize(results, query), query)
     
-    def subquery(self, txt):
-        return txt
-
 
 class ConversationToolFactory():
 
@@ -28,7 +34,7 @@ class ConversationToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        api = ConversationAnswer(self.completion_llm, self.is_verbose)        
+        api = ConversationReader(self.completion_llm, self.is_verbose)        
         return [
             Tool(
               name="Message",

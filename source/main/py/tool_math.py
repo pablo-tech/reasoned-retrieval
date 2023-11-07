@@ -12,7 +12,7 @@ class CalculatorInput(BaseModel):
     question: str = Field()
 
 
-class MathAnswer(ToolSelect):
+class MathRetriever(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("MATH", completion_llm, is_verbose)
@@ -26,23 +26,6 @@ class MathAnswer(ToolSelect):
                 # coroutine= ... <- you can specify an async method if desired as well
         )
 
-    def run(self, tool_input, user_query=""):
-        return self.invoke(tool_input, self.select)
-    
-    def select(self, query):
-        results = self.subquery(query)
-        return self.answer(self.summarize(results, query), query)
-
-    # def answer(self, results):
-    #     return [result for result in results]
-    
-    # def summarize(self, results):
-    #     try:
-    #         return [eval(result.replace('Answer: ', '')) for result in results]
-    #     except:
-    #         pass
-    #     return []
-
     def subquery(self, query):
         results = [self.math_tool.run(query)]
         try:
@@ -50,6 +33,16 @@ class MathAnswer(ToolSelect):
         except:
             pass
         return results        
+
+
+class MathReader(MathRetriever):
+
+    def run(self, tool_input, user_query=""):
+        return self.invoke(tool_input, self.select)
+    
+    def select(self, query):
+        results = self.subquery(query)
+        return self.answer(self.summarize(results, query), query)
 
         
 class MathToolFactory():
@@ -59,7 +52,7 @@ class MathToolFactory():
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        api = MathAnswer(self.completion_llm, self.is_verbose) 
+        api = MathReader(self.completion_llm, self.is_verbose) 
         return [
             Tool(
               name="Calculate",
