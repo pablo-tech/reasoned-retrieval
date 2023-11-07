@@ -2,15 +2,15 @@ from langchain.agents import Tool
 from langchain import Wikipedia
 from langchain.agents.react.base import DocstoreExplorer
 
-from llm_run import ToolRun
+from llm_run import ToolSelect
 
 import wikipedia    
 
-class WikipediaStore(ToolRun):
+class WikipediaStore(ToolSelect):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose=False):
-        super().__init__()
+        super().__init__(completion_llm, is_verbose)
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.doc_store = wikipedia
@@ -25,30 +25,43 @@ class WikipediaSearch(WikipediaStore):
         return self.invoke(tool_input, self.select)
 
     def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
+        results = self.subquery(query)
+        return self.answer(self.summarize(results, query), query)
 
-    def answer(self, results):
-        return [result for result in results]
+    # def answer(self, results):
+    #     return [result for result in results]
 
-    def summarize(self, results, k=5, n=5):
-        snippet = []
-        for result in results:
-          try:
-            snippet.append(self.doc_store.summary(result,
-                                                  sentences=n))
-          except Exception as e:
-            # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
-            pass
-          if len(snippet) >= k:
-            return snippet
-        return snippet
+    # def summarize(self, results, k=5, n=5):
+    #     snippet = []
+    #     for result in results:
+    #       try:
+    #         snippet.append(self.doc_store.summary(result,
+    #                                               sentences=n))
+    #       except Exception as e:
+    #         # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
+    #         pass
+    #       if len(snippet) >= k:
+    #         return snippet
+    #     return snippet
 
-    def subquery(self, query):
+    def subquery(self, query, k=5, n=5):
+        results = []
         try:
-          return self.doc_store.search(query)
+          results = self.doc_store.search(query)
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
+        snippets = []
+        for result in results:
+          try:
+            snippets.append(self.doc_store.summary(result,
+                                                   sentences=n))
+          except Exception as e:
+            # print("SEARCH_SUMMARIZE_ERROR=" + str(e))
+            pass
+          if len(snippets) >= k:
+            return snippets
+        return snippets
 
 
 class WikipediaLookup(WikipediaStore):

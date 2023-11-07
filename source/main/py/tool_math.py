@@ -5,17 +5,17 @@ from langchain.agents import Tool
 
 from pydantic import BaseModel, Field
 
-from llm_run import ToolRun
+from llm_run import ToolSelect
 
 
 class CalculatorInput(BaseModel):
     question: str = Field()
 
 
-class MathAnswer(ToolRun):
+class MathAnswer(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__()
+        super().__init__(completion_llm, is_verbose)
         self.math_engine = LLMMathChain(llm=completion_llm, 
                                         verbose=is_verbose)
         self.math_tool = Tool.from_function(
@@ -30,20 +30,26 @@ class MathAnswer(ToolRun):
         return self.invoke(tool_input, self.select)
     
     def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
+        results = self.subquery(query)
+        return self.answer(self.summarize(results, query), query)
 
-    def answer(self, results):
-        return [result for result in results]
+    # def answer(self, results):
+    #     return [result for result in results]
     
-    def summarize(self, results):
+    # def summarize(self, results):
+    #     try:
+    #         return [eval(result.replace('Answer: ', '')) for result in results]
+    #     except:
+    #         pass
+    #     return []
+
+    def subquery(self, query):
+        results = [self.math_tool.run(query)]
         try:
             return [eval(result.replace('Answer: ', '')) for result in results]
         except:
             pass
-        return []
-
-    def subquery(self, query):
-        return [self.math_tool.run(query)]
+        return results        
 
         
 class MathToolFactory():

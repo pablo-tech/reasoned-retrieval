@@ -5,7 +5,7 @@ from langchain.agents import Tool
 from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
-from llm_run import ToolRun
+from llm_run import ToolSelect
 
 
 class SerpEngine(SerpAPIWrapper):
@@ -59,10 +59,10 @@ class SerpSearch(SerpEngine):
         return self.configurable_results(query)
     
 
-class SearchSerpResult(ToolRun):
+class SearchSerpResult(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__()
+        super().__init__(completion_llm, is_verbose)
         self.search_engine = SerpSearch()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -71,17 +71,19 @@ class SearchSerpResult(ToolRun):
         return self.invoke(tool_input, self.select)
     
     def select(self, query):
-        return self.answer(self.summarize(self.subquery(query)))
+        results = self.subquery(query), query
+        return self.answer(self.summarize(results, query))
             
-    def answer(self, results):
-        return [result for result in results]
+    # def answer(self, results, query):
+    #     return [result for result in results]
 
-    def summarize(self, results):
-        return [result['snippet'] for result in results]
+    # def summarize(self, results, query):
+    #     return [result for result in results]
 
     def subquery(self, query):
-        selected = self.search_engine.select(query)
-        return self.search_engine.organic(selected)
+        results = self.search_engine.select(query)
+        results = self.search_engine.organic(results)
+        return [result['snippet'] for result in results]
     
 
 class SearchToolFactory():
