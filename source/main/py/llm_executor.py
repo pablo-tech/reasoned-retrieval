@@ -137,7 +137,8 @@ class PipelinedExecutor(ModelRun):
                 self.get_journey().add_run(model_step, observation)                
 
             except Exception as e:
-                self.get_error().error_input("EXECUTOR_ERROR=" + str(e), observation)
+                self.get_error().error_input("EXECUTOR_ERROR=" + str(e) + "\nCONTEXT=>" + str(self.context_values), 
+                                             observation)
 
 
             remain_iterations-=1
@@ -147,8 +148,8 @@ class PipelinedExecutor(ModelRun):
                     print("TIMEOUT...")
                 timeout_run = RunAnswer(None, self.context_values.get_scratchpad(), 
                                         self.get_error(), self.get_measure(), self.get_name())
-                if self.is_verbose:
-                    print("\n\n" + "FINAL_" + str(timeout_run) + "\n\n")                
+                # if self.is_verbose:
+                #     print("\n\n" + str(timeout_run) + "\n\n")                
                 return timeout_run
             
 
