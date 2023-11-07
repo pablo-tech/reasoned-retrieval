@@ -2,7 +2,7 @@ from langchain.schema.messages import AIMessage
 from langchain.prompts.base import StringPromptValue
 
 from llm_memory import LlmMemory
-from llm_template import PromptFactory
+from react_template import PromptFactory
 from react_parser import OptimisticParser
 from tool_factory import ToolFactory
 

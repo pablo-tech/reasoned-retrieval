@@ -1,6 +1,6 @@
 import time
 
-from llm_template import TemplateBank
+from react_template import TemplateBank
 from tool_factory import ToolFactory
 from llm_memory import LlmMemory
 from llm_agent import AgentFactory
