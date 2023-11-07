@@ -2,11 +2,11 @@ import json
 
 from langchain.agents import Tool
 
-from llm_run import ToolRun
+from llm_run import ToolSelect
 
     
 
-class HotpotDataset(ToolRun):
+class HotpotDataset(ToolSelect):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose):
