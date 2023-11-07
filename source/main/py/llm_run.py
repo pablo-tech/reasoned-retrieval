@@ -182,7 +182,7 @@ class RunAnswer():
         return self.run_error
 
     def get_name(self):
-        return self.run_name()
+        return self.run_name
     
     def __str__(self):
         s = self.get_name() + "_RUN_DETAIL=>" + "\n"
