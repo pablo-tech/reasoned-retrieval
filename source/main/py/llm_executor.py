@@ -96,7 +96,7 @@ class PipelinedExecutor(ModelRun):
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.get_journey())
                 model_start = time.time()
-                model_step, input_len, output_len = self.llm_agent.invoke(self.context_values)
+                model_step, prompt_str, input_len, output_len = self.llm_agent.invoke(self.context_values)
                 model_end = time.time()
 
                 # if self.is_verbose:
@@ -137,7 +137,7 @@ class PipelinedExecutor(ModelRun):
                 self.get_journey().add_run(model_step, observation)                
 
             except Exception as e:
-                self.get_error().error_input("EXECUTOR_ERROR=" + str(e) + "\nCONTEXT=>" + str(self.context_values), 
+                self.get_error().error_input("EXECUTOR_ERROR=" + str(e) + "\nCONTEXT=>" + str(prompt_str), 
                                              observation)
 
 

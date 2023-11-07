@@ -35,7 +35,7 @@ class PipelinedAgent():
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
         input_len = len(prompt.to_string())
-        print("\n\nFILLED_PROMPT=>"+self.filled_str(prompt) + "\n\n")
+        # print("\n\nFILLED_PROMPT=>"+self.filled_str(prompt) + "\n\n")
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
             inferred = inferred.content
@@ -45,7 +45,7 @@ class PipelinedAgent():
         agent_step = self.agent_parser.parse(inferred)
         # if self.is_verbose:
         #     print("\nPARSED=>"+str(agent_step)+"\n\n")
-        return agent_step, input_len, output_len
+        return agent_step, self.prompt_str(prompt), input_len, output_len
 
     def filled_prompt(self, incomplete_prompt, context_values):
         return incomplete_prompt.invoke(context_values.get_values())
@@ -74,7 +74,7 @@ class PipelinedAgent():
     def get_memory(self):
         return self.agent_memory
 
-    def filled_str(self, prompt):
+    def prompt_str(self, prompt):
         if not isinstance(prompt, StringPromptValue):
             s = ""
             for m in prompt.messages:
