@@ -45,7 +45,7 @@ class PipelinedAgent():
         agent_step = self.agent_parser.parse(inferred)
         # if self.is_verbose:
         #     print("\nPARSED=>"+str(agent_step)+"\n\n")
-        return agent_step, self.prompt_str(prompt), input_len, output_len
+        return agent_step, prompt.to_string(), input_len, output_len
 
     def filled_prompt(self, incomplete_prompt, context_values):
         return incomplete_prompt.invoke(context_values.get_values())
@@ -74,13 +74,13 @@ class PipelinedAgent():
     def get_memory(self):
         return self.agent_memory
 
-    def prompt_str(self, prompt):
-        if not isinstance(prompt, StringPromptValue):
-            s = ""
-            for m in prompt.messages:
-              s += m.content
-            return s
-        return str(prompt.text)    
+    # def prompt_str(self, prompt):
+    #     if not isinstance(prompt, StringPromptValue):
+    #         s = ""
+    #         for m in prompt.messages:
+    #           s += m.content
+    #         return s
+    #     return str(prompt.text)    
 
 
 class AgentFactory():
