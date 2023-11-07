@@ -10,7 +10,7 @@ class HotpotDataset(ToolRun):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__()
+        super().__init__("HOTPOT")
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         hotpot_train = '/content/drive/MyDrive/StanfordLLM/hotpot_qa/hotpot_train_v1.1.json'

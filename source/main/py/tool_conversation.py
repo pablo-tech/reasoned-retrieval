@@ -8,7 +8,7 @@ from llm_select import ToolSelect
 class ConversationAnswer(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
+        super().__init__("CONVERSATION", completion_llm, is_verbose)
 
     def run(self, tool_input):
         return self.invoke(tool_input, self.select)

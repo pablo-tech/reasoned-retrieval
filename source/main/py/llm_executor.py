@@ -72,7 +72,7 @@ class PipelinedExecutor(ModelRun):
                  max_execution_time,
                  agent_stop=["Observation"],
                  is_verbose=False):
-        super().__init__()
+        super().__init__("EXECUTOR")
         # save
         self.llm_agent = llm_agent
         self.llm_agent.set_stop(agent_stop)

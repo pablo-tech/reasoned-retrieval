@@ -15,7 +15,7 @@ class CalculatorInput(BaseModel):
 class MathAnswer(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
+        super().__init__("MATH", completion_llm, is_verbose)
         self.math_engine = LLMMathChain(llm=completion_llm, 
                                         verbose=is_verbose)
         self.math_tool = Tool.from_function(

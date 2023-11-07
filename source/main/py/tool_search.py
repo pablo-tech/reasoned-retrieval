@@ -62,7 +62,7 @@ class SerpSearch(SerpEngine):
 class SearchSerpResult(ToolSelect):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
+        super().__init__("SERP", completion_llm, is_verbose)
         self.search_engine = SerpSearch()
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose

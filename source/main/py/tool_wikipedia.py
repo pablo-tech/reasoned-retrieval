@@ -8,7 +8,7 @@ class WikipediaStore(ToolSelect):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose=False):
-        super().__init__(completion_llm, is_verbose)
+        super().__init__("WIKIPEDIA", completion_llm, is_verbose)
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.doc_store = wikipedia

@@ -194,10 +194,11 @@ class RunAnswer():
 
 class ModelRun():
 
-    def __init__(self):
+    def __init__(self, model_name):
         self.current_error = RunError()
         self.current_measure = RunMeasure()
         self.run_journeys = []
+        self.model_name = model_name
 
     def new_journey(self):
         self.run_journeys.append(RunJourney())
@@ -210,12 +211,15 @@ class ModelRun():
 
     def get_measure(self):
         return self.current_measure
+    
+    def get_name(self):
+        return self.model_name
 
 
 class ToolRun(ModelRun):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, model_name):
+        super().__init__(model_name)
         self.new_journey()
 
     def invoke(self, query, func):
@@ -231,7 +235,7 @@ class ToolRun(ModelRun):
                                        model_end-model_start)
             self.get_journey().add_run(model_step, model_step.get_answer()) 
         except Exception as e:
-                self.get_error().error_input("TOOL_RUN_ERROR" + str(e), query)
+                self.get_error().error_input(self.get_name() + "_RUN_ERROR" + str(e), query)
         return RunAnswer(model_step, self.get_journey(), 
                          self.get_error(), self.get_measure()) 
 
