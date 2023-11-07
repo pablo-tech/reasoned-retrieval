@@ -35,8 +35,7 @@ class PipelinedAgent():
         # print("\nINCOMPLETE_PROMPT=>"+str(prompt))
         prompt = self.filled_prompt(prompt, executor_input)
         input_len = len(prompt.to_string())
-        # if self.is_verbose:
-        # print("\n\nFILLED_PROMPT=>"+self.filled_str(prompt) + "\n\n")
+        print("\n\nFILLED_PROMPT=>"+self.filled_str(prompt) + "\n\n")
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
             inferred = inferred.content
