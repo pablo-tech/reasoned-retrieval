@@ -142,12 +142,14 @@ class RunAnswer():
 
     def __init__(self, 
                 run_step, run_journey, 
-                run_error, run_measure):
+                run_error, run_measure,
+                run_name):
         ### save
         self.agent_answer = None
         self.run_journey = run_journey
         self.run_error = run_error
         self.run_measure = run_measure
+        self.run_name = run_name
         ### summarize
         self.is_finish = False
         self.log = ''
@@ -179,8 +181,11 @@ class RunAnswer():
     def get_error(self):
         return self.run_error
 
+    def get_name(self):
+        return self.run_name()
+    
     def __str__(self):
-        s = "RUN_DETAIL=>" + "\n"
+        s = self.get_name() + "_RUN_DETAIL=>" + "\n"
         s += " - RUN_ANSWER: " + str(self.get_answer()) + "\n"
         s += " - RUN_NORMAL: " + str(self.get_finish()) + "\n"
         s += " - RUN_JOURNEY: " + "\n"
@@ -237,6 +242,6 @@ class ToolRun(ModelRun):
         except Exception as e:
                 self.get_error().error_input(self.get_name() + "_RUN_ERROR" + str(e), query)
         return RunAnswer(model_step, self.get_journey(), 
-                         self.get_error(), self.get_measure()) 
+                         self.get_error(), self.get_measure(), self.get_name()) 
 
        

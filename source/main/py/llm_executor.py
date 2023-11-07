@@ -128,10 +128,10 @@ class PipelinedExecutor(ModelRun):
                 if isinstance(model_step, FinishStep):
                         self.get_journey().add_run(model_step, model_step.get_answer()) 
                         final_run = RunAnswer(model_step, self.get_journey(), 
-                                              self.get_error(), self.get_measure())
+                                              self.get_error(), self.get_measure(), self.get_name())
                         self.llm_agent.get_memory().message_exchange(user_query, final_run.get_answer())             
                         if self.is_verbose:
-                            print("\n\n" + "FINAL_" + str(final_run) + "\n\n")
+                            print("\n\n" + str(final_run) + "\n\n")
                         return final_run
 
                 self.get_journey().add_run(model_step, observation)                
@@ -146,7 +146,7 @@ class PipelinedExecutor(ModelRun):
                 if self.is_verbose:
                     print("TIMEOUT...")
                 timeout_run = RunAnswer(None, self.context_values.get_scratchpad(), 
-                                        self.get_error(), self.get_measure())
+                                        self.get_error(), self.get_measure(), self.get_name())
                 if self.is_verbose:
                     print("\n\n" + "FINAL_" + str(timeout_run) + "\n\n")                
                 return timeout_run
