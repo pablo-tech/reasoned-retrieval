@@ -1,10 +1,8 @@
 from langchain.agents import Tool
-from langchain import Wikipedia
-from langchain.agents.react.base import DocstoreExplorer
-
-from llm_run import ToolSelect
 
 import wikipedia    
+
+from llm_select import ToolSelect
 
 class WikipediaStore(ToolSelect):
     # https://pypi.org/project/wikipedia/
