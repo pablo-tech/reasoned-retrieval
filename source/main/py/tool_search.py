@@ -72,7 +72,7 @@ class SearchSerpResult(ToolSelect):
     
     def select(self, query):
         results = self.subquery(query), query
-        return self.answer(self.summarize(results, query))
+        return self.answer(self.summarize(results, query), query)
             
     # def answer(self, results, query):
     #     return [result for result in results]
