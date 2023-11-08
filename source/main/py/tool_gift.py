@@ -80,7 +80,7 @@ class GiftDataset():
         return self.raw_data
 
 
-class GiftClean():
+class GiftClean(GiftDataset):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__()
@@ -91,6 +91,9 @@ class GiftClean():
             if isinstance(completion_llm, ChatOpenAI):
                 clean = clean.content
             self.clean_data.append(json.loads(clean))        
+
+    def get_clean(self):
+        return self.clean_data
 
 
 class GiftRetriever():
