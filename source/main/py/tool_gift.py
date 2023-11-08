@@ -65,8 +65,8 @@ Summarize this product in a flat JSON
 class GiftDataset():
 
     def __init__(self, 
-                 dir_path="/content/drive/MyDrive/TataLLM/GiftReader/",
-                 n=None):
+                 n,
+                 dir_path="/content/drive/MyDrive/TataLLM/GiftReader/"):
         file_names = JsonReader.list_files(dir_path)
         files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
         self.raw_data = []
@@ -82,8 +82,8 @@ class GiftDataset():
 
 class GiftClean(GiftDataset):
 
-    def __init__(self, completion_llm, is_verbose):
-        super().__init__()
+    def __init__(self, n, completion_llm, is_verbose):
+        super().__init__(n)
         summarizer = GiftSummarizer(completion_llm, is_verbose)
         self.clean_data = []
         for item in self.get_raw():  
