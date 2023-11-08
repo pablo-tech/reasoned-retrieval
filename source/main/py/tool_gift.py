@@ -75,6 +75,7 @@ class GiftDataset():
               self.raw_data.append(item)
         if n is not None and len(self.raw_data) > n:
             self.raw_data = self.raw_data[:n]
+        print("raw_length=" + str(len(self.raw_data)))
 
     def get_raw(self):
         return self.raw_data
