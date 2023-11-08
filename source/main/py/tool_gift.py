@@ -91,10 +91,17 @@ class GiftClean(GiftDataset):
             clean = summarizer.item_summary(str(item))
             if isinstance(completion_llm, ChatOpenAI):
                 clean = clean.content
-            self.clean_data.append(json.loads(clean))        
+            self.clean_data.append(json.loads(clean))  
+        self.data_store = self.get_store(self.clean_data)
 
     def get_clean(self):
         return self.clean_data
+    
+    def get_store(self):
+        return { k['title']: v for k, v in self.get_clean()}
+    
+    def get_product(self, title_txt):
+        return self.data_store[title_txt]
 
 
 class GiftRetriever():
