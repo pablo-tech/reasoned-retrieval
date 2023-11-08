@@ -37,31 +37,24 @@ class JsonReader():
         return files
 
 
+class GiftSummary():
+    
+    def summary_instruction():
+        return """
+You are an AI that summarizes complex JSON objects.
+"""
+
+
 class GiftDataset():
 
     def __init__(self, dir_path="/content/drive/MyDrive/TataLLM/GiftReader/"):
         file_names = JsonReader.list_files(dir_path)
-        self.category_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
-        self.data = []
-        for category in self.category_data:
-            for item in category['results']:
-                self.data.append(item)
+        files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
+        self.raw_data = []
+        for file_data in files_data:
+            for item in file_data:
+              self.raw_data.append(item)
                 
-        # print(file_names)
-
-    # def get_master(self):
-    #     return self.data
-
-    # def get_example(self):
-    #     # return GiftReader.get_example(master_json[0][1])        
-    #     pass
-
-class GiftTemplate():
-    
-    def get_instruction():
-        return """
-You are an AI that summarizes complex JSON objects.
-"""
 
 
 class GiftRetriever():
