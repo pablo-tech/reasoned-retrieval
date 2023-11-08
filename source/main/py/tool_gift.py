@@ -47,13 +47,17 @@ You are an AI that summarizes complex JSON objects.
 
 class GiftDataset():
 
-    def __init__(self, dir_path="/content/drive/MyDrive/TataLLM/GiftReader/"):
+    def __init__(self, 
+                 dir_path="/content/drive/MyDrive/TataLLM/GiftReader/",
+                 n=None):
         file_names = JsonReader.list_files(dir_path)
         files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
         self.raw_data = []
         for file_data in files_data:
             for item in file_data:
               self.raw_data.append(item)
+        if n is not None and len(self.raw_data) > n:
+            self.raw_data = self.raw_data[:n]
                 
 
 
