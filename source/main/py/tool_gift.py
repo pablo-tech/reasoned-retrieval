@@ -98,7 +98,7 @@ class GiftClean(GiftDataset):
         return self.clean_data
     
     def get_store(self):
-        return { k['title']: v for k, v in self.get_clean()}
+        return { item['title']: item for item in self.get_clean()}
     
     def get_product(self, title_txt):
         return self.data_store[title_txt]
