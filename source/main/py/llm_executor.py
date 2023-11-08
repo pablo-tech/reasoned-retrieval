@@ -91,7 +91,7 @@ class PipelinedExecutor(ModelRun):
 
         while remain_iterations > 0:
             try:
-                model_step, observation = None, None
+                model_step, observation, prompt_str = None, None, None
                 is_hallucination = False
                 self.context_values.set_history(self.llm_agent.get_memory().__str__())
                 self.context_values.set_scratchpad(self.get_journey())
