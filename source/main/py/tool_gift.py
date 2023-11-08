@@ -508,7 +508,7 @@ class JsonReader():
         return files
 
 
-class GiftDataset():
+class GiftInit():
 
     def read_data(self, dir_path="./"):
         ### FILES
