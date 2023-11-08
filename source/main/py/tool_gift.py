@@ -1,6 +1,8 @@
 import os
 import json
     
+from langchain.chat_models import ChatOpenAI
+
 
 class JsonReader():
 
@@ -73,7 +75,22 @@ class GiftDataset():
               self.raw_data.append(item)
         if n is not None and len(self.raw_data) > n:
             self.raw_data = self.raw_data[:n]
-                
+
+    def get_raw(self):
+        return self.raw_data
+
+
+class GiftClean():
+
+    def __init__(self, completion_llm, is_verbose):
+        super().__init__()
+        summarizer = GiftSummarizer(completion_llm, is_verbose)
+        self.clean_data = []
+        for item in self.get_raw():  
+            clean = summarizer.item_summary(str(item))
+            if isinstance(completion_llm, ChatOpenAI):
+                clean = clean.content
+            self.clean_data.append(json.loads(clean))        
 
 
 class GiftRetriever():
