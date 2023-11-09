@@ -29,17 +29,6 @@ class DomainDataset():
     def __init__(self, dir_path):
         file_names = JsonReader.list_files(dir_path)
         self.corpus = self.read_corpus(dir_path, file_names)
-        # files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
-        # self.raw_data = []
-        # for file_data in files_data:
-        #     for item in file_data:
-        #       self.raw_data.append(item)
-        # if n is not None and len(self.raw_data) > n:
-        #     self.raw_data = self.raw_data[:n]
-        # print("raw_length=" + str(len(self.raw_data)))
-
-    def get_corpus(self):
-        return self.corpus
 
     def read_corpus(self, dir_path, file_names):
         print("\n\n" + "|| ")
@@ -52,3 +41,9 @@ class DomainDataset():
             file_corpus = JsonReader.read_file(file_name, dir_path)
             corpus[file_name] = file_corpus
         return corpus
+    
+    def subdomain_names(self):
+        return self.corpus.keys()
+    
+    def subdomain_items(self, domain_name):
+        return self.corpus[domain_name]
