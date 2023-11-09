@@ -4,9 +4,8 @@ import uuid
 from collections import defaultdict
 from flatten_json import flatten
 
-from langchain.chat_models import ChatOpenAI
-
-from helper_index import JsonFlatner
+# from langchain.chat_models import ChatOpenAI
+# from helper_index import JsonFlatner
 
 
 class JsonReader():
