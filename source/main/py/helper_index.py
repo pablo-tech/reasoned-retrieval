@@ -64,7 +64,8 @@ Answer: ['150 Square Feet', '5000 BTU']
 
     def objective_summary(self, item_txt, examples_txt, objective_txt):
         context = self.system_instruction(objective_txt) + "\n" 
-        context += item_txt+ "\n" 
+        context += examples_txt
+        context += "Question:" + item_txt+ "\n" 
         context += self.context_question(objective_txt)
         return self.completion_llm.invoke(context)
 
