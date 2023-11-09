@@ -21,7 +21,7 @@ class DomainDatasets():
         return self.data_sets
     
     
-class DialogueState():
+class DialogueState(DomainDatasets):
 
     def __init__(self, n, completion_llm, is_verbose):
         super().__init__()
@@ -40,7 +40,7 @@ class DialogueState():
             for key, item in subdomain_corpus.items():
                 self.raw_data[key] = item
                 self.domain_raw[subdomain_name].append(item)
-                if len(self.raw_data) > self.n:
+                if len(self.domain_clean) > self.n:
                     return
                 try:
                     flat = self.flatten_json(item)
