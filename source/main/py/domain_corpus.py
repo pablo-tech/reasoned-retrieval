@@ -58,7 +58,7 @@ class GiftDataset(DomainDataset):
     def get_corpus(self, domain_name):
         corpus = {}
         for item in self.subdomain_corpus(domain_name)['results']:
-            corpus[uuid.uuid5()] = item
+            corpus[uuid.uuid1()] = item
         return corpus
 
 
