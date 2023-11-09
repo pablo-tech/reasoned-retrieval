@@ -116,7 +116,7 @@ class DomainIngestion(DomainDatasets):
         for subdomain_name in dataset.get_subdomains():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
             for key, item in subdomain_corpus.items():
-                if i >= self.n:
+                if self.n is not None and i >= self.n:
                     return
                 self.raw_data[key] = item
                 self.domain_raw[subdomain_name].append(item)
@@ -124,13 +124,13 @@ class DomainIngestion(DomainDatasets):
                     flat = self.flatten_json(item)
                     self.domain_clean[subdomain_name].append(flat)
                     i += 1
+                    print("...")
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(item))
 
     def flatten_json(self, item):
         flatner = JsonFlatner(self.completion_llm, self.is_verbose)
         clean = flatner.item_summary(str(item))
-        print("...")
         if isinstance(self.completion_llm, ChatOpenAI):
             clean = clean.content
         return json.loads(clean)
