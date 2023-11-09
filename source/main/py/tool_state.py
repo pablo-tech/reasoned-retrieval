@@ -19,6 +19,9 @@ class DialogueState():
         for dataset in [gift_data, tv_data, ac_data]:
             for name in dataset.get_subdomains():
                 corpus = dataset.get_corpus(name)
+                items = corpus.values()
+                if len(items) > n:
+                    items = items[:n]
                 self.raw_data.extend(corpus.values())
         # self.clean_data = self.flatten_data(raw_data)
 
