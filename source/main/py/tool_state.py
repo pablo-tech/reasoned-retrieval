@@ -19,8 +19,8 @@ class DialogueState():
         ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         self.raw_data = defaultdict(list)
         for dataset in [gift_data, tv_data, ac_data]:
-            i = 0
             for name in dataset.get_subdomains():
+                i = 0
                 corpus = dataset.get_corpus(name)
                 for item in corpus.values():
                     if i < n:
