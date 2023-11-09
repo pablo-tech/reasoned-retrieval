@@ -3,7 +3,7 @@ import json
     
 from langchain.chat_models import ChatOpenAI
 
-from helper_flatten import JsonFlatner
+from helper_index import JsonFlatner
 
 
 class JsonReader():
