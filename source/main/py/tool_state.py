@@ -17,13 +17,13 @@ class DialogueState():
         ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         self.raw_data = {}
         for dataset in [gift_data, tv_data, ac_data]:
+            i = 0
             for name in dataset.get_subdomains():
                 corpus = dataset.get_corpus(name)
-                i = 0
                 for k, v in corpus.items():
                     if i < n:
                         self.raw_data[k] = v
-                    i += 1
+                        i += 1
         # self.clean_data = self.flatten_data(raw_data)
 
     def flatten_data(self, domain_data):
