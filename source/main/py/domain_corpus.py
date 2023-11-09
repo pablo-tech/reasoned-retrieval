@@ -1,6 +1,8 @@
 import os, json
 import uuid
 
+from collections import defaultdict
+
 from langchain.chat_models import ChatOpenAI
 
 from helper_index import JsonFlatner
@@ -82,9 +84,6 @@ class AcDataset(DomainDataset):
 
     def get_corpus(self, domain_name):
         return self.subdomain_corpus(domain_name)
-
-
-from collections import defaultdict
 
 
 class DomainDatasets():
