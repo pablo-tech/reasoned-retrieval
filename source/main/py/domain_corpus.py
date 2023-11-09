@@ -122,9 +122,8 @@ class DomainDatasets():
     
 class DomainIngestion(DomainDatasets):
 
-    def __init__(self, n, completion_llm, is_verbose):
+    def __init__(self, completion_llm, is_verbose):
         super().__init__()
-        self.n = n
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.raw_data = {}
@@ -137,20 +136,15 @@ class DomainIngestion(DomainDatasets):
                 print("INGESTION_ERROR="+ str(e))
 
     def ingest_dataset(self, dataset):
-        i = 0
         for subdomain_name in dataset.get_subdomains():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
             for key, item in subdomain_corpus.items():
-                if self.n is not None and i >= self.n:
-                    return
                 try:
                     clean = self.shorten_json(flatten(eval(item)))
                     if DatasetValidation.is_valid_json(clean):
                         self.raw_data[key] = item
                         self.domain_raw[subdomain_name].append(item)
                         self.domain_clean[subdomain_name].append(clean)
-                        i += 1
-                        print("...")
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
     
