@@ -41,7 +41,7 @@ class DomainDataset():
     def get_corpus(self):
         return self.corpus
 
-    def read_corpus(dir_path, file_names):
+    def read_corpus(self, dir_path, file_names):
         print("\n\n" + "|| ")
         print("|| READ CORPUS")
         print("||")
