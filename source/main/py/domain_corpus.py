@@ -3,8 +3,8 @@ import uuid
 
 from collections import defaultdict
 
-from pandas.io.json import json_normalize
-# from flatten_json import flatten
+# from pandas.io.json import json_normalize
+from flatten_json import flatten
 
 # from langchain.chat_models import ChatOpenAI
 # from helper_index import JsonFlatner
@@ -159,11 +159,12 @@ class DomainIngestion(DomainDatasets):
                         i += 1
                         print("...")
                 except Exception as e:
-                    print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
+                    pass 
+                    # print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
 
     def flatten_json(self, item):
-        return json_normalize(item)
-        # return flatten(item)
+        return flatten(item)
+        # return json_normalize(item)
         # flatner = JsonFlatner(self.completion_llm, self.is_verbose)
         # clean = flatner.item_summary(str(item))
         # if isinstance(self.completion_llm, ChatOpenAI):
