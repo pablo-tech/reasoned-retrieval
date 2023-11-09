@@ -35,6 +35,7 @@ class DialogueState():
     def flatten_json(self, item):
         flatner = JsonFlatner(self.completion_llm, self.is_verbose)
         clean = flatner.item_summary(str(item))
+        print("...")
         if isinstance(self.completion_llm, ChatOpenAI):
             clean = clean.content
         return json.loads(clean)
