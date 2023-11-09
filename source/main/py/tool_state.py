@@ -40,13 +40,13 @@ class DialogueState(DomainDatasets):
             for key, item in subdomain_corpus.items():
                 self.raw_data[key] = item
                 self.domain_raw[subdomain_name].append(item)
-                if len(self.domain_clean) > self.n:
-                    return
                 try:
                     flat = self.flatten_json(item)
                     self.domain_clean[subdomain_name].append(flat)
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(item))
+                if len(self.raw_data) > self.n:
+                    return
 
     def flatten_json(self, item):
         flatner = JsonFlatner(self.completion_llm, self.is_verbose)
