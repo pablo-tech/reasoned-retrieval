@@ -26,7 +26,7 @@ class JsonReader():
 
 class DomainDataset():
 
-    def __init__(self, n, dir_path):
+    def __init__(self, dir_path):
         file_names = JsonReader.list_files(dir_path)
         self.corpus = self.read_corpus(dir_path, file_names)
         # files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
@@ -52,17 +52,3 @@ class DomainDataset():
             file_corpus = JsonReader.read_file(file_name, dir_path)
             corpus.update(file_corpus)
         return corpus
-
-
-    # def read_corpus(self, dir_path="./"):
-    #     ### FILES
-    #     if self.is_test:
-    #         file_names=["test.json"]
-    #     else:
-    #         file_names = JsonReader.list_files(dir_path)
-
-    #     ### DATA
-    #     json_corpus = JsonReader.read_corpus(dir_path, file_names)
-    #     example_corpus = self.example_reader.read_examples(json_corpus)
-    #     LogMessage.write("content_length=" + str(len(json_corpus)))
-    #     LogMessage.write("example_length=" + str(len(example_corpus)))

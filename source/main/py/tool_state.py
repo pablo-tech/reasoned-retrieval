@@ -10,12 +10,23 @@ from domain_corpus import DomainDataset
 class DialogueState():
 
     def __init__(self, n, completion_llm, is_verbose):
-        gift_data = DomainDataset(n, dir_path="/content/drive/MyDrive/TataLLM/GiftReader/")
-        flatner = JsonFlatner(completion_llm, is_verbose)
-        self.clean_data = []
-        for item in gift_data.get_raw():  
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
+        gift_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
+        tv_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
+        ac_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
+        raw_data = []
+        for data in [gift_data, tv_data, ac_data]:
+            raw_data.extend(data.values())
+        if n is not None and n < len(raw_data):
+            raw_data = raw_data[:n]
+        self.clean_data = self.flatten_data(raw_data)
+
+    def flatten_data(self, domain_data):
+        flatner = JsonFlatner(self.completion_llm, self.is_verbose)
+        for item in domain_data:  
             clean = flatner.item_summary(str(item))
-            if isinstance(completion_llm, ChatOpenAI):
+            if isinstance(self.completion_llm, ChatOpenAI):
                 clean = clean.content
             self.clean_data.append(json.loads(clean))  
         self.data_store = self.get_store()
