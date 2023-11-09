@@ -24,7 +24,7 @@ class DialogueState():
             for name in dataset.get_subdomains():
                 i = 0
                 corpus = dataset.get_corpus(name)
-                for key, item in corpus.values():
+                for key, item in corpus.items():
                     self.raw_data[key].append(item)
                     if i < n:
                         self.domain_raw[name].append(item)
