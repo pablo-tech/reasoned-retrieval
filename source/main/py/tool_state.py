@@ -16,12 +16,10 @@ class DialogueState():
         tv_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
         ac_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         self.raw_data = []
-        for data_set in [gift_data, tv_data, ac_data]:
-            for subdomain_name in data_set.subdomain_names():
-                item_dict = data_set.subdomain_items(subdomain_name)
-                self.raw_data.extend(item_dict.values())
-        if n is not None and n < len(self.raw_data):
-            self.raw_data = self.raw_data[:n]
+        for dataset in [gift_data, tv_data, ac_data]:
+            for name in dataset.subdomain_names():
+                corpus = dataset.subdomain_corpus(name)
+                self.raw_data.extend(corpus.values())
         # self.clean_data = self.flatten_data(raw_data)
 
     def flatten_data(self, domain_data):

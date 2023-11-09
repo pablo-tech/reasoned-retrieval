@@ -45,5 +45,5 @@ class DomainDataset():
     def subdomain_names(self):
         return self.corpus.keys()
     
-    def subdomain_items(self, domain_name):
+    def subdomain_corpus(self, domain_name):
         return self.corpus[domain_name]
