@@ -17,7 +17,7 @@ class DialogueState():
         ac_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         raw_data = []
         for data_set in [gift_data, tv_data, ac_data]:
-            raw_data.extend(data_set.get_corpus.values())
+            raw_data.extend(data_set.get_corpus().values())
         if n is not None and n < len(raw_data):
             raw_data = raw_data[:n]
         self.clean_data = self.flatten_data(raw_data)
