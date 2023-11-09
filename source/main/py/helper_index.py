@@ -40,7 +40,6 @@ What {objective_txt} are present in this text?
 """
 
     def objective_summary(self, item_txt, objective_txt):
-        objective_txt = "noun"
         context = self.system_instruction(objective_txt) + "\n" 
         context += item_txt+ "\n" 
         context += self.context_question(objective_txt)
