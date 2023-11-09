@@ -2,7 +2,9 @@ import os, json
 import uuid
 
 from collections import defaultdict
-from flatten_json import flatten
+
+from pandas.io.json import json_normalize
+# from flatten_json import flatten
 
 # from langchain.chat_models import ChatOpenAI
 # from helper_index import JsonFlatner
@@ -96,7 +98,7 @@ class TvDataset(DomainDataset):
         corpus = self.subdomain_corpus(domain_name)
         # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
         corpus = { k: v for k,v in corpus.items()
-                  if k not in ['body'] }
+                  if k not in ['body', 'specification'] }
         return DatasetValidation.valid_corpus(corpus)
 
 
@@ -109,7 +111,7 @@ class AcDataset(DomainDataset):
         corpus = self.subdomain_corpus(domain_name)
         # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
         corpus = { k: v for k,v in corpus.items()
-                  if k not in ['body'] }
+                  if k not in ['body', 'specification'] }
         return DatasetValidation.valid_corpus(corpus)
     
 
@@ -157,10 +159,11 @@ class DomainIngestion(DomainDatasets):
                         i += 1
                         print("...")
                 except Exception as e:
-                    print("FLATEN_ERROR=" + str(e) + " " + str(item))
+                    print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
 
     def flatten_json(self, item):
-        return flatten(item)
+        return json_normalize(item)
+        # return flatten(item)
         # flatner = JsonFlatner(self.completion_llm, self.is_verbose)
         # clean = flatner.item_summary(str(item))
         # if isinstance(self.completion_llm, ChatOpenAI):
