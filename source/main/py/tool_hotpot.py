@@ -2,10 +2,10 @@ import json
 
 from langchain.agents import Tool
 
-from llm_select import ToolSelect
+from helper_select import SelectHelper
 
     
-class HotpotDataset(ToolSelect):
+class HotpotDataset(SelectHelper):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose):

@@ -5,14 +5,14 @@ from langchain.agents import Tool
 
 from pydantic import BaseModel, Field
 
-from llm_select import ToolSelect
+from helper_select import SelectHelper
 
 
 class CalculatorInput(BaseModel):
     question: str = Field()
 
 
-class MathRetriever(ToolSelect):
+class MathRetriever(SelectHelper):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("MATH", completion_llm, is_verbose)

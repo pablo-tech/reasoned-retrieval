@@ -3,6 +3,8 @@ import json
     
 from langchain.chat_models import ChatOpenAI
 
+from helper_flatten import JsonFlatner
+
 
 class JsonReader():
 
@@ -37,29 +39,6 @@ class JsonReader():
                 if os.path.isfile(item_path):
                     files.append(listed_item)        
         return files
-
-
-class GiftSummarizer():
-    
-    def __init__(self, completion_llm, is_verbose):
-        self.completion_llm = completion_llm
-        self.is_verbose =  is_verbose
-    
-    def summary_instruction(self):
-        return """
-You are an AI that summarizes complex JSON objects.
-"""
-
-    def context_question(self):
-        return """
-Summarize this product in a flat JSON
-"""
-
-    def item_summary(self, item_tx):
-        context = self.summary_instruction() + "\n" 
-        context += item_tx + "\n" 
-        context += self.context_question()
-        return self.completion_llm.invoke(context)
     
 
 class GiftDataset():
@@ -85,10 +64,10 @@ class GiftClean(GiftDataset):
 
     def __init__(self, n, completion_llm, is_verbose):
         super().__init__(n)
-        summarizer = GiftSummarizer(completion_llm, is_verbose)
+        flatner = JsonFlatner(completion_llm, is_verbose)
         self.clean_data = []
         for item in self.get_raw():  
-            clean = summarizer.item_summary(str(item))
+            clean = flatner.item_summary(str(item))
             if isinstance(completion_llm, ChatOpenAI):
                 clean = clean.content
             self.clean_data.append(json.loads(clean))  

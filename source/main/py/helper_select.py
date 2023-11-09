@@ -1,7 +1,7 @@
 from llm_run import ToolRun
 
 
-class ToolSelect(ToolRun):
+class SelectHelper(ToolRun):
 
     def __init__(self, model_name, completion_llm, is_verbose):
         super().__init__(model_name)

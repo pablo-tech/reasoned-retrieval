@@ -2,9 +2,10 @@ from langchain.agents import Tool
 
 import wikipedia    
 
-from llm_select import ToolSelect
+from helper_select import SelectHelper
 
-class WikipediaRetriever(ToolSelect):
+
+class WikipediaRetriever(SelectHelper):
     # https://pypi.org/project/wikipedia/
 
     def __init__(self, completion_llm, is_verbose=False):

@@ -5,7 +5,7 @@ from langchain.agents import Tool
 from langchain.utilities import SerpAPIWrapper
 from serpapi import GoogleSearch
 
-from llm_select import ToolSelect
+from helper_select import SelectHelper
 
 
 class SerpRetriever(SerpAPIWrapper):
@@ -64,7 +64,7 @@ class SerpReader(SerpRetriever):
         return [result['snippet'] for result in results]
 
 
-class SearchSerpReader(ToolSelect):
+class SearchSerpReader(SelectHelper):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("SERP", completion_llm, is_verbose)

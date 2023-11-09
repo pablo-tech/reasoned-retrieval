@@ -2,10 +2,10 @@
 
 from langchain.agents import Tool
 
-from llm_select import ToolSelect
+from helper_select import SelectHelper
 
 
-class ConversationRetriever(ToolSelect):
+class ConversationRetriever(SelectHelper):
 
     def __init__(self, completion_llm, is_verbose):
         super().__init__("CONVERSATION", completion_llm, is_verbose)
