@@ -55,9 +55,9 @@ class DomainDataset():
     def subdomain_corpus(self, domain_name):
         return self.corpus[domain_name]
 
-    def valid_corpus(self, domain_name):
+    def valid_corpus(self, any_corpus):
         return { str(k): str(v) for k, v 
-                in self.subdomain_corpus(domain_name).items()
+                in any_corpus.items()
                 if self.is_valid_json(v) }
 
     def is_valid_json(self, dict):
