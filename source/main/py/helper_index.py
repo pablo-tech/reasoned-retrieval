@@ -56,6 +56,10 @@ Answer: ['Burgundy', 'Classic', 'Deluxe', 'Medium']
         return """
 Question: Skybags 35 Ltrs Black Medium Laptop Backpack
 Answer: ['35 Ltrs'] 
+Question: INSIGNIA 32-inch Class F20 Series Smart HD 720p Fire TV with Alexa Voice Remote (NS-32F201NA23, 2022 Model)
+Answer: ['32-inch', 'F20 Series', '2022 Model'] 
+Question: Amazon Basics Window Mounted Air Conditioner with Mechanical Control Cools 150 Square Feet, 5000 BTU, AC Unit, White
+Answer: ['150 Square Feet', '5000 BTU'] 
 """
 
     def objective_summary(self, item_txt, examples_txt, objective_txt):
