@@ -94,6 +94,9 @@ class TvDataset(DomainDataset):
     
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
+        # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
+        corpus = { k: v for k,v in corpus.items()
+                  if k not in ['body'] }
         return DatasetValidation.valid_corpus(corpus)
 
 
@@ -104,8 +107,11 @@ class AcDataset(DomainDataset):
 
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
+        # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
+        corpus = { k: v for k,v in corpus.items()
+                  if k not in ['body'] }
         return DatasetValidation.valid_corpus(corpus)
-
+    
 
 class DomainDatasets():
 
