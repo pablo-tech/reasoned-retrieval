@@ -17,34 +17,43 @@ class DialogueState():
         gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
         tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
         ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
-        self.raw_data = defaultdict(list)
+        self.raw_data = {}
+        self.domain_raw = defaultdict(list)
+        self.domain_clean = defaultdict(list)
         for dataset in [gift_data, tv_data, ac_data]:
             for name in dataset.get_subdomains():
                 i = 0
                 corpus = dataset.get_corpus(name)
-                for item in corpus.values():
+                for key, item in corpus.values():
+                    self.raw_data[key].append(item)
                     if i < n:
-                        self.raw_data[name].append(item)
+                        self.domain_raw[name].append(item)
+                        flat = self.flatten_json(item)
+                        self.domain_clean[name].append(flat)
                         i += 1
-        # self.clean_data = self.flatten_data(raw_data)
 
-    def flatten_data(self, domain_data):
+    def flatten_json(self, item):
         flatner = JsonFlatner(self.completion_llm, self.is_verbose)
-        for item in domain_data:  
-            clean = flatner.item_summary(str(item))
-            if isinstance(self.completion_llm, ChatOpenAI):
-                clean = clean.content
-            self.clean_data.append(json.loads(clean))  
-        self.data_store = self.get_store()
+        clean = flatner.item_summary(str(item))
+        if isinstance(self.completion_llm, ChatOpenAI):
+            clean = clean.content
+        return json.loads(clean)
+    
+    def get_raw(self):
+        return self.raw_data
 
-    def get_clean(self):
-        return self.clean_data
+    def get_product(self, key):
+        return self.get_raw()[key]
+
+    def get_domain_raw(self):
+        return self.domain_raw
+
+    def get_domain_clean(self):
+        return self.domain_clean
     
-    def get_store(self):
-        return { item['title']: item for item in self.get_clean()}
+    # def get_store(self):
+    #     return { item['title']: item for item in self.get_clean()}
     
-    def get_product(self, title_txt):
-        return self.data_store[title_txt]
 
 
 class GiftRetriever():
