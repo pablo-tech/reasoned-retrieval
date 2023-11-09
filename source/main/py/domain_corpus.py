@@ -78,7 +78,7 @@ class GiftDataset(DomainDataset):
         corpus = {}
         for item in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = item
-        return corpus     
+        return self.valid_corpus(corpus)     
        
 
 class TvDataset(DomainDataset):
@@ -86,6 +86,10 @@ class TvDataset(DomainDataset):
     def __init__(self, dir_path):
         super().__init__(dir_path)
     
+    def get_corpus(self, domain_name):
+        corpus = self.subdomain_corpus(domain_name)
+        return self.valid_corpus(corpus)
+
 
 class AcDataset(DomainDataset):
 
@@ -93,7 +97,8 @@ class AcDataset(DomainDataset):
         super().__init__(dir_path)
 
     def get_corpus(self, domain_name):
-        return self.subdomain_corpus(domain_name)
+        corpus = self.subdomain_corpus(domain_name)
+        return self.valid_corpus(corpus)
 
 
 class DomainDatasets():
@@ -119,7 +124,10 @@ class DomainIngestion(DomainDatasets):
         self.domain_raw = defaultdict(list)
         self.domain_clean = defaultdict(list)
         for dataset in self.get_data_sets():
-            self.ingest_dataset(dataset)
+            try:
+                self.ingest_dataset(dataset)
+            except Exception as e:
+                print("INGESTION_ERROR="+ str(e))
 
     def ingest_dataset(self, dataset):
         i = 0
