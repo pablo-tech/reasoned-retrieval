@@ -6,6 +6,8 @@ from langchain.chat_models import ChatOpenAI
 from helper_index import JsonFlatner
 from domain_corpus import GiftDataset, TvDataset, AcDataset
 
+from collections import defaultdict
+
     
 class DialogueState():
 
@@ -15,14 +17,14 @@ class DialogueState():
         gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
         tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
         ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
-        self.raw_data = {}
+        self.raw_data = defaultdict(list)
         for dataset in [gift_data, tv_data, ac_data]:
             i = 0
             for name in dataset.get_subdomains():
                 corpus = dataset.get_corpus(name)
-                for k, v in corpus.items():
+                for item in corpus.values():
                     if i < n:
-                        self.raw_data[k] = v
+                        self.raw_data[name].append(item)
                         i += 1
         # self.clean_data = self.flatten_data(raw_data)
 
