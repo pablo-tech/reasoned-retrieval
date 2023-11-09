@@ -54,7 +54,20 @@ class DomainDataset():
     
     def subdomain_corpus(self, domain_name):
         return self.corpus[domain_name]
-    
+
+    def valid_corpus(self, domain_name):
+        return { str(k): str(v) for k, v 
+                in self.subdomain_corpus(domain_name)
+                if self.is_valid_json(v) }
+
+    def is_valid_json(self, dict):
+        try:
+            eval(json.loads(json.dumps(str(dict))))       
+            return True
+        except Exception as e:
+            print("INVALID_DICT=" + str(dict))
+        return False
+
 
 class GiftDataset(DomainDataset):
 
@@ -66,26 +79,13 @@ class GiftDataset(DomainDataset):
         for item in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = item
         return corpus     
-
-    def is_valid_json(self, dict):
-        try:
-            eval(json.loads(json.dumps(str(dict))))       
-            return True
-        except Exception as e:
-            print("INVALID_DICT=" + str(dict))
-        return False
-    
+       
 
 class TvDataset(DomainDataset):
 
     def __init__(self, dir_path):
         super().__init__(dir_path)
     
-    def get_corpus(self, domain_name):
-        return { str(k): str(v) for k, v 
-                in self.subdomain_corpus(domain_name)
-                if self.is_valid_json(v) }
-
 
 class AcDataset(DomainDataset):
 
