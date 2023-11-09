@@ -136,14 +136,14 @@ class DomainIngestion(DomainDatasets):
             for key, item in subdomain_corpus.items():
                 if self.n is not None and i >= self.n:
                     return
-                self.raw_data[key] = item
-                self.domain_raw[subdomain_name].append(item)
                 try:
                     flat = self.flatten_json(item)
-                    validated = eval(json.loads(json.dumps(str(flat))))
-                    self.domain_clean[subdomain_name].append(validated)
-                    i += 1
-                    print("...")
+                    if self.is_valid_json(flat):
+                        self.raw_data[key] = item
+                        self.domain_raw[subdomain_name].append(item)
+                        self.domain_clean[subdomain_name].append(flat)
+                        i += 1
+                        print("...")
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(item))
 
