@@ -1,4 +1,5 @@
 import os, json
+import uuid
 
 
 class JsonReader():
@@ -42,7 +43,7 @@ class DomainDataset():
             corpus[file_name] = file_corpus
         return corpus
     
-    def subdomain_names(self):
+    def get_subdomains(self):
         return self.corpus.keys()
     
     def subdomain_corpus(self, domain_name):
@@ -53,21 +54,18 @@ class GiftDataset(DomainDataset):
 
     def __init__(self, dir_path):
         super().__init__(dir_path)
-
-    def get_subdomains(self):
-        return self.subdomain_names()
     
     def get_corpus(self, domain_name):
-        return self.subdomain_corpus(domain_name)['results']
+        corpus = {}
+        for item in self.subdomain_corpus(domain_name)['results']:
+            corpus[uuid.uuid()] = item
+        return corpus
 
 
 class TvDataset(DomainDataset):
 
     def __init__(self, dir_path):
         super().__init__(dir_path)
-
-    def get_subdomains(self):
-        return self.subdomain_names()
     
     def get_corpus(self, domain_name):
         return self.subdomain_corpus(domain_name)
@@ -78,9 +76,6 @@ class AcDataset(DomainDataset):
     def __init__(self, dir_path):
         super().__init__(dir_path)
 
-    def get_subdomains(self):
-        return self.subdomain_names()
-    
     def get_corpus(self, domain_name):
         return self.subdomain_corpus(domain_name)
 
