@@ -8,29 +8,45 @@ from domain_corpus import GiftDataset, TvDataset, AcDataset
 
 from collections import defaultdict
 
+
+class DomainDatasets():
+
+    def __init__(self):
+        gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
+        tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
+        ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
+        self.data_sets = [gift_data, tv_data, ac_data]
+
+    def get_data_sets(self):
+        return self.data_sets
+    
     
 class DialogueState():
 
     def __init__(self, n, completion_llm, is_verbose):
+        super().__init__()
+        self.n = n
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
-        tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
-        ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         self.raw_data = {}
         self.domain_raw = defaultdict(list)
         self.domain_clean = defaultdict(list)
-        for dataset in [gift_data, tv_data, ac_data]:
-            for name in dataset.get_subdomains():
-                i = 0
-                corpus = dataset.get_corpus(name)
-                for key, item in corpus.items():
-                    self.raw_data[key] = item
-                    if i < n:
-                        self.domain_raw[name].append(item)
-                        flat = self.flatten_json(item)
-                        self.domain_clean[name].append(flat)
-                        i += 1
+        for dataset in self.get_data_sets():
+            self.ingest_dataset(dataset)
+
+    def ingest_dataset(self, dataset):
+        for subdomain_name in dataset.get_subdomains():
+            subdomain_corpus = dataset.get_corpus(subdomain_name)
+            for key, item in subdomain_corpus.items():
+                self.raw_data[key] = item
+                self.domain_raw[subdomain_name].append(item)
+                if len(self.raw_data) > self.n:
+                    return
+                try:
+                    flat = self.flatten_json(item)
+                    self.domain_clean[subdomain_name].append(flat)
+                except Exception as e:
+                    print("FLATEN_ERROR=" + str(e) + " " + str(item))
 
     def flatten_json(self, item):
         flatner = JsonFlatner(self.completion_llm, self.is_verbose)
