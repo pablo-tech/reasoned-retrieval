@@ -7,13 +7,13 @@ from helper_index import JsonFlatner
 from domain_corpus import DomainDataset
 
     
-class GiftClean(DomainDataset):
+class DialogueState():
 
     def __init__(self, n, completion_llm, is_verbose):
-        super().__init__(n, dir_path="/content/drive/MyDrive/TataLLM/GiftReader/")
+        gift_data = DomainDataset(n, dir_path="/content/drive/MyDrive/TataLLM/GiftReader/")
         flatner = JsonFlatner(completion_llm, is_verbose)
         self.clean_data = []
-        for item in self.get_raw():  
+        for item in gift_data.get_raw():  
             clean = flatner.item_summary(str(item))
             if isinstance(completion_llm, ChatOpenAI):
                 clean = clean.content
