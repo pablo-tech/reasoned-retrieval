@@ -3,18 +3,6 @@ import os, json
 
 class JsonReader():
 
-    def read_corpus(dir_path, file_names):
-        print("\n\n" + "|| ")
-        print("|| READ CORPUS")
-        print("||")
-        print("dir_path=" + str(dir_path) + "\t" + "file_names=" + str(file_names))
-
-        corpus = {}
-        for file_name in sorted(file_names):
-            file_corpus = JsonReader.read_file(file_name, dir_path)
-            corpus.update(file_corpus)
-        return corpus
-
     def read_file(file_name, dir_path):
         try:
             print("READING=" + dir_path + file_name)
@@ -40,18 +28,30 @@ class DomainDataset():
 
     def __init__(self, n, dir_path):
         file_names = JsonReader.list_files(dir_path)
-        files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
-        self.raw_data = []
-        for file_data in files_data:
-            for item in file_data:
-              self.raw_data.append(item)
-        if n is not None and len(self.raw_data) > n:
-            self.raw_data = self.raw_data[:n]
-        print("raw_length=" + str(len(self.raw_data)))
+        self.corpus = self.read_corpus(dir_path, file_names)
+        # files_data = [JsonReader.read_file(file_name, dir_path) for file_name in file_names]
+        # self.raw_data = []
+        # for file_data in files_data:
+        #     for item in file_data:
+        #       self.raw_data.append(item)
+        # if n is not None and len(self.raw_data) > n:
+        #     self.raw_data = self.raw_data[:n]
+        # print("raw_length=" + str(len(self.raw_data)))
 
-    def get_raw(self):
-        return self.raw_data
+    def get_corpus(self):
+        return self.corpus
 
+    def read_corpus(dir_path, file_names):
+        print("\n\n" + "|| ")
+        print("|| READ CORPUS")
+        print("||")
+        print("dir_path=" + str(dir_path) + "\t" + "file_names=" + str(file_names))
+
+        corpus = {}
+        for file_name in sorted(file_names):
+            file_corpus = JsonReader.read_file(file_name, dir_path)
+            corpus.update(file_corpus)
+        return corpus
 
 
     # def read_corpus(self, dir_path="./"):
