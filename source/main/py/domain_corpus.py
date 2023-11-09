@@ -50,5 +50,5 @@ class DomainDataset():
         corpus = {}
         for file_name in sorted(file_names):
             file_corpus = JsonReader.read_file(file_name, dir_path)
-            corpus.update(file_corpus)
+            corpus[file_name] = file_corpus
         return corpus
