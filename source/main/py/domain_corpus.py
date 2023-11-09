@@ -2,6 +2,7 @@ import os, json
 import uuid
 
 from collections import defaultdict
+from flatten_json import flatten
 
 from langchain.chat_models import ChatOpenAI
 
@@ -160,11 +161,12 @@ class DomainIngestion(DomainDatasets):
                     print("FLATEN_ERROR=" + str(e) + " " + str(item))
 
     def flatten_json(self, item):
-        flatner = JsonFlatner(self.completion_llm, self.is_verbose)
-        clean = flatner.item_summary(str(item))
-        if isinstance(self.completion_llm, ChatOpenAI):
-            clean = clean.content
-        return json.loads(clean)
+        return flatten(item)
+        # flatner = JsonFlatner(self.completion_llm, self.is_verbose)
+        # clean = flatner.item_summary(str(item))
+        # if isinstance(self.completion_llm, ChatOpenAI):
+        #     clean = clean.content
+        # return json.loads(clean)
     
     def get_raw(self):
         return self.raw_data

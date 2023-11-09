@@ -1,6 +1,4 @@
-
-
-class JsonFlatner():
+class JsonLlmFlatner():
     
     def __init__(self, completion_llm, is_verbose):
         self.completion_llm = completion_llm
