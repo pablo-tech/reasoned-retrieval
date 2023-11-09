@@ -33,11 +33,7 @@ class PosExtractor():
         return f"""
 You are an AI expert at extracting {objective_txt} from strings.
 Your response must be in the format of a python list, not bullets.
-"""
-
-    def context_question(self, objective_txt):
-        return f"""
-Question: What {objective_txt} are present in this text?
+Question: What {objective_txt} are present in the question?
 """
     
     def noun_examples(self):
@@ -65,8 +61,8 @@ Answer: ['150 Square Feet', '5000 BTU']
     def objective_summary(self, item_txt, examples_txt, objective_txt):
         context = self.system_instruction(objective_txt) + "\n" 
         context += examples_txt
-        context += "Question:" + item_txt+ "\n" 
-        context += self.context_question(objective_txt)
+        context += "Question: " + item_txt+ "\n" 
+        context += "Answer: "
         return self.completion_llm.invoke(context)
 
     def noun_summary(self, item_txt):
