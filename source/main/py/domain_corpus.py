@@ -65,7 +65,7 @@ class GiftDataset(DomainDataset):
         corpus = {}
         for item in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = item
-        return corpus
+        return corpus        
 
 
 class TvDataset(DomainDataset):
@@ -122,7 +122,8 @@ class DomainIngestion(DomainDatasets):
                 self.domain_raw[subdomain_name].append(item)
                 try:
                     flat = self.flatten_json(item)
-                    self.domain_clean[subdomain_name].append(flat)
+                    validated = eval(json.loads(json.dumps(str(flat))))
+                    self.domain_clean[subdomain_name].append(validated)
                     i += 1
                     print("...")
                 except Exception as e:
