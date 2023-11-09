@@ -118,10 +118,10 @@ class AcDataset(DomainDataset):
 class DomainDatasets():
 
     def __init__(self):
-        gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
-        tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
-        ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
-        self.data_sets = [gift_data, tv_data, ac_data]
+        self.gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
+        self.tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
+        self.ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
+        self.data_sets = [self.gift_data, self.tv_data, self.ac_data]
 
     def get_data_sets(self):
         return self.data_sets
