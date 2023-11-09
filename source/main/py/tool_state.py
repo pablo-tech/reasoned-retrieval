@@ -25,7 +25,7 @@ class DialogueState():
                 i = 0
                 corpus = dataset.get_corpus(name)
                 for key, item in corpus.items():
-                    self.raw_data[key].append(item)
+                    self.raw_data[key] = item
                     if i < n:
                         self.domain_raw[name].append(item)
                         flat = self.flatten_json(item)
