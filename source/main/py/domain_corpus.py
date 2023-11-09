@@ -151,19 +151,30 @@ class DomainIngestion(DomainDatasets):
                 if self.n is not None and i >= self.n:
                     return
                 try:
-                    flat = self.flatten_json(item)
-                    if DatasetValidation.is_valid_json(flat):
+                    clean = self.shorten_json(flatten(eval(item)))
+                    if DatasetValidation.is_valid_json(clean):
                         self.raw_data[key] = item
                         self.domain_raw[subdomain_name].append(item)
-                        self.domain_clean[subdomain_name].append(flat)
+                        self.domain_clean[subdomain_name].append(clean)
                         i += 1
                         print("...")
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
-
-    def flatten_json(self, item):
-        return flatten(eval(item))
     
+    def shorten_json(self, long):
+        short = {}
+        for k, v in long.items():
+            key = self.shorten_key(k)
+            if isinstance(v, str):
+                v = v.strip()
+            short[key] = v
+        return short    
+    
+    def shorten_key(self, key):
+        chain = key.split("_")
+        chain = [item for item in chain if not item.isnumeric()]
+        return chain[-1]    
+        
     def get_raw(self):
         return self.raw_data
 
