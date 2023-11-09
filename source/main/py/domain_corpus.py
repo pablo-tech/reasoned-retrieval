@@ -97,8 +97,8 @@ class TvDataset(DomainDataset):
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
         # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
-        corpus = { k: v for k,v in corpus.items()
-                  if k not in ['body', 'specification'] }
+        corpus = { k: v for k,v in corpus.items() }
+                #   if k not in ['body', 'specification'] }
         return DatasetValidation.valid_corpus(corpus)
 
 
@@ -110,8 +110,8 @@ class AcDataset(DomainDataset):
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
         # 'id', 'url', 'domain', 'source', 'title', 'subtitle', 'text', 'knowledge', 'body', 'specification'
-        corpus = { k: v for k,v in corpus.items()
-                  if k not in ['body', 'specification'] }
+        corpus = { k: v for k,v in corpus.items() }
+                #   if k not in ['body', 'specification'] }
         return DatasetValidation.valid_corpus(corpus)
     
 
@@ -159,17 +159,10 @@ class DomainIngestion(DomainDatasets):
                         i += 1
                         print("...")
                 except Exception as e:
-                    pass 
-                    # print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
+                    print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
 
     def flatten_json(self, item):
         return flatten(eval(item))
-        # return json_normalize(item)
-        # flatner = JsonFlatner(self.completion_llm, self.is_verbose)
-        # clean = flatner.item_summary(str(item))
-        # if isinstance(self.completion_llm, ChatOpenAI):
-        #     clean = clean.content
-        # return json.loads(clean)
     
     def get_raw(self):
         return self.raw_data
