@@ -55,12 +55,18 @@ class DomainDataset():
     def subdomain_corpus(self, domain_name):
         return self.corpus[domain_name]
 
-    def valid_corpus(self, any_corpus):
+
+class DatasetValidation():
+
+    def __init__(self):
+        pass
+        
+    def valid_corpus(any_corpus):
         return { str(k): str(v) for k, v 
                 in any_corpus.items()
-                if self.is_valid_json(v) }
+                if DatasetValidation.is_valid_json(v) }
 
-    def is_valid_json(self, dict):
+    def is_valid_json(dict):
         try:
             eval(json.loads(json.dumps(str(dict))))       
             return True
@@ -78,7 +84,7 @@ class GiftDataset(DomainDataset):
         corpus = {}
         for item in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = item
-        return self.valid_corpus(corpus)     
+        return DatasetValidation.valid_corpus(corpus)     
        
 
 class TvDataset(DomainDataset):
@@ -88,7 +94,7 @@ class TvDataset(DomainDataset):
     
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
-        return self.valid_corpus(corpus)
+        return DatasetValidation.valid_corpus(corpus)
 
 
 class AcDataset(DomainDataset):
@@ -98,7 +104,7 @@ class AcDataset(DomainDataset):
 
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
-        return self.valid_corpus(corpus)
+        return DatasetValidation.valid_corpus(corpus)
 
 
 class DomainDatasets():
@@ -138,7 +144,7 @@ class DomainIngestion(DomainDatasets):
                     return
                 try:
                     flat = self.flatten_json(item)
-                    if self.is_valid_json(flat):
+                    if DatasetValidation.is_valid_json(flat):
                         self.raw_data[key] = item
                         self.domain_raw[subdomain_name].append(item)
                         self.domain_clean[subdomain_name].append(flat)
