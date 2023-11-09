@@ -4,7 +4,7 @@ import json
 from langchain.chat_models import ChatOpenAI
 
 from helper_index import JsonFlatner
-from domain_corpus import DomainDataset
+from domain_corpus import GiftDataset, TvDataset, AcDataset
 
     
 class DialogueState():
@@ -12,13 +12,13 @@ class DialogueState():
     def __init__(self, n, completion_llm, is_verbose):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        gift_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
-        tv_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
-        ac_data = DomainDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
+        gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
+        tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
+        ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
         self.raw_data = []
         for dataset in [gift_data, tv_data, ac_data]:
-            for name in dataset.subdomain_names():
-                corpus = dataset.subdomain_corpus(name)
+            for name in dataset.get_subdomains():
+                corpus = dataset.get_corpus(name)
                 self.raw_data.extend(corpus.values())
         # self.clean_data = self.flatten_data(raw_data)
 

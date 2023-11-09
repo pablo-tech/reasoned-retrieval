@@ -47,3 +47,41 @@ class DomainDataset():
     
     def subdomain_corpus(self, domain_name):
         return self.corpus[domain_name]
+    
+
+class GiftDataset(DomainDataset):
+
+    def __init__(self, dir_path):
+        super().__init__(dir_path)
+
+    def get_subdomains(self):
+        return self.subdomain_names()
+    
+    def get_corpus(self, domain_name):
+        return self.subdomain_corpus(domain_name)['results']
+
+
+class TvDataset(DomainDataset):
+
+    def __init__(self, dir_path):
+        super().__init__(dir_path)
+
+    def get_subdomains(self):
+        return self.subdomain_names()
+    
+    def get_corpus(self, domain_name):
+        return self.subdomain_corpus(domain_name)
+
+
+class AcDataset(DomainDataset):
+
+    def __init__(self, dir_path):
+        super().__init__(dir_path)
+
+    def get_subdomains(self):
+        return self.subdomain_names()
+    
+    def get_corpus(self, domain_name):
+        return self.subdomain_corpus(domain_name)
+
+
