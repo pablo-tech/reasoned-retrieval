@@ -37,20 +37,41 @@ Your response must be in the format of a python list, not bullets.
 
     def context_question(self, objective_txt):
         return f"""
-What {objective_txt} are present in this text?
+Question: What {objective_txt} are present in this text?
+"""
+    
+    def noun_examples(self):
+        return """
+Question: Wenger by Victorinox Black MOD City Medium Backpack
+Answer: ['Wenger', 'Victorinox', 'Black', 'MOD', 'City', 'Medium', 'Backpack'] 
 """
 
-    def objective_summary(self, item_txt, objective_txt):
+    def adjective_examples(self):
+        return """
+Question: Victorinox Burgundy Altmont Classic Deluxe Medium Laptop Backpack
+Answer: ['Burgundy', 'Classic', 'Deluxe', 'Medium']
+"""
+
+    def quantified_examples(self):
+        return """
+Question: Skybags 35 Ltrs Black Medium Laptop Backpack
+Answer: ['35 Ltrs'] 
+"""
+
+    def objective_summary(self, item_txt, examples_txt, objective_txt):
         context = self.system_instruction(objective_txt) + "\n" 
         context += item_txt+ "\n" 
         context += self.context_question(objective_txt)
         return self.completion_llm.invoke(context)
 
     def noun_summary(self, item_txt):
-        return self.objective_summary(item_txt, "nouns")
+        examples_txt = self.noun_examples()
+        return self.objective_summary(item_txt, examples_txt, "nouns")
     
     def adjective_summary(self, item_txt):
-        return self.objective_summary(item_txt, "adjectives")
+        examples_txt = self.adjective_examples()
+        return self.objective_summary(item_txt, examples_txt, "adjectives")
     
     def quantified_summary(self, item_txt):
-        return self.objective_summary(item_txt, "quantified values")
+        examples_txt = self.quantified_examples()
+        return self.objective_summary(item_txt, examples_txt, "quantified values")
