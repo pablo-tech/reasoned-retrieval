@@ -32,6 +32,7 @@ class PosExtractor():
     def system_instruction(self, objective_txt):
         return f"""
 You are an AI expert at extracting {objective_txt} from strings.
+Your response must be in the format of a python list, not bullets.
 """
 
     def context_question(self, objective_txt):
