@@ -3,14 +3,13 @@ from domain_product import GiftDataset, TvDataset, AcDataset, DomainSchema
 
 class SchemaCreator():
 
-    def __init__(self, db_cursor, completion_llm, is_verbose):
+    def __init__(self, domain_name, domain_datasets,
+                 db_cursor, completion_llm, is_verbose):
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.domain_schema = {}
-        self.create_schema("CROMA_TV", [TvDataset()])
-        self.create_schema("CROMA_AC", [AcDataset()])
-        self.create_schema("CLIQ", [GiftDataset()])
+        self.create_schema(domain_name, domain_datasets)
 
     def get_domain_schema(self, domain_name):
         return self.domain_schema[domain_name]
