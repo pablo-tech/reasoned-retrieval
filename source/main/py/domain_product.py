@@ -73,6 +73,45 @@ class DatasetValidation():
             print("INVALID_DICT=" + str(dict))
         return False
 
+class CromaDataset(DomainDataset):
+
+    def __init__(self, dir_path):
+        super().__init__(dir_path)
+
+    def get_corpus(self, domain_name):
+        corpus = self.subdomain_corpus(domain_name)
+        corpus = { k: self.clean_body(v) for k,v in corpus.items() }
+        return DatasetValidation.valid_corpus(corpus)
+
+    def clean_body(self, product):
+        replica = product.copy()
+        cleansed = ''
+        for section in product['body'].copy():
+            for feature in section:
+                if isinstance(feature, list):
+                    for bullet in feature:
+                        # print(bullet)
+                        if isinstance(bullet, list):
+                            if len(cleansed) != 0:
+                                cleansed += "\n"  
+                            cleansed += bullet[0] 
+                            if cleansed[-1] not in [".", "!", "?"]:
+                                cleansed += "."
+        replica['body'] = cleansed
+        return replica          
+
+
+class TvDataset(CromaDataset):
+
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
+        super().__init__(dir_path)
+    
+
+class AcDataset(CromaDataset):
+
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/"):
+        super().__init__(dir_path)
+
 
 class GiftDataset(DomainDataset):
 
@@ -84,38 +123,7 @@ class GiftDataset(DomainDataset):
         for item in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = item
         return DatasetValidation.valid_corpus(corpus)     
-       
 
-class TvDataset(DomainDataset):
-
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
-        super().__init__(dir_path)
-    
-    def get_corpus(self, domain_name):
-        corpus = self.subdomain_corpus(domain_name)
-        corpus = { k: v for k,v in corpus.items() }
-        return DatasetValidation.valid_corpus(corpus)
-
-
-class AcDataset(DomainDataset):
-
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/"):
-        super().__init__(dir_path)
-
-    def get_corpus(self, domain_name):
-        corpus = self.subdomain_corpus(domain_name)
-        corpus = { k: v for k,v in corpus.items() }
-        return DatasetValidation.valid_corpus(corpus)
-    
-
-# class DomainDatasets():
-
-#     def __init__(self):
-#         self.gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
-#         self.tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
-#         self.ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
-#         self.data_sets = [self.gift_data, self.tv_data, self.ac_data]
-    
     
 class DomainIngestion():
 
@@ -167,9 +175,6 @@ class DomainIngestion():
 
     def get_product(self, key):
         return self.get_raw()[key]
-
-    def get_domain_raw(self):
-        return self.domain_raw
 
     def get_domain_clean(self):
         return self.domain_clean
