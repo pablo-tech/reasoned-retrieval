@@ -5,6 +5,8 @@ class SchemaCreator():
 
     def __init__(self, domain_name, domain_datasets,
                  db_cursor, completion_llm, is_verbose):
+        self.domain_name = domain_name.upper()
+        self.domain_datasets = domain_datasets
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -14,15 +16,17 @@ class SchemaCreator():
     def get_domain_schema(self):
         return self.domain_schema
     
-    def create_schema(self, domain_name, domain_datasets):
-        schema = DomainSchema(data_sets=domain_datasets,
+    def get_domain_name(self):
+        return self.domain_name
+    
+    def create_schema(self):
+        schema = DomainSchema(data_sets=self.domain_datasets,
                               completion_llm=self.completion_llm,
                               is_verbose=self.is_verbose)
-        domain_name = self.domain_name(domain_name)
-        create_sql = self.create_table(domain_name, 
+        create_sql = self.create_table(self.domain_name, 
                                        'id', 
                                         schema.column_names())
-        self.execute_query(domain_name, create_sql)
+        self.execute_query(self.domain_name, create_sql)
         self.domain_schema = schema
 
     def execute_query(self, domain_name, create_sql):
@@ -43,9 +47,6 @@ class SchemaCreator():
     {primary_key} TEXT PRIMARY KEY {column_names}
     ) ;
     """
-
-    def domain_name(self, domain_name):
-        return domain_name.upper()
 
     def non_primary(self, primary_key, column_names):
         return sorted([name for name in column_names if name!=primary_key])
