@@ -123,6 +123,11 @@ class GiftDataset(DomainDataset):
     def get_corpus(self, domain_name):
         corpus = {}
         for item in self.subdomain_corpus(domain_name)['results']:
+            item = { k:v for k,v in item 
+                    if k not in ['id', 'availability', 'brands', 'colors', 
+                                 'currencycode', 'originalprice', 'price',
+                                 'ratingcount', 'searchable', 'sizes', 
+                                 'text', 'title', 'type', 'uri']}
             corpus[str(uuid.uuid1())] = item
         return DatasetValidation.valid_corpus(corpus)     
 
