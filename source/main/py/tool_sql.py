@@ -4,9 +4,11 @@ from domain_product import GiftDataset, TvDataset, AcDataset, DomainSchema
 class SchemaCreator():
 
     def __init__(self, domain_name, domain_datasets,
+                 selected_columns,
                  db_cursor, completion_llm, is_verbose):
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
+        self.selected_columns = selected_columns
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -22,9 +24,9 @@ class SchemaCreator():
         schema = DomainSchema(data_sets=self.domain_datasets,
                               completion_llm=self.completion_llm,
                               is_verbose=self.is_verbose)
-        create_sql = self.create_table(self.domain_name, 
-                                       'id', 
-                                        schema.column_names())
+        column_names = [col for col in schema.column_names()
+                        if col in self.selected_columns]
+        create_sql = self.create_table(self.domain_name, 'id', column_names)
         self.execute_query(self.domain_name, create_sql)
         return schema
 
@@ -39,7 +41,6 @@ class SchemaCreator():
 
     def create_table(self, schema_name, primary_key, column_names):
         column_names = self.non_primary(primary_key, column_names)
-        column_names = sorted(list(column_names))
         column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
         column_names = " ".join(column_names)
         return f"""
