@@ -80,7 +80,7 @@ class CromaDataset(DomainDataset):
 
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
-        corpus = { k: self.clean_body(v) for k,v in corpus.items() }
+        corpus = { v['id']: self.clean_body(v) for k,v in corpus.items() }
         return DatasetValidation.valid_corpus(corpus)
 
     def clean_body(self, product):
