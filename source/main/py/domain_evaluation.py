@@ -11,6 +11,6 @@ class HotpotDataset():
         with open(hotpot_train) as json_file:
             self.data = json.load(json_file) 
 
-    def get_data(self):
+    def get_corpus(self):
         return self.data
 
