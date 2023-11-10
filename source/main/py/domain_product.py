@@ -178,16 +178,16 @@ class DomainIngestion():
         chain = [item for item in chain if not item.isnumeric()]
         return chain[-1]    
         
-    def get_raw(self):
+    def get_raw_products(self):
         return self.raw_data
 
-    def get_clean(self):
+    def get_clean_products(self):
         return self.clean_data.values()
 
     def get_product(self, key):
         return self.clean_data[key]
 
-    def get_subdomains(self):
+    def get_subdomain_products(self):
         return self.domain_clean
     
 
@@ -199,7 +199,7 @@ class DomainSchema(DomainIngestion):
 
     def column_names(self):
         all_columns = set()
-        for subdomain_data in self.get_subdomains().values():
+        for subdomain_data in self.get_subdomain_products().values():
             for item in subdomain_data.values():
                 item_columns = list(item.keys())
                 item_columns = [ self.normal_name(column) for column in item_columns ]
