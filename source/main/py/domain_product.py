@@ -136,6 +136,7 @@ class DomainIngestion():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.raw_data = {}
+        self.clean_data = {}
         self.domain_clean = defaultdict(dict)
         for dataset in self.get_data_sets():
             try:
@@ -159,6 +160,7 @@ class DomainIngestion():
                         pass
                     if DatasetValidation.is_valid_json(clean):
                         self.raw_data[key] = item
+                        self.clean_data[key] = clean
                         self.domain_clean[subdomain_name][key] = clean
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
@@ -181,7 +183,7 @@ class DomainIngestion():
         return self.raw_data
 
     def get_product(self, key):
-        return self.get_raw()[key]
+        return self.clean_data()[key]
 
     def get_domain_clean(self):
         return self.domain_clean
