@@ -214,3 +214,5 @@ class DomainSchema(DomainIngestion):
         text = text.replace("(", "")
         text = text.replace(")", "")
         return text.lower()
+    
+    
