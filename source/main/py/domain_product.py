@@ -8,7 +8,7 @@ from flatten_json import flatten
 
 class JsonReader():
 
-    def read_file(file_name, dir_path, is_verbose=True):
+    def read_file(file_name, dir_path, is_verbose=False):
         try:
                 # print("READING=" + dir_path + file_name)
             f = open(dir_path + file_name)
@@ -32,7 +32,7 @@ class JsonReader():
 
 class DomainDataset():
 
-    def __init__(self, dir_path, is_verbose=True):
+    def __init__(self, dir_path, is_verbose=False):
         self.is_verbose = is_verbose
         file_names = JsonReader.list_files(dir_path)
         self.corpus = self.read_corpus(dir_path, file_names)
