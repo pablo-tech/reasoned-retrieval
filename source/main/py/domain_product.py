@@ -8,10 +8,9 @@ from flatten_json import flatten
 
 class JsonReader():
 
-    def read_file(file_name, dir_path, is_verbose=False):
+    def read_file(file_name, dir_path, is_verbose=True):
         try:
-            if is_verbose:
-                print("READING=" + dir_path + file_name)
+                # print("READING=" + dir_path + file_name)
             f = open(dir_path + file_name)
             corpus_json = json.load(f)
             if is_verbose:
