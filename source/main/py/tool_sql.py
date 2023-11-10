@@ -10,6 +10,10 @@ class SchemaCreator():
         self.create_schema("CROMA_TV", [TvDataset()])
         self.create_schema("CROMA_AC", [AcDataset()])
         self.create_schema("CLIQ", [GiftDataset()])
+        self.domain_schema = {}
+
+    def get_domain_schema(self, domain_name):
+        return self.domain_schema[domain_name]
     
     def create_schema(self, domain_name, domain_datasets):
         schema = DomainSchema(data_sets=domain_datasets,
@@ -20,6 +24,7 @@ class SchemaCreator():
                                        'id', 
                                         schema.column_names())
         self.execute_query(domain_name, create_sql)
+        self.domain_schema[domain_name] = schema
 
     def execute_query(self, domain_name, create_sql):
         try:
