@@ -7,10 +7,10 @@ class SchemaCreator():
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
+        self.domain_schema = {}
         self.create_schema("CROMA_TV", [TvDataset()])
         self.create_schema("CROMA_AC", [AcDataset()])
         self.create_schema("CLIQ", [GiftDataset()])
-        self.domain_schema = {}
 
     def get_domain_schema(self, domain_name):
         return self.domain_schema[domain_name]
