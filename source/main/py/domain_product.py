@@ -33,7 +33,7 @@ class JsonReader():
 
 class DomainDataset():
 
-    def __init__(self, dir_path, is_verbose=False):
+    def __init__(self, dir_path, is_verbose=True):
         self.is_verbose = is_verbose
         file_names = JsonReader.list_files(dir_path)
         self.corpus = self.read_corpus(dir_path, file_names)
