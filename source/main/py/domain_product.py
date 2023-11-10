@@ -76,7 +76,7 @@ class DatasetValidation():
 
 class GiftDataset(DomainDataset):
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/"):
         super().__init__(dir_path)
     
     def get_corpus(self, domain_name):
@@ -91,7 +91,7 @@ class TvDataset(DomainDataset):
     def __init__(self, dir_path):
         super().__init__(dir_path)
     
-    def get_corpus(self, domain_name):
+    def get_corpus(self, domain_name="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
         corpus = self.subdomain_corpus(domain_name)
         corpus = { k: v for k,v in corpus.items() }
         return DatasetValidation.valid_corpus(corpus)
@@ -99,7 +99,7 @@ class TvDataset(DomainDataset):
 
 class AcDataset(DomainDataset):
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/"):
         super().__init__(dir_path)
 
     def get_corpus(self, domain_name):
@@ -108,22 +108,20 @@ class AcDataset(DomainDataset):
         return DatasetValidation.valid_corpus(corpus)
     
 
-class DomainDatasets():
+# class DomainDatasets():
 
-    def __init__(self):
-        self.gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
-        self.tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
-        self.ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
-        self.data_sets = [self.gift_data, self.tv_data, self.ac_data]
-
-    def get_data_sets(self):
-        return self.data_sets
+#     def __init__(self):
+#         self.gift_data = GiftDataset(dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/")
+#         self.tv_data = TvDataset(dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/")
+#         self.ac_data = AcDataset(dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/")
+#         self.data_sets = [self.gift_data, self.tv_data, self.ac_data]
     
     
-class DomainIngestion(DomainDatasets):
+class DomainIngestion():
 
-    def __init__(self, completion_llm, is_verbose):
+    def __init__(self, data_sets, completion_llm, is_verbose):
         super().__init__()
+        self.data_sets = data_sets
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.raw_data = {}
@@ -134,6 +132,9 @@ class DomainIngestion(DomainDatasets):
                 self.ingest_dataset(dataset)
             except Exception as e:
                 print("INGESTION_ERROR="+ str(e))
+
+    def get_data_sets(self):
+        return self.data_sets
 
     def ingest_dataset(self, dataset):
         for subdomain_name in dataset.get_subdomains():
