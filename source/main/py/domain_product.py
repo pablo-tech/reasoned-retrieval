@@ -141,6 +141,7 @@ class DomainIngestion():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
             for key, item in subdomain_corpus.items():
                 try:
+                    print("KEY="+str(key))
                     clean = self.shorten_json(flatten(eval(item)))
                     if DatasetValidation.is_valid_json(clean):
                         self.raw_data[key] = item
