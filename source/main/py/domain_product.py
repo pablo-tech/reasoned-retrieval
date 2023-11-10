@@ -33,15 +33,17 @@ class JsonReader():
 
 class DomainDataset():
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, is_verbose=False):
+        self.is_verbose = is_verbose
         file_names = JsonReader.list_files(dir_path)
         self.corpus = self.read_corpus(dir_path, file_names)
 
     def read_corpus(self, dir_path, file_names):
-        print("\n\n" + "|| ")
-        print("|| READ CORPUS")
-        print("||")
-        print("dir_path=" + str(dir_path) + "\t" + "file_names=" + str(file_names))
+        if self.is_verbose:
+            print("\n\n" + "|| ")
+            print("|| READ CORPUS")
+            print("||")
+            print("dir_path=" + str(dir_path) + "\t" + "file_names=" + str(file_names))
 
         corpus = {}
         for file_name in sorted(file_names):
