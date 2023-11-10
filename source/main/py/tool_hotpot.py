@@ -9,7 +9,7 @@ from domain_evaluation import HotpotDataset
 class HotpotRetriever(SelectHelper):
 
     def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
+        super().__init__("HOTPOT", completion_llm, is_verbose)
         self.hotpot_data = HotpotDataset()
         self.doc_store = {}
         for example in self.hotpot_data.get_corpus():
