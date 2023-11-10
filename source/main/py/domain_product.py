@@ -88,10 +88,10 @@ class GiftDataset(DomainDataset):
 
 class TvDataset(DomainDataset):
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
         super().__init__(dir_path)
     
-    def get_corpus(self, domain_name="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
+    def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
         corpus = { k: v for k,v in corpus.items() }
         return DatasetValidation.valid_corpus(corpus)
