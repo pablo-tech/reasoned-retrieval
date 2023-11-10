@@ -32,7 +32,8 @@ class SchemaCreator():
         try:
           self.db_cursor.execute(f"DROP TABLE IF EXISTS {domain_name};")
           self.db_cursor.execute(create_sql)
-          print(create_sql)
+          if self.is_verbose:
+              print(create_sql)
         except Exception as e:
           print("CREATION_ERROR=" + domain_name + " " + str(e) + "\n" + str(create_sql))
 
