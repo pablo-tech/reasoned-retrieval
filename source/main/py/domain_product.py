@@ -183,7 +183,7 @@ class DomainIngestion():
         return self.raw_data
 
     def get_product(self, key):
-        return self.clean_data()[key]
+        return self.clean_data[key]
 
     def get_domain_clean(self):
         return self.domain_clean
