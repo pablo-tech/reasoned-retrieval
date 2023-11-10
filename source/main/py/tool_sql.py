@@ -10,8 +10,7 @@ class SchemaCreator():
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        self.domain_schema = None
-        self.create_schema(domain_name, domain_datasets)
+        self.domain_schema = self.create_schema()
 
     def get_domain_schema(self):
         return self.domain_schema
@@ -27,7 +26,7 @@ class SchemaCreator():
                                        'id', 
                                         schema.column_names())
         self.execute_query(self.domain_name, create_sql)
-        self.domain_schema = schema
+        return schema
 
     def execute_query(self, domain_name, create_sql):
         try:
