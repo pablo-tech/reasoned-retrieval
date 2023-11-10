@@ -3,7 +3,6 @@ import uuid
 
 from collections import defaultdict
 
-# from pandas.io.json import json_normalize
 from flatten_json import flatten
 
 
@@ -182,3 +181,24 @@ class DomainIngestion():
 
     def get_domain_clean(self):
         return self.domain_clean
+    
+
+class DomainSchema(DomainIngestion):
+
+    def __init__(self, data_sets, completion_llm, is_verbose):
+        super().__init__(data_sets, completion_llm, is_verbose)
+        self.slot_values = defaultdict(set)
+
+    def column_names(self):
+        domain_data = self.get_domain_clean()
+        all_columns = set()
+        for subdomain_name in domain_data.keys():
+            subdomain_data = domain_data[subdomain_name]
+            for item in subdomain_data.values():
+                item_columns = list(item.keys())
+                item_columns = [ self.normal_name(column) for column in item_columns ]
+                all_columns.update(item_columns)
+        return { self.normal_name(column) for column in all_columns}
+
+    def normal_name(self, text):
+        return text.replace(" ", "_").lower()
