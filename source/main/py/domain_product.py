@@ -199,10 +199,8 @@ class DomainSchema(DomainIngestion):
         self.slot_values = defaultdict(set)
 
     def column_names(self):
-        domain_data = self.get_domain_clean()
         all_columns = set()
-        for subdomain_name in domain_data.keys():
-            subdomain_data = domain_data[subdomain_name]
+        for subdomain_data in self.get_subdomains().values():
             for item in subdomain_data.values():
                 item_columns = list(item.keys())
                 item_columns = [ self.normal_name(column) for column in item_columns ]
