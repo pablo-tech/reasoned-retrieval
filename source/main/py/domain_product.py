@@ -201,4 +201,4 @@ class DomainSchema(DomainIngestion):
         return { self.normal_name(column) for column in all_columns}
 
     def normal_name(self, text):
-        return text.replace(" ", "_").lower()
+        return text.replace(" ", "_").replace(".", "_").lower()
