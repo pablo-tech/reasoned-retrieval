@@ -204,7 +204,8 @@ class DomainSchema(DomainIngestion):
                 item_columns = list(item.keys())
                 item_columns = [ self.normal_name(column) for column in item_columns ]
                 all_columns.update(item_columns)
-        return { self.normal_name(column) for column in all_columns}
+        column_names = { self.normal_name(column) for column in all_columns}
+        return sorted(list(column_names))
 
     def normal_name(self, text):
         text = text.replace(" ", "_")
