@@ -71,13 +71,17 @@ class GooglePalm2(GoogleBase):
         super().__init__()
 
     def invoke(self, prompt):
-        completion = palm.generate_text(
-            model="models/text-bison-001",
-            prompt=prompt,
-            temperature=0.1,
-            max_output_tokens=800,
-        )
-        return completion.result
+        try:
+            completion = palm.generate_text(
+                model="models/text-bison-001",
+                prompt=prompt,
+                temperature=0.1,
+                max_output_tokens=800,
+            )
+            return completion.result
+        except Exception as e:
+            print("PALM_ERROR="+str(e))
+            return 'None'
 
 
 class MetaBase():
@@ -104,9 +108,13 @@ class MetaBase():
             token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
     
     def invoke(self, prompt):
-        txt = self.pipeline(prompt)[0]['generated_text']
-        txts = txt.split("Answer:")
-        return txts[1].strip()
+        try:
+            txt = self.pipeline(prompt)[0]['generated_text']
+            txts = txt.split("Answer:")
+            return txts[1].strip()
+        except Exception as e:
+            print("LLAMA_ERROR="+str(e))
+            return 'None'
 
 
 class MetaLlama2_7b(MetaBase):
@@ -161,7 +169,6 @@ class LlmInfernce():
         inferred = self.llm_generator.chain_forward(inference_context={"question": question},
                                                     prompt_template=self.prompt_template,
                                                     model_params=model_params)
-        print("INNER_INFERRED=" + str(inferred))
         inferred = inferred.split("###")[0]
         return inferred
 
@@ -178,8 +185,11 @@ class GoogleFlanXxl(FlanInference):
         super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
         
     def invoke(self, prompt):
-        return self.question_answer(question=prompt,
-                                    model_params={"temperature": 0.5,
-                                                  "repetition_penalty": 1.1})      
-
+        try:
+            return self.question_answer(question=prompt,
+                                        model_params={"temperature": 0.5,
+                                                    "repetition_penalty": 1.1})      
+        except Exception as e:
+            print("FLAN_ERROR="+str(e))
+            return 'None'
 
