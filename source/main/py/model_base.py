@@ -56,39 +56,37 @@ class OpenaiBase():
                           temperature=temperature,
                           max_tokens=max_tokens)
 
-class ChatGpt3_0():
+# class ChatGpt3_0():
+
+#     def __init__(self):
+#         self.model = OpenaiBase().inference_llm_30()
+
+#     def invoke(self, prompt):
+#         try:
+#             return self.model.invoke(prompt)
+#         except Exception as e:
+#             print("GPT4_ERROR="+str(e))
+#             return ''
+
+
+# class ChatGpt4_0():
+
+#     def __init__(self):
+#         self.model = OpenaiBase().chat_llm_40()
+
+#     def invoke(self, prompt):
+#         try:
+#             return self.model.invoke(prompt)
+#         except Exception as e:
+#             print("GPT4_ERROR="+str(e))
+#             return ''
+
+class GooglePalm2():
 
     def __init__(self):
-        self.model = OpenaiBase().inference_llm_30()
+        pass
 
     def invoke(self, prompt):
-        try:
-            return self.model.invoke(prompt)
-        except Exception as e:
-            print("GPT4_ERROR="+str(e))
-            return ''
-
-
-class ChatGpt4_0():
-
-    def __init__(self):
-        self.model = OpenaiBase().chat_llm_40()
-
-    def invoke(self, prompt):
-        try:
-            return self.model.invoke(prompt)
-        except Exception as e:
-            print("GPT4_ERROR="+str(e))
-            return ''
-
-
-class GoogleBase():
-
-    def __init__(self):
-        self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
-        palm.configure(api_key=self.palm_api_key)
-
-    def palm2(self, prompt):
         try:
             completion = palm.generate_text(
                 model="models/text-bison-001",
@@ -99,7 +97,16 @@ class GoogleBase():
             return completion.result
         except Exception as e:
             print("PALM_ERROR="+str(e))
-            return ''
+            return ''    
+
+class GoogleBase():
+
+    def __init__(self):
+        self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
+        palm.configure(api_key=self.palm_api_key)
+
+    def palm2(self):
+        return GooglePalm2()
 
 
 # class GooglePalm2(GoogleBase):
