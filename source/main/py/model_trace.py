@@ -22,17 +22,16 @@ class ThoughtTracer():
             print("\n")
             print(textwrap.fill("--> " + str(question), width))
             print(textwrap.fill("CORRECT => " + correct_answer, width)) 
-            try:
-                for name, llm in named_llms.items():
+            for name, llm in named_llms.items():
+                try:
                     bot = ChatBot(agent_llm=llm,
-                                  agent_tools=tools,
-                                  is_verbose=self.is_verbose)
+                                agent_tools=tools,
+                                is_verbose=self.is_verbose)
                     inferred_response = bot.invoke(question)
-                    traces[name][question] = inferred_response
-                    print(textwrap.fill(str(name.upper()) + " => " + inferred_response.get_answer(), width))
+                    traces[name][question] = inferred_response                        print(textwrap.fill(str(name.upper()) + " => " + inferred_response.get_answer(), width))
 
-            except Exception as e:
-                print(str(name.upper()) + " => ERROR") 
+                except Exception as e:
+                    print(str(name.upper()) + " => ERROR") 
         return traces  
 
     def hotpot_traces(self, named_llms, data, n):
