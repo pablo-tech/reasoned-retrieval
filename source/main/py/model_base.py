@@ -153,6 +153,17 @@ class LlmInfernce():
       template += ai_key + ":"
       self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
 
+  def question_answer(self, questions, model_params):
+      for qna in questions:
+          question = qna["user_question"]
+          answer = qna["agent_answer"]
+          inferred = self.llm_generator.chain_forward(inference_context={"question": question},
+                                                      prompt_template=self.prompt_template,
+                                                      model_params=model_params)
+          inferred = inferred.split("###")[0]
+          print(f"Q: {question} \nA (actual): {answer} \nA (inferred): {inferred} \n--")
+
+
 class FlanInference(LlmInfernce):
 
   def __init__(self, llm_generator):
