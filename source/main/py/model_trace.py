@@ -19,7 +19,8 @@ class ThoughtTracer():
             example = data[i]
             question = example['question'].strip()
             correct_answer = example['answer'] 
-            print(textwrap.fill("\n\n--> " + str(question), width))
+            print("\n")
+            print(textwrap.fill("--> " + str(question), width))
             print(textwrap.fill("CORRECT => " + correct_answer, width)) 
             try:
                 for name, llm in named_llms.items():
