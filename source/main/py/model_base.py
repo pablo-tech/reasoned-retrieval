@@ -65,7 +65,7 @@ class GoogleBase():
         palm.configure(api_key=self.palm_api_key)
 
 
-class palm2(GoogleBase):
+class GooglePalm2(GoogleBase):
 
     def __init__(self) -> None:
         super().__init__()
@@ -109,42 +109,42 @@ class MetaBase():
         return txts[1].strip()
 
 
-class llama2_7b(MetaBase):
+class MetaLlama2_7b(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-7b")
     
 
-class lama2_7b_chat(MetaBase):
+class MetaLama2_7b_chat(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-7b-chat")
 
 
-class llama2_7b_hf(MetaBase):
+class MetaLlama2_7b_hf(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-7b-hf")
 
 
-class llama2_7b_chat_hf(MetaBase):
+class MetaLlama2_7b_chat_hf(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-7b-chat-hf")
 
 
-class llama2_13b(MetaBase):
+class MetaLlama2_13b(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-13b")
     
 
-class llama2_13b_chat(MetaBase):
+class MetaLlama2_13b_chat(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-13b-chat")
 
 
-class llama2_13b_hf(MetaBase):
+class MetaLlama2_13b_hf(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-13b-hf")
 
 
-class llama2_13b_chat_hf(MetaBase):
+class MetaLlama2_13b_chat_hf(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-13b-chat-hf")
 
@@ -171,7 +171,7 @@ class FlanInference(LlmInfernce):
       super().__init__(llm_generator, "Question", "Answer")
 
 
-class FlanXxl(FlanInference):
+class GoogleFlanXxl(FlanInference):
 
     def __init__(self):
         super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
