@@ -86,16 +86,9 @@ class GoogleBase():
 
     def __init__(self):
         self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
-        # palm_api_key = getpass.getpass(prompt='Enter your PaLM API key: ')
         palm.configure(api_key=self.palm_api_key)
 
-
-class GooglePalm2(GoogleBase):
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def invoke(self, prompt):
+    def palm2(self, prompt):
         try:
             completion = palm.generate_text(
                 model="models/text-bison-001",
@@ -107,6 +100,25 @@ class GooglePalm2(GoogleBase):
         except Exception as e:
             print("PALM_ERROR="+str(e))
             return ''
+
+
+# class GooglePalm2(GoogleBase):
+
+#     def __init__(self) -> None:
+#         super().__init__()
+
+#     def invoke(self, prompt):
+#         try:
+#             completion = palm.generate_text(
+#                 model="models/text-bison-001",
+#                 prompt=prompt,
+#                 temperature=0.1,
+#                 max_output_tokens=800,
+#             )
+#             return completion.result
+#         except Exception as e:
+#             print("PALM_ERROR="+str(e))
+#             return ''
 
 
 class MetaBase():
