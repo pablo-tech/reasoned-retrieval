@@ -6,9 +6,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.llms import GooglePalm
 from langchain.llms import HuggingFacePipeline
 from langchain import HuggingFaceHub
-# from langchain.chains import ConversationChain
-# from langchain.pydantic_v1 import BaseModel
-# from langchain import PromptTemplate
 
 import numpy as np
 import pandas as pd
@@ -54,36 +51,7 @@ class OpenaiBase():
                           engine="tdl-gpt-4",
                           temperature=temperature,
                           max_tokens=max_tokens)
-        
-
-# class GoogleFlanXxl(BaseModel):
-
-#     def question_answer(self, question, model_params):
-
-#         llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl")
-
-#         human_key = "Question"
-#         ai_key = "Answer"
-#         template = human_key + ": {question}" + "\n"
-#         template += ai_key + ":"
-#         prompt_template = PromptTemplate(template=template, input_variables=["question"])
-
-
-#         inferred = llm_generator.chain_forward(inference_context={"question": question},
-#                                                prompt_template=prompt_template,
-#                                                model_params=model_params)
-#         inferred = inferred.split("###")[0]
-#         return inferred
-
-#     def invoke(self, prompt):
-#         try:
-#             return self.question_answer(question=prompt,
-#                                         model_params={"temperature": 0.5,
-#                                                     "repetition_penalty": 1.1})      
-#         except Exception as e:
-#             print("FLAN_ERROR="+str(e))
-#             return ''
-
+    
 
 class GoogleBase():
 
