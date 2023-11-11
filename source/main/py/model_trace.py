@@ -31,7 +31,7 @@ class ThoughtTracer():
                     print(textwrap.fill(str(name.upper()) + "=" + inferred_response.get_answer(), width))
 
             except Exception as e:
-                print("QUESTIONER_ERROR="+str(e)+"..."+str(question))
+                print(str(name.upper()) + "=" + str(e)) 
                 print("\n")
                 pass
         return traces  
