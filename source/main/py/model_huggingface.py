@@ -1,21 +1,18 @@
 import os
 import requests
 import json
-from getpass import getpass
 
 from langchain import HuggingFaceHub
 from langchain import LLMChain
 from langchain.llms import HuggingFacePipeline
 from langchain.llms import HuggingFaceTextGenInference
-from langchain.llms.base import LLM
 
 import torch
 from torch import cuda, bfloat16
 
 import transformers
-from transformers import pipeline
 from transformers import StoppingCriteria, StoppingCriteriaList
-
+from transformers import pipeline
 
 
 class HuggingFaceAuth():
@@ -111,12 +108,6 @@ class HuggingFaceStoppable(HuggingFaceEnv):
             use_auth_token=self.get_auth()
         )    
     
-    
-import torch
-from torch import cuda, bfloat16
-import transformers
-from transformers import StoppingCriteria, StoppingCriteriaList
-
 
 class StopOnTokens(StoppingCriteria):
 
