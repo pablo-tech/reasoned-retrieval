@@ -5,6 +5,9 @@ from langchain import PromptTemplate
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.pydantic_v1 import BaseModel
+from langchain.llms import HuggingFacePipeline
+from langchain.chains import ConversationChain
+
 
 import numpy as np
 import pandas as pd
@@ -71,19 +74,22 @@ class GooglePalm2():
             return ''    
         
 
-class LlmInfernce(BaseModel):
-
-    def __init__(self, llm_generator, human_key, ai_key):
-        # super().__init__()
-        self.llm_generator = llm_generator
-        template = human_key + ": {question}" + "\n"
-        template += ai_key + ":"
-        self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
+class GoogleFlanXxl(BaseModel):
 
     def question_answer(self, question, model_params):
-        inferred = self.llm_generator.chain_forward(inference_context={"question": question},
-                                                    prompt_template=self.prompt_template,
-                                                    model_params=model_params)
+
+        llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl")
+
+        human_key = "Question"
+        ai_key = "Answer"
+        template = human_key + ": {question}" + "\n"
+        template += ai_key + ":"
+        prompt_template = PromptTemplate(template=template, input_variables=["question"])
+
+
+        inferred = llm_generator.chain_forward(inference_context={"question": question},
+                                               prompt_template=prompt_template,
+                                               model_params=model_params)
         inferred = inferred.split("###")[0]
         return inferred
 
@@ -96,18 +102,6 @@ class LlmInfernce(BaseModel):
             print("FLAN_ERROR="+str(e))
             return ''
 
-
-class FlanInference(LlmInfernce):
-
-    def __init__(self, llm_generator):
-        super().__init__(llm_generator, "Question", "Answer")
-
-
-class GoogleFlanXxl(FlanInference):
-
-    def __init__(self):
-        super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
-        
 
 class GoogleBase():
 
@@ -146,7 +140,15 @@ class MetaLlama2():
     
     def invoke(self, prompt):
         try:
-            response = self.pipeline(prompt)
+            response = ''
+            # prompt = PromptTemplate(template=prompt, 
+                                    # input_variables=[])
+            llm = HuggingFacePipeline(pipeline=self.pipeline, 
+                                      model_kwargs={'temperature':0.5})
+            response = llm.invoke(prompt)
+            # chain = ConversationChain(llm=llm, prompt=prompt)
+            # response = chain.run(prompt)
+            # response = self.pipeline(prompt)
             txt = response[0]['generated_text']
             txts = txt.split("Answer:")
             return txts[1].strip()
