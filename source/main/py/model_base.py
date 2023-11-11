@@ -4,8 +4,6 @@ import os
 from langchain import PromptTemplate
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
-from langchain.llms import AzureOpenAI
-# from langchain.llms import AzureChatOpenAI
 
 import numpy as np
 import pandas as pd
@@ -15,9 +13,10 @@ import getpass
 from transformers import AutoTokenizer
 import transformers
 import torch
-import accelerate
 
 from model_huggingface import HuggingFaceAuth
+from model_huggingface import HuggingFaceRemote
+from model_base import FlanInference
 
 
 class OpenaiBase():
@@ -169,6 +168,19 @@ class FlanInference(LlmInfernce):
   def __init__(self, llm_generator):
       super().__init__(llm_generator, "Question", "Answer")
 
+
+class FlanXxl(FlanInference):
+
+    def __init__(self):
+        super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
+        
+    def invoke(self, prompt):
+        questions = { "user_question": prompt,
+                    "agent_answer": "" }
+        response = self.question_answer(questions=[questions],
+                                        model_params={"temperature": 0,
+                                                      "repetition_penalty": 1.1})  
+        return response       
     
 
 
