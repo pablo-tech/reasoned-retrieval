@@ -87,6 +87,9 @@ class OpenaiBase():
 
 class GoogleBase():
 
+    def __init__(self):
+        HuggingFaceAuth()
+
     def palm2(self):
         return GooglePalm(google_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU",
                           model_kwargs={'temperature':0.5})    
