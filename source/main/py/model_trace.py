@@ -11,7 +11,8 @@ class ThoughtTracer():
     def __init__(self, is_verbose):
         self.is_verbose = is_verbose
 
-    def thought_traces(self, named_llms, tools, data, n):
+    def thought_traces(self, named_llms, tools, data, 
+                       n, width=75):
         traces = defaultdict(dict)
 
         for i in range(n):
@@ -27,7 +28,6 @@ class ThoughtTracer():
                                   is_verbose=self.is_verbose)
                     inferred_response = bot.invoke(question)
                     traces[name][question] = inferred_response
-                    width=75  
                     print(textwrap.fill(str(name.upper()) + "=" + inferred_response.get_answer(), width))
 
             except Exception as e:
