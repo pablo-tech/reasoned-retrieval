@@ -18,6 +18,8 @@ class ThoughtTracer():
             example = data[i]
             question = example['question'].strip()
             correct_answer = example['answer'] 
+            print(textwrap.fill("\n--> " + str(question), width))
+            print(textwrap.fill("CORRECT=" + correct_answer, width)) 
             try:
                 for name, llm in named_llms.items():
                     bot = ChatBot(agent_llm=llm,
@@ -26,9 +28,7 @@ class ThoughtTracer():
                     inferred_response = bot.invoke(question)
                     traces[name][question] = inferred_response
                     width=75  
-                    print(textwrap.fill("\n--> " + str(question), width))
-                    print(textwrap.fill("CORRECT=" + correct_answer, width)) 
-                    print(textwrap.fill(name + " " + "INFERRED=" + inferred_response.get_answer(), width))
+                    print(textwrap.fill(str(name.upper()) + "=" + inferred_response.get_answer(), width))
 
             except Exception as e:
                 print("QUESTIONER_ERROR="+str(e)+"..."+str(question))
