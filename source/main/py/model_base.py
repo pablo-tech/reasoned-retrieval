@@ -99,47 +99,47 @@ class MetaBase():
             token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
     
     def invoke(self, prompt):
-          return self.pipeline(prompt)[0]
+        return self.pipeline(prompt)[0]
 
 
 class llama2_7b(MetaBase):
-        def __init__(self):
-              super().__init__("meta-llama/Llama-2-7b")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-7b")
     
 
 class lama2_7b_chat(MetaBase):
-        def __init__(self):
-            super().__init__("meta-llama/Llama-2-7b-chat")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-7b-chat")
 
 
 class llama2_7b_hf(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-7b-hf")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-7b-hf")
 
 
 class llama2_7b_chat_hf(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-7b-chat-hf")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-7b-chat-hf")
 
 
 class llama2_13b(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-13b")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-13b")
     
 
 class llama2_13b_chat(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-13b-chat")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-13b-chat")
 
 
 class llama2_13b_hf(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-13b-hf")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-13b-hf")
 
 
 class llama2_13b_chat_hf(MetaBase):
-       def __init__(self):
-            super().__init__("meta-llama/Llama-2-13b-chat-hf")
+    def __init__(self):
+        super().__init__("meta-llama/Llama-2-13b-chat-hf")
 
 
     
