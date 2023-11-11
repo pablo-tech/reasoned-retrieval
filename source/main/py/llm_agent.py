@@ -38,7 +38,10 @@ class PipelinedAgent():
         # print("\n\nFILLED_PROMPT=>"+self.filled_str(prompt) + "\n\n")
         inferred = self.agent_llm.invoke(prompt)
         if isinstance(inferred, AIMessage):
-            inferred = inferred.content
+            try:
+                inferred = inferred.content
+            except:
+                inferred = ''
         output_len = len(inferred)
         # if self.is_verbose:
         # print("\nINFERRED=>"+"\n"+str(inferred))
