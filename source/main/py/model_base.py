@@ -5,6 +5,7 @@ from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import GooglePalm
 from langchain.llms import HuggingFacePipeline
+from langchain import HuggingFaceHub
 # from langchain.chains import ConversationChain
 # from langchain.pydantic_v1 import BaseModel
 # from langchain import PromptTemplate
@@ -53,25 +54,6 @@ class OpenaiBase():
                           engine="tdl-gpt-4",
                           temperature=temperature,
                           max_tokens=max_tokens)
-    
-
-# class GooglePalm2():
-
-#     def __init__(self):
-#         pass
-
-#     def invoke(self, prompt):
-#         try:
-#             completion = palm.generate_text(
-#                 model="models/text-bison-001",
-#                 prompt=prompt,
-#                 temperature=0.1,
-#                 max_output_tokens=800,
-#             )
-#             return completion.result
-#         except Exception as e:
-#             print("PALM_ERROR="+str(e))
-#             return ''    
         
 
 # class GoogleFlanXxl(BaseModel):
@@ -109,34 +91,9 @@ class GoogleBase():
         return GooglePalm(google_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU",
                           model_kwargs={'temperature':0.5})    
 
-    # def flanxxl(self):
-    #     return GoogleFlanXxl()
-    
-
-# class MetaLlama2():
-
-#     def __init__(self, model_name):
-#         self.pipeline = self.get_pipeline(model_name)
-
-#     def get_pipeline(self, model_name):
-    
-#     def invoke(self, prompt):
-#         try:
-#             response = ''
-#             # prompt = PromptTemplate(template=prompt, 
-#                                     # input_variables=[])
-#             llm = HuggingFacePipeline(pipeline=self.pipeline, 
-#                                       model_kwargs={'temperature':0.5})
-#             response = llm.invoke(prompt)
-#             # chain = ConversationChain(llm=llm, prompt=prompt)
-#             # response = chain.run(prompt)
-#             # response = self.pipeline(prompt)
-#             txt = response[0]['generated_text']
-#             txts = txt.split("Answer:")
-#             return txts[1].strip()
-#         except Exception as e:
-#             print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
-#             return '' 
+    def flan_xxl(self):
+        return HuggingFaceHub(repo_id="google/flan-t5-xxl",
+                              model_kwargs={'temperature':0.5})
 
 
 class MetaBase():
