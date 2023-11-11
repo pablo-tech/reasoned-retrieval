@@ -44,42 +44,12 @@ class OpenaiBase():
                       temperature=temperature,
                       max_tokens=max_tokens)
 
-        # AzureOpenAI(openai_api_key=api_key,
-        #             model_name='text-davinci-003',
-        #             engine="bot-davinci",
-        #             temperature=0,
-        #             max_tokens = 256)
-
     def chat_llm_40(self, temperature=0, max_tokens = 256):
         return ChatOpenAI(openai_api_key=self.api_key,
                           engine="tdl-gpt-4",
                           temperature=temperature,
                           max_tokens=max_tokens)
-
-# class ChatGpt3_0():
-
-#     def __init__(self):
-#         self.model = OpenaiBase().inference_llm_30()
-
-#     def invoke(self, prompt):
-#         try:
-#             return self.model.invoke(prompt)
-#         except Exception as e:
-#             print("GPT4_ERROR="+str(e))
-#             return ''
-
-
-# class ChatGpt4_0():
-
-#     def __init__(self):
-#         self.model = OpenaiBase().chat_llm_40()
-
-#     def invoke(self, prompt):
-#         try:
-#             return self.model.invoke(prompt)
-#         except Exception as e:
-#             print("GPT4_ERROR="+str(e))
-#             return ''
+    
 
 class GooglePalm2():
 
@@ -99,99 +69,6 @@ class GooglePalm2():
             print("PALM_ERROR="+str(e))
             return ''    
         
-
-# class GooglePalm2(GoogleBase):
-
-#     def __init__(self) -> None:
-#         super().__init__()
-
-#     def invoke(self, prompt):
-#         try:
-#             completion = palm.generate_text(
-#                 model="models/text-bison-001",
-#                 prompt=prompt,
-#                 temperature=0.1,
-#                 max_output_tokens=800,
-#             )
-#             return completion.result
-#         except Exception as e:
-#             print("PALM_ERROR="+str(e))
-#             return ''
-
-
-class MetaBase():
-
-    def __init__(self, model_name):
-        HuggingFaceAuth()
-        self.pipeline = self.get_pipeline(model_name)
-
-    def get_pipeline(self, model_name):
-        tokenizer=AutoTokenizer.from_pretrained(model_name,
-                                                token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
-        return transformers.pipeline(
-            "text-generation",
-            model=model_name,
-            tokenizer=tokenizer,
-            torch_dtype=torch.bfloat16,
-            trust_remote_code=True,
-            device_map="auto",
-            max_length=1000,
-            do_sample=True,
-            top_k=10,
-            num_return_sequences=1,
-            eos_token_id=tokenizer.eos_token_id,
-            token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
-    
-    def invoke(self, prompt):
-        try:
-            response = self.pipeline(prompt)
-            txt = response[0]['generated_text']
-            txts = txt.split("Answer:")
-            return txts[1].strip()
-        except Exception as e:
-            print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
-            return ''
-
-
-# class MetaLlama2_7b(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-7b")
-    
-
-# class MetaLama2_7b_chat(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-7b-chat")
-
-
-# class MetaLlama2_7b_hf(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-7b-hf")
-
-
-# class MetaLlama2_7b_chat_hf(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-7b-chat-hf")
-
-
-# class MetaLlama2_13b(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-13b")
-    
-
-# class MetaLlama2_13b_chat(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-13b-chat")
-
-
-# class MetaLlama2_13b_hf(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-13b-hf")
-
-
-# class MetaLlama2_13b_chat_hf(MetaBase):
-#     def __init__(self):
-#         super().__init__("meta-llama/Llama-2-13b-chat-hf")
-
 
 class LlmInfernce():
 
@@ -241,3 +118,44 @@ class GoogleBase():
     
     def flanxxl(self):
         return GoogleFlanXxl()
+    
+
+class MetaLlama2():
+
+    def __init__(self, model_name):
+        self.pipeline = self.get_pipeline(model_name)
+
+    def get_pipeline(self, model_name):
+        tokenizer=AutoTokenizer.from_pretrained(model_name,
+                                                token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
+        return transformers.pipeline(
+            "text-generation",
+            model=model_name,
+            tokenizer=tokenizer,
+            torch_dtype=torch.bfloat16,
+            trust_remote_code=True,
+            device_map="auto",
+            max_length=1000,
+            do_sample=True,
+            top_k=10,
+            num_return_sequences=1,
+            eos_token_id=tokenizer.eos_token_id,
+            token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
+    
+    def invoke(self, prompt):
+        try:
+            response = self.pipeline(prompt)
+            txt = response[0]['generated_text']
+            txts = txt.split("Answer:")
+            return txts[1].strip()
+        except Exception as e:
+            print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
+            return '' 
+
+class MetaBase():
+
+    def __init__(self):
+        HuggingFaceAuth()
+
+    def llama2_7b_chat_hf(self):
+        return MetaLlama2(model_name="meta-llama/Llama-2-7b-chat-hf")    
