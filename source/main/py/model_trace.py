@@ -19,7 +19,7 @@ class ThoughtTracer():
             example = data[i]
             question = example['question'].strip()
             correct_answer = example['answer'] 
-            print("\n")
+            print("\n\n=========\n")
             print(textwrap.fill("--> " + str(question), width))
             print(textwrap.fill("CORRECT => " + correct_answer, width)) 
             for name, llm in named_llms.items():
@@ -32,7 +32,7 @@ class ThoughtTracer():
                     print(textwrap.fill(str(name.upper()) + " => " + inferred_response.get_answer(), width))
 
                 except Exception as e:
-                    print(str(name.upper()) + " => ERROR.. INFERRED=" + str(inferred_response)) 
+                    print(str(name.upper()) + " => ERROR..." + str(e) + "\n...INFERRED" + str(inferred_response)) 
         return traces  
 
     def hotpot_traces(self, named_llms, data, n):
