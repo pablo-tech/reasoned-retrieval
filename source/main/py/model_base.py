@@ -1,6 +1,7 @@
 import openai
 import os
 
+from langchain import PromptTemplate
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import AzureOpenAI
@@ -143,6 +144,19 @@ class llama2_13b_chat_hf(MetaBase):
     def __init__(self):
         super().__init__("meta-llama/Llama-2-13b-chat-hf")
 
+
+class LlmInfernce():
+
+  def __init__(self, llm_generator, human_key, ai_key):
+      self.llm_generator = llm_generator
+      template = human_key + ": {question}" + "\n"
+      template += ai_key + ":"
+      self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
+
+class FlanInference(LlmInfernce):
+
+  def __init__(self, llm_generator):
+      super().__init__(llm_generator, "Question", "Answer")
 
     
 
