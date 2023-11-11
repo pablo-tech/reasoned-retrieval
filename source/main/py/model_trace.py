@@ -38,7 +38,7 @@ class ThoughtTracer():
     def hotpot_traces(self, named_llms, data, n):
         model_traces = defaultdict(list)
         for name, llm in named_llms.items():
-            tools = HotpotToolFactory(self.completion_llm).get_tools()
+            tools = HotpotToolFactory(llm).get_tools()
             question_traces = self.thought_traces(name, llm, tools, data, n)
             model_traces[name].add(question_traces)
         return model_traces
