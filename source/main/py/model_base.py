@@ -151,15 +151,12 @@ class LlmInfernce():
       template += ai_key + ":"
       self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
 
-  def question_answer(self, questions, model_params):
-      for qna in questions:
-          question = qna["user_question"]
-          answer = qna["agent_answer"]
-          inferred = self.llm_generator.chain_forward(inference_context={"question": question},
-                                                      prompt_template=self.prompt_template,
-                                                      model_params=model_params)
-          inferred = inferred.split("###")[0]
-          print(f"Q: {question} \nA (actual): {answer} \nA (inferred): {inferred} \n--")
+  def question_answer(self, question, model_params):
+      inferred = self.llm_generator.chain_forward(inference_context={"question": question},
+                                                  prompt_template=self.prompt_template,
+                                                  model_params=model_params)
+      inferred = inferred.split("###")[0]
+      return inferred
 
 
 class FlanInference(LlmInfernce):
@@ -174,12 +171,8 @@ class FlanXxl(FlanInference):
         super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
         
     def invoke(self, prompt):
-        questions = { "user_question": prompt,
-                      "agent_answer": "" }
-        response = self.question_answer(questions=[questions],
-                                        model_params={"temperature": 0.5,
-                                                      "repetition_penalty": 1.1})  
-        return response       
-    
+        return self.question_answer(question=prompt,
+                                    model_params={"temperature": 0.5,
+                                                  "repetition_penalty": 1.1})      
 
 
