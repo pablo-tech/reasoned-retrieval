@@ -151,24 +151,25 @@ class MetaLlama2_13b_chat_hf(MetaBase):
 
 class LlmInfernce():
 
-  def __init__(self, llm_generator, human_key, ai_key):
-      self.llm_generator = llm_generator
-      template = human_key + ": {question}" + "\n"
-      template += ai_key + ":"
-      self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
+    def __init__(self, llm_generator, human_key, ai_key):
+        self.llm_generator = llm_generator
+        template = human_key + ": {question}" + "\n"
+        template += ai_key + ":"
+        self.prompt_template = PromptTemplate(template=template, input_variables=["question"])
 
-  def question_answer(self, question, model_params):
-      inferred = self.llm_generator.chain_forward(inference_context={"question": question},
-                                                  prompt_template=self.prompt_template,
-                                                  model_params=model_params)
-      inferred = inferred.split("###")[0]
-      return inferred
+    def question_answer(self, question, model_params):
+        inferred = self.llm_generator.chain_forward(inference_context={"question": question},
+                                                    prompt_template=self.prompt_template,
+                                                    model_params=model_params)
+        print("INNER_INFERRED=" + str(inferred))
+        inferred = inferred.split("###")[0]
+        return inferred
 
 
 class FlanInference(LlmInfernce):
 
-  def __init__(self, llm_generator):
-      super().__init__(llm_generator, "Question", "Answer")
+    def __init__(self, llm_generator):
+        super().__init__(llm_generator, "Question", "Answer")
 
 
 class GoogleFlanXxl(FlanInference):
