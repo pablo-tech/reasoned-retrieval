@@ -74,7 +74,7 @@ class GooglePalm2():
 class LlmInfernce(BaseModel):
 
     def __init__(self, llm_generator, human_key, ai_key):
-        super().__init__()
+        # super().__init__()
         self.llm_generator = llm_generator
         template = human_key + ": {question}" + "\n"
         template += ai_key + ":"
@@ -86,6 +86,15 @@ class LlmInfernce(BaseModel):
                                                     model_params=model_params)
         inferred = inferred.split("###")[0]
         return inferred
+
+    def invoke(self, prompt):
+        try:
+            return self.question_answer(question=prompt,
+                                        model_params={"temperature": 0.5,
+                                                    "repetition_penalty": 1.1})      
+        except Exception as e:
+            print("FLAN_ERROR="+str(e))
+            return ''
 
 
 class FlanInference(LlmInfernce):
@@ -99,15 +108,6 @@ class GoogleFlanXxl(FlanInference):
     def __init__(self):
         super().__init__(llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl"))
         
-    def invoke(self, prompt):
-        try:
-            return self.question_answer(question=prompt,
-                                        model_params={"temperature": 0.5,
-                                                    "repetition_penalty": 1.1})      
-        except Exception as e:
-            print("FLAN_ERROR="+str(e))
-            return ''
-
 
 class GoogleBase():
 
