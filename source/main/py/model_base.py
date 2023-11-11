@@ -56,6 +56,31 @@ class OpenaiBase():
                           temperature=temperature,
                           max_tokens=max_tokens)
 
+class ChatGpt3_0():
+
+    def __init__(self) -> None:
+        self.model = OpenaiBase().inference_llm_30()
+
+    def invoke(self, prompt):
+        try:
+            return self.model.invoke(prompt)
+        except Exception as e:
+            print("GPT4_ERROR="+str(e))
+            return 'None'
+
+
+class ChatGpt4_0():
+
+    def __init__(self) -> None:
+        self.model = OpenaiBase().chat_llm_40()
+
+    def invoke(self, prompt):
+        try:
+            return self.model.invoke(prompt)
+        except Exception as e:
+            print("GPT4_ERROR="+str(e))
+            return 'None'
+
 
 class GoogleBase():
 
