@@ -11,6 +11,11 @@ import pandas as pd
 import google.generativeai as palm
 import getpass
 
+from transformers import AutoTokenizer
+import transformers
+import torch
+import accelerate
+
 
 class OpenaiBase():
 
@@ -67,3 +72,73 @@ class GoogleBase():
             max_output_tokens=800,
         )
         return completion.result
+
+
+class MetaBase():
+
+    def __init__(self, model_name):
+        self.pipeline = self.get_pipeline(model_name)
+
+    def get_pipeline(self, model_name):
+        tokenizer=AutoTokenizer.from_pretrained(model_name)
+        return transformers.pipeline(
+            "text-generation",
+            model=model_name,
+            tokenizer=tokenizer,
+            torch_dtype=torch.bfloat16,
+            trust_remote_code=True,
+            device_map="auto",
+            max_length=1000,
+            do_sample=True,
+            top_k=10,
+            num_return_sequences=1,
+            eos_token_id=tokenizer.eos_token_id,
+            token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
+    
+    def invoke(self, prompt):
+          return self.self.pipeline(prompt)
+
+
+class llama2_7b():
+        def __init__(self):
+              super().__init__("meta-llama/Llama-2-7b")
+    
+
+class lama2_7b_chat():
+        def __init__(self):
+            super().__init__("meta-llama/Llama-2-7b-chat")
+
+
+class llama2_7b_hf():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-7b-hf")
+
+
+class llama2_7b_chat_hf():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-7b-chat-hf")
+
+
+class llama2_13b():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-13b")
+    
+
+class llama2_13b_chat():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-13b-chat")
+
+
+class llama2_13b_hf():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-13b-hf")
+
+
+class llama2_13b_chat_hf():
+       def __init__(self):
+            super().__init__("meta-llama/Llama-2-13b-chat-hf")
+
+
+    
+
+
