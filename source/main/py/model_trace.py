@@ -24,15 +24,16 @@ class ThoughtTracer():
             print(textwrap.fill("CORRECT => " + correct_answer, width)) 
             for name, llm in named_llms.items():
                 try:
+                    name = name.upper()
                     bot = ChatBot(agent_llm=llm,
                                   agent_tools=tools,
                                   is_verbose=self.is_verbose)
                     inferred_response = bot.invoke(question)
                     traces[name][question] = inferred_response
-                    print(str(name.upper()) + " => " + str(inferred_response.get_answer()))
+                    print(str(name) + " => " + str(inferred_response.get_answer()))
 
                 except Exception as e:
-                    print(str(name.upper()) + " => " + str(inferred_response.get_answer()))
+                    print(str(name) + " => " + str(inferred_response.get_answer()))
                     pass 
                     # print(str(name.upper()) + " => ERROR..." + str(e) + "\n... INFERRED=> " + str(inferred_response.get_answer())) 
         return traces  
