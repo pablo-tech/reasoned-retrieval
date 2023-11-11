@@ -96,7 +96,7 @@ class MetaBase():
             token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
     
     def invoke(self, prompt):
-          return self.self.pipeline(prompt)
+          return self.pipeline(prompt)[0]
 
 
 class llama2_7b():
