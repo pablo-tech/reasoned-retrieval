@@ -29,7 +29,7 @@ class ThoughtTracer():
                                 is_verbose=self.is_verbose)
                     inferred_response = bot.invoke(question)
                     traces[name][question] = inferred_response
-                    print(textwrap.fill(str(name.upper()) + " => " + inferred_response.get_answer(), width))
+                    print(textwrap.fill(str(name.upper()) + " => " + str(inferred_response.get_answer()), width))
 
                 except Exception as e:
                     print(str(name.upper()) + " => ERROR..." + str(e) + "\n...INFERRED" + str(inferred_response)) 
