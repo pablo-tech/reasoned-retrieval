@@ -58,7 +58,7 @@ class OpenaiBase():
 
 class ChatGpt3_0():
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.model = OpenaiBase().inference_llm_30()
 
     def invoke(self, prompt):
@@ -66,12 +66,12 @@ class ChatGpt3_0():
             return self.model.invoke(prompt)
         except Exception as e:
             print("GPT4_ERROR="+str(e))
-            return 'None'
+            return ''
 
 
 class ChatGpt4_0():
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.model = OpenaiBase().chat_llm_40()
 
     def invoke(self, prompt):
@@ -79,7 +79,7 @@ class ChatGpt4_0():
             return self.model.invoke(prompt)
         except Exception as e:
             print("GPT4_ERROR="+str(e))
-            return 'None'
+            return ''
 
 
 class GoogleBase():
@@ -106,7 +106,7 @@ class GooglePalm2(GoogleBase):
             return completion.result
         except Exception as e:
             print("PALM_ERROR="+str(e))
-            return 'None'
+            return ''
 
 
 class MetaBase():
@@ -134,12 +134,13 @@ class MetaBase():
     
     def invoke(self, prompt):
         try:
-            txt = self.pipeline(prompt)[0]['generated_text']
+            response = self.pipeline(prompt)
+            txt = response[0]['generated_text']
             txts = txt.split("Answer:")
             return txts[1].strip()
         except Exception as e:
-            print("LLAMA_ERROR="+str(e))
-            return 'None'
+            print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
+            return ''
 
 
 class MetaLlama2_7b(MetaBase):
@@ -216,5 +217,5 @@ class GoogleFlanXxl(FlanInference):
                                                     "repetition_penalty": 1.1})      
         except Exception as e:
             print("FLAN_ERROR="+str(e))
-            return 'None'
+            return ''
 
