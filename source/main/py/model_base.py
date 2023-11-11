@@ -177,7 +177,7 @@ class FlanXxl(FlanInference):
         questions = { "user_question": prompt,
                       "agent_answer": "" }
         response = self.question_answer(questions=[questions],
-                                        model_params={"temperature": 0,
+                                        model_params={"temperature": 0.5,
                                                       "repetition_penalty": 1.1})  
         return response       
     
