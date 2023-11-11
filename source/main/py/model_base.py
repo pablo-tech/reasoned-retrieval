@@ -79,11 +79,11 @@ class MetaBase():
 
     def __init__(self, model_name):
         HuggingFaceAuth()
-        self.pipeline = self.get_pipeline(model_name,
-                                          token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
+        self.pipeline = self.get_pipeline(model_name)
 
     def get_pipeline(self, model_name):
-        tokenizer=AutoTokenizer.from_pretrained(model_name)
+        tokenizer=AutoTokenizer.from_pretrained(model_name,
+                                                token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
         return transformers.pipeline(
             "text-generation",
             model=model_name,
