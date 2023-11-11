@@ -17,6 +17,7 @@ from transformers import pipeline
 from transformers import StoppingCriteria, StoppingCriteriaList
 
 
+
 class HuggingFaceAuth():
 
     def __init__(self,

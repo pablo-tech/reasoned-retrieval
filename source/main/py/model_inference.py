@@ -1,6 +1,8 @@
 from langchain import PromptTemplate
 
-from model_huggingface import HuggingFaceRemote
+from langchain.chains.question_answering import load_qa_chain
+
+from collections import defaultdict
 
 
 class LlmInfernce():
@@ -32,16 +34,6 @@ class FlanInference(LlmInfernce):
 
   def __init__(self, llm_generator):
       super().__init__(llm_generator, "Question", "Answer")
-
-
-
-from llm_huggingface import HuggingFaceRemote
-
-from langchain.chains.question_answering import load_qa_chain
-# from langchain.chat_models import ChatOpenAI
-# from langchain.llms import OpenAI
-
-from collections import defaultdict
 
 
 class LlmRetriever():
