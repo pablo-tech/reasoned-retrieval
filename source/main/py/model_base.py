@@ -98,16 +98,7 @@ class GooglePalm2():
         except Exception as e:
             print("PALM_ERROR="+str(e))
             return ''    
-
-class GoogleBase():
-
-    def __init__(self):
-        self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
-        palm.configure(api_key=self.palm_api_key)
-
-    def palm2(self):
-        return GooglePalm2()
-
+        
 
 # class GooglePalm2(GoogleBase):
 
@@ -162,44 +153,44 @@ class MetaBase():
             return ''
 
 
-class MetaLlama2_7b(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-7b")
+# class MetaLlama2_7b(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-7b")
     
 
-class MetaLama2_7b_chat(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-7b-chat")
+# class MetaLama2_7b_chat(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-7b-chat")
 
 
-class MetaLlama2_7b_hf(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-7b-hf")
+# class MetaLlama2_7b_hf(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-7b-hf")
 
 
-class MetaLlama2_7b_chat_hf(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-7b-chat-hf")
+# class MetaLlama2_7b_chat_hf(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-7b-chat-hf")
 
 
-class MetaLlama2_13b(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-13b")
+# class MetaLlama2_13b(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-13b")
     
 
-class MetaLlama2_13b_chat(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-13b-chat")
+# class MetaLlama2_13b_chat(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-13b-chat")
 
 
-class MetaLlama2_13b_hf(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-13b-hf")
+# class MetaLlama2_13b_hf(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-13b-hf")
 
 
-class MetaLlama2_13b_chat_hf(MetaBase):
-    def __init__(self):
-        super().__init__("meta-llama/Llama-2-13b-chat-hf")
+# class MetaLlama2_13b_chat_hf(MetaBase):
+#     def __init__(self):
+#         super().__init__("meta-llama/Llama-2-13b-chat-hf")
 
 
 class LlmInfernce():
@@ -238,3 +229,15 @@ class GoogleFlanXxl(FlanInference):
             print("FLAN_ERROR="+str(e))
             return ''
 
+
+class GoogleBase():
+
+    def __init__(self):
+        self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
+        palm.configure(api_key=self.palm_api_key)
+
+    def palm2(self):
+        return GooglePalm2()
+    
+    def flanxxl(self):
+        return GoogleFlanXxl()
