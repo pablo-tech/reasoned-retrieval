@@ -31,12 +31,15 @@ class ThoughtTracer():
                                   is_verbose=self.is_verbose)
                     inferred_response = bot.invoke(question)
                     traces[name][question] = inferred_response
-                    print(str(name) + " => " + str(inferred_response.get_answer()))
+                    if inferred_response is not None and inferred_response.get_answer() is not None:    
+                        print(str(name) + " => " + str(inferred_response.get_answer()))
+                    else:
+                        print(str(name) + " => " + "None")
 
                 except Exception as e:
-                    print(str(name) + " => " + str(inferred_response.get_answer()))
-                    pass 
-                    # print(str(name.upper()) + " => ERROR..." + str(e) + "\n... INFERRED=> " + str(inferred_response.get_answer())) 
+                    # print(str(name) + " => " + str(inferred_response.get_answer()))
+                    # pass 
+                    print(str(name.upper()) + " => ERROR..." + str(e) + "\n... INFERRED=> " + str(inferred_response)) 
         return traces  
 
     def hotpot_traces(self, named_llms, data, n):
