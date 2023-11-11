@@ -8,8 +8,7 @@ from collections import defaultdict
 
 class ThoughtTracer():
 
-    def __init__(self, named_llms, is_verbose):
-        self.named_llms = named_llms
+    def __init__(self, is_verbose):
         self.is_verbose = is_verbose
 
     def thought_traces(self, name, llm, tools, data, n):
