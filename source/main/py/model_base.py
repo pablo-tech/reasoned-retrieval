@@ -16,6 +16,8 @@ import transformers
 import torch
 import accelerate
 
+from model_huggingface import HuggingFaceAuth
+
 
 class OpenaiBase():
 
@@ -77,6 +79,7 @@ class GoogleBase():
 class MetaBase():
 
     def __init__(self, model_name):
+        HuggingFaceAuth()
         self.pipeline = self.get_pipeline(model_name)
 
     def get_pipeline(self, model_name):
@@ -99,42 +102,42 @@ class MetaBase():
           return self.pipeline(prompt)[0]
 
 
-class llama2_7b():
+class llama2_7b(MetaBase):
         def __init__(self):
               super().__init__("meta-llama/Llama-2-7b")
     
 
-class lama2_7b_chat():
+class lama2_7b_chat(MetaBase):
         def __init__(self):
             super().__init__("meta-llama/Llama-2-7b-chat")
 
 
-class llama2_7b_hf():
+class llama2_7b_hf(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-7b-hf")
 
 
-class llama2_7b_chat_hf():
+class llama2_7b_chat_hf(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-7b-chat-hf")
 
 
-class llama2_13b():
+class llama2_13b(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-13b")
     
 
-class llama2_13b_chat():
+class llama2_13b_chat(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-13b-chat")
 
 
-class llama2_13b_hf():
+class llama2_13b_hf(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-13b-hf")
 
 
-class llama2_13b_chat_hf():
+class llama2_13b_chat_hf(MetaBase):
        def __init__(self):
             super().__init__("meta-llama/Llama-2-13b-chat-hf")
 
