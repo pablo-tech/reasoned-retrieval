@@ -4,6 +4,7 @@ import os
 from langchain import PromptTemplate
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
+from langchain.pydantic_v1 import BaseModel
 
 import numpy as np
 import pandas as pd
@@ -70,9 +71,10 @@ class GooglePalm2():
             return ''    
         
 
-class LlmInfernce():
+class LlmInfernce(BaseModel):
 
     def __init__(self, llm_generator, human_key, ai_key):
+        super().__init__()
         self.llm_generator = llm_generator
         template = human_key + ": {question}" + "\n"
         template += ai_key + ":"
