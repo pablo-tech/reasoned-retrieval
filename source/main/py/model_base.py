@@ -1,13 +1,13 @@
 import openai
 import os
 
-from langchain import PromptTemplate
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
-from langchain.pydantic_v1 import BaseModel
+from langchain.llms import GooglePalm
 from langchain.llms import HuggingFacePipeline
-from langchain.chains import ConversationChain
-
+# from langchain.chains import ConversationChain
+# from langchain.pydantic_v1 import BaseModel
+# from langchain import PromptTemplate
 
 import numpy as np
 import pandas as pd
@@ -55,76 +55,102 @@ class OpenaiBase():
                           max_tokens=max_tokens)
     
 
-class GooglePalm2():
+# class GooglePalm2():
 
-    def __init__(self):
-        pass
+#     def __init__(self):
+#         pass
 
-    def invoke(self, prompt):
-        try:
-            completion = palm.generate_text(
-                model="models/text-bison-001",
-                prompt=prompt,
-                temperature=0.1,
-                max_output_tokens=800,
-            )
-            return completion.result
-        except Exception as e:
-            print("PALM_ERROR="+str(e))
-            return ''    
+#     def invoke(self, prompt):
+#         try:
+#             completion = palm.generate_text(
+#                 model="models/text-bison-001",
+#                 prompt=prompt,
+#                 temperature=0.1,
+#                 max_output_tokens=800,
+#             )
+#             return completion.result
+#         except Exception as e:
+#             print("PALM_ERROR="+str(e))
+#             return ''    
         
 
-class GoogleFlanXxl(BaseModel):
+# class GoogleFlanXxl(BaseModel):
 
-    def question_answer(self, question, model_params):
+#     def question_answer(self, question, model_params):
 
-        llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl")
+#         llm_generator=HuggingFaceRemote(repo_id="google/flan-t5-xxl")
 
-        human_key = "Question"
-        ai_key = "Answer"
-        template = human_key + ": {question}" + "\n"
-        template += ai_key + ":"
-        prompt_template = PromptTemplate(template=template, input_variables=["question"])
+#         human_key = "Question"
+#         ai_key = "Answer"
+#         template = human_key + ": {question}" + "\n"
+#         template += ai_key + ":"
+#         prompt_template = PromptTemplate(template=template, input_variables=["question"])
 
 
-        inferred = llm_generator.chain_forward(inference_context={"question": question},
-                                               prompt_template=prompt_template,
-                                               model_params=model_params)
-        inferred = inferred.split("###")[0]
-        return inferred
+#         inferred = llm_generator.chain_forward(inference_context={"question": question},
+#                                                prompt_template=prompt_template,
+#                                                model_params=model_params)
+#         inferred = inferred.split("###")[0]
+#         return inferred
 
-    def invoke(self, prompt):
-        try:
-            return self.question_answer(question=prompt,
-                                        model_params={"temperature": 0.5,
-                                                    "repetition_penalty": 1.1})      
-        except Exception as e:
-            print("FLAN_ERROR="+str(e))
-            return ''
+#     def invoke(self, prompt):
+#         try:
+#             return self.question_answer(question=prompt,
+#                                         model_params={"temperature": 0.5,
+#                                                     "repetition_penalty": 1.1})      
+#         except Exception as e:
+#             print("FLAN_ERROR="+str(e))
+#             return ''
 
 
 class GoogleBase():
 
-    def __init__(self):
-        self.palm_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU"
-        palm.configure(api_key=self.palm_api_key)
-
     def palm2(self):
-        return GooglePalm2()
+        return GooglePalm(google_api_key="AIzaSyDO6QXdAxqyex0pKqmfUUEFYuV0CvjC-WU",
+                          model_kwargs={'temperature':0.5})    
+
+    # def flanxxl(self):
+    #     return GoogleFlanXxl()
     
-    def flanxxl(self):
-        return GoogleFlanXxl()
+
+# class MetaLlama2():
+
+#     def __init__(self, model_name):
+#         self.pipeline = self.get_pipeline(model_name)
+
+#     def get_pipeline(self, model_name):
     
+#     def invoke(self, prompt):
+#         try:
+#             response = ''
+#             # prompt = PromptTemplate(template=prompt, 
+#                                     # input_variables=[])
+#             llm = HuggingFacePipeline(pipeline=self.pipeline, 
+#                                       model_kwargs={'temperature':0.5})
+#             response = llm.invoke(prompt)
+#             # chain = ConversationChain(llm=llm, prompt=prompt)
+#             # response = chain.run(prompt)
+#             # response = self.pipeline(prompt)
+#             txt = response[0]['generated_text']
+#             txts = txt.split("Answer:")
+#             return txts[1].strip()
+#         except Exception as e:
+#             print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
+#             return '' 
 
-class MetaLlama2():
 
-    def __init__(self, model_name):
-        self.pipeline = self.get_pipeline(model_name)
+class MetaBase():
 
-    def get_pipeline(self, model_name):
+    def __init__(self):
+        HuggingFaceAuth()
+
+    def llama2_7b_chat_hf(self, 
+                          model_name="meta-llama/Llama-2-7b-chat-hf",
+                          model_kwargs={'temperature':0.5}):
+        
         tokenizer=AutoTokenizer.from_pretrained(model_name,
                                                 token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
-        return transformers.pipeline(
+        pipeline = transformers.pipeline(
             "text-generation",
             model=model_name,
             tokenizer=tokenizer,
@@ -137,29 +163,7 @@ class MetaLlama2():
             num_return_sequences=1,
             eos_token_id=tokenizer.eos_token_id,
             token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
-    
-    def invoke(self, prompt):
-        try:
-            response = ''
-            # prompt = PromptTemplate(template=prompt, 
-                                    # input_variables=[])
-            llm = HuggingFacePipeline(pipeline=self.pipeline, 
-                                      model_kwargs={'temperature':0.5})
-            response = llm.invoke(prompt)
-            # chain = ConversationChain(llm=llm, prompt=prompt)
-            # response = chain.run(prompt)
-            # response = self.pipeline(prompt)
-            txt = response[0]['generated_text']
-            txts = txt.split("Answer:")
-            return txts[1].strip()
-        except Exception as e:
-            print("LLAMA_ERROR="+str(e)+" RESPONSE="+str(response))
-            return '' 
+        
+        return HuggingFacePipeline(pipeline=pipeline, 
+                                   model_kwargs=model_kwargs)
 
-class MetaBase():
-
-    def __init__(self):
-        HuggingFaceAuth()
-
-    def llama2_7b_chat_hf(self):
-        return MetaLlama2(model_name="meta-llama/Llama-2-7b-chat-hf")    
