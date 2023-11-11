@@ -64,12 +64,17 @@ class GoogleBase():
         # palm_api_key = getpass.getpass(prompt='Enter your PaLM API key: ')
         palm.configure(api_key=self.palm_api_key)
 
-    def palm_llm_2(self, prompt):
+
+class palm2(GoogleBase):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def invoke(self, prompt):
         completion = palm.generate_text(
             model="models/text-bison-001",
             prompt=prompt,
             temperature=0.1,
-            # The maximum length of the response
             max_output_tokens=800,
         )
         return completion.result
