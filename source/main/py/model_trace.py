@@ -32,7 +32,7 @@ class ThoughtTracer():
                     print(textwrap.fill(str(name.upper()) + " => " + str(inferred_response.get_answer()), width))
 
                 except Exception as e:
-                    print(str(name.upper()) + " => ERROR..." + str(e) + "\n...INFERRED" + str(inferred_response)) 
+                    print(str(name.upper()) + " => ERROR..." + str(e) + "\n...INFERRED" + str(inferred_response.get_answer())) 
         return traces  
 
     def hotpot_traces(self, named_llms, data, n):
