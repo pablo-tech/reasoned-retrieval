@@ -41,7 +41,7 @@ class PipelinedAgent():
             inferred = inferred.content
         output_len = len(inferred)
         # if self.is_verbose:
-        #     print("\nINFERRED=>"+"\n"+str(inferred))
+        print("\nINFERRED=>"+"\n"+str(inferred))
         agent_step = self.agent_parser.parse(inferred)
         # if self.is_verbose:
         #     print("\nPARSED=>"+str(agent_step)+"\n\n")
