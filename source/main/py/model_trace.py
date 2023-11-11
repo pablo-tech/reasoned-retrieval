@@ -25,6 +25,7 @@ class ThoughtTracer():
             for name, llm in named_llms.items():
                 try:
                     name = name.upper()
+                    inferred_response = None
                     bot = ChatBot(agent_llm=llm,
                                   agent_tools=tools,
                                   is_verbose=self.is_verbose)
