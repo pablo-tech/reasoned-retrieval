@@ -1,6 +1,6 @@
 from langchain import PromptTemplate
 
-from llm_huggingface import HuggingFaceRemote
+from model_huggingface import HuggingFaceRemote
 
 
 class LlmInfernce():
