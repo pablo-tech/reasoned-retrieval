@@ -79,7 +79,8 @@ class MetaBase():
 
     def __init__(self, model_name):
         HuggingFaceAuth()
-        self.pipeline = self.get_pipeline(model_name)
+        self.pipeline = self.get_pipeline(model_name,
+                                          token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
 
     def get_pipeline(self, model_name):
         tokenizer=AutoTokenizer.from_pretrained(model_name)
