@@ -99,7 +99,9 @@ class MetaBase():
             token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
     
     def invoke(self, prompt):
-        return self.pipeline(prompt)[0]
+        txt = self.pipeline(prompt)[0]['generated_text']
+        txts = txt.split("Answer:")
+        return txts[1].strip()
 
 
 class llama2_7b(MetaBase):
