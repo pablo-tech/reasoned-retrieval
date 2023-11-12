@@ -58,6 +58,52 @@ class SchemaCreator():
         return sorted([name for name in column_names if name!=primary_key])
     
 
+
+class DatasetReducer():
+
+    def __init__(self):
+        self.primary_key = 'id'
+
+    def get_primary_key(self):
+        return self.primary_key
+
+    def unique_columns(self, schema):
+        return [self.get_primary_key()] + [col for col in schema.column_names() 
+                                           if col!=self.get_primary_key()]
+
+    def product_rows(self, products, all_columns):
+        rows = ""
+        unique_id = set()
+        for product in products:
+            if product[self.get_primary_key()] not in unique_id:
+              unique_id.add(product[self.get_primary_key()])
+              values = []
+              for column in all_columns:
+                  value = ''
+                  try:
+                    value = product[column]
+                  except:
+                    pass
+                  values.append(value)
+              if len(rows) == 0:
+                  rows += "\n" + str(tuple(values))
+              else:
+                  rows += ",\n" + str(tuple(values))
+        return rows                  
+
+    def enum_values(self, enum_cols, products):
+        enum_vals = defaultdict(set)
+        for product in products:
+            for col in enum_cols:
+                try:
+                  vals = product[col]
+                  enum_vals[col].add(vals)
+                except Exception as e:
+                  # print("vals=" + str(vals) + " " + str(e))
+                  pass
+        return enum_vals    
+
+
 class ProductRetriever():
 
     def __init__(self):
