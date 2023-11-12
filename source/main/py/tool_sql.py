@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from domain_product import GiftDataset, TvDataset, AcDataset, DomainSchema
 
 
@@ -12,23 +14,26 @@ class SchemaCreator():
         self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        self.domain_schema = self.create_schema()
+        self.domain_schema, self.create_sql = self.create_schema()
 
     def get_domain_schema(self):
         return self.domain_schema
-    
+
+    def get_create_sql(self):
+        return self.create_sql
+
     def get_domain_name(self):
         return self.domain_name
     
     def create_schema(self):
-        schema = DomainSchema(data_sets=self.domain_datasets,
-                              completion_llm=self.completion_llm,
-                              is_verbose=self.is_verbose)
-        column_names = [col for col in schema.column_names()
+        domain_schema = DomainSchema(data_sets=self.domain_datasets,
+                                     completion_llm=self.completion_llm,
+                                     is_verbose=self.is_verbose)
+        column_names = [col for col in domain_schema.column_names()
                         if col in self.selected_columns]
         create_sql = self.create_table(self.domain_name, 'id', column_names)
         self.execute_query(self.domain_name, create_sql)
-        return schema
+        return domain_schema, create_sql
 
     def execute_query(self, domain_name, create_sql):
         try:
