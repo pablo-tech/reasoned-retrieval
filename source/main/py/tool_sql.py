@@ -73,22 +73,18 @@ class DatabaseSchema(DatabaseInstance):
     def __init__(self, 
                  domain_name, domain_datasets, 
                  selected_cols, enum_cols, primary_key,
-                 completion_llm, ):
+                 completion_llm):
         super().__init__()
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
         self.selected_cols = selected_cols 
         self.enum_cols = enum_cols           
+        self.primary_key = primary_key
         self.completion_llm = completion_llm     
-        self.primary_key = primary_key,
         self.schema_creator = SchemaCreator(self.get_db_cursor(),
                                             domain_name, domain_datasets, selected_cols,  
                                             completion_llm, False)
-        self.domain_schema = self.schema_creator.get_domain_schema()        
-        self.domain_products = self.domain_schema.get_clean_products()
         self.ds_reducer = DatasetReducer(primary_key)
-        self.product_enum_values = self.ds_reducer.find_enum_values(self.enum_cols, 
-                                                                    self.domain_products) 
         self.ds_augmenter = DatasetAugmenter()
 
     def get_primary_key(self):
@@ -99,13 +95,32 @@ class DatabaseSchema(DatabaseInstance):
 
     def get_create_sql(self):
         return self.schema_creator.get_create_sql()
-
-    def get_enum_values(self):
-        return self.product_enum_values
+    
+    def get_domain_name(self):
+        return self.schema_creator.get_domain_name()
+    
+    def get_domain_schema(self):
+        return self.schema_creator.get_domain_schema()
     
     def get_domain_products(self):
-        return list(self.domain_products)
+        return list(self.get_domain_schema().get_clean_products())
+    
+    def get_ds_reducer(self):
+        return self.ds_reducer
 
+    def get_unique_columns(self):
+        return self.ds_reducer.unique_columns(self.get_domain_schema())
+    
+    def get_enum_values(self):
+        return self.ds_reducer.find_enum_values(self.enum_cols, 
+                                                self.get_domain_products())
+
+    def get_product_rows(self, columns):
+        return self.ds_reducer.product_rows(self.get_domain_products(), columns)
+
+    def get_ds_augmenter(self):
+        return self.ds_augmenter
+    
 
 class ProductLoader(DatabaseSchema):
 
@@ -124,14 +139,14 @@ class ProductLoader(DatabaseSchema):
         return insert_sql        
 
     def load_sql(self):
-        return self.get_sql(self.schema_creator.get_domain_name(), 
+        return self.get_sql(self.get_domain_name(), 
                             self.get_rows())   
 
     def get_rows(self):
-        columns = self.ds_reducer.unique_columns(self.domain_schema)
+        columns = self.get_unique_columns()
         columns = [col for col in columns if col in self.selected_cols]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        rows = self.ds_reducer.product_rows(self.domain_products, columns)
+        rows = self.get_product_rows(columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
 
