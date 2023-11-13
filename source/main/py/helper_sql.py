@@ -29,7 +29,6 @@ class SqlHelper():
     def get_prompt(self, question, columns, signature, enums):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
-        prompt += f"Question: {question}" + "\n"
         prompt += f"The only table columns to return are {columns}"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
         prompt += f"{signature}" 
@@ -46,4 +45,5 @@ Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess';
 Question: what are the cheapest GUESS products?
 Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess' ORDER BY price ASC;
 """
+        prompt += f"Question: {question}" + "\n"
         return prompt            
