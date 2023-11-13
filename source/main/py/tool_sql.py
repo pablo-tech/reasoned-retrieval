@@ -145,8 +145,6 @@ class ProductLoader():
                  domain_name, domain_datasets,
                  selected_cols, enum_cols,
                  completion_llm):
-        super().__init__(domain_name, domain_datasets, 
-                         selected_cols, enum_cols, completion_llm)
         self.db_schema = DatabaseSchema(domain_name, domain_datasets,
                                         selected_cols, enum_cols,
                                         completion_llm)
