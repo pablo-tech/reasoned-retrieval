@@ -39,12 +39,14 @@ class SqlHelper():
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
         prompt += """        
-Question: what GUESS products do you have? 
-Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess';
+Question: what ARISTOCRAT products do you have? 
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Aristocrat';
 Question: what GESTS products do you have?
 Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess';
-Question: what are the cheapest GUESS products?
-Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess' ORDER BY price ASC;
+Question: what are the cheapest Scharf products?
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Scharf' ORDER BY price ASC;
+Question: "what are the cheapest Carpisa watches?"
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 """
         prompt += f"Question: {question}" + "\n"
         return prompt            
