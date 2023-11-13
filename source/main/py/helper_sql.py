@@ -11,6 +11,7 @@ class SqlHelper():
         self.query_signature = query_signature
         self.query_enums = query_enums
         self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
 
     def get_result(self, query, n=3):
         prompt = self.get_prompt(query, 
