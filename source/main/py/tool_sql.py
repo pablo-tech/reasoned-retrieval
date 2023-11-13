@@ -3,6 +3,8 @@ from collections import defaultdict
 from domain_product import SchemaCreator
 from domain_product import GiftDataset, TvDataset, AcDataset
 
+import sqlite3
+
 
 class DatasetReducer():
 
@@ -51,13 +53,15 @@ class DatasetReducer():
 
 class ProductLoader(DatasetReducer):
 
-    def __init__(self, db_cursor,
+    def __init__(self, 
                  domain_name, domain_datasets,
                  selected_cols, enum_cols,
-                 completion_llm):
+                 completion_llm,
+                 database_name="tutorial.db"):
         super().__init__()
-        self.db_cursor = db_cursor
-        self.schema_creator = SchemaCreator(db_cursor,
+        self.db_connection = sqlite3.connect(database_name)
+        self.db_cursor = self.db_connection.cursor()
+        self.schema_creator = SchemaCreator(self.db_cursor,
                                             domain_name, domain_datasets, selected_cols,  
                                             completion_llm, False)
         self.selected_cols = selected_cols 
@@ -69,7 +73,7 @@ class ProductLoader(DatasetReducer):
     def load_products(self):
         insert_sql = self.load_sql()
         self.db_cursor.execute(insert_sql)
-        self.db_cursor.commit()
+        self.db_connection.commit()
         return insert_sql        
 
     def load_sql(self):
