@@ -36,4 +36,14 @@ class SqlHelper():
         prompt += "Note that table columns take the following enumerated values:" + "\n"
         for column, values in enums:
             prompt += f"{column} => {values}" + "\n"
+        prompt += "Importantly, you must adjust queries for any possible question mispellings."
+        prompt += "EXAMPLES:" + "\n"
+        prompt += """        
+Question: what GUESS products do you have? 
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess';
+Question: what GESTS products do you have?
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess';
+Question: what are the cheapest GUESS products?
+Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Guess' ORDER BY price ASC;
+"""
         return prompt            
