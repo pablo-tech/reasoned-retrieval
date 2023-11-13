@@ -70,6 +70,12 @@ class ProductLoader(DatasetReducer):
         self.domain_products = self.domain_schema.get_clean_products()
         self.product_enum_values = self.find_enum_values(self.enum_cols, self.domain_products) 
 
+    def get_db_connection(self):
+        self.db_connection
+
+    def get_db_cursor(self):
+        self.db_cursor
+
     def load_products(self):
         insert_sql = self.load_sql()
         self.db_cursor.execute(insert_sql)
