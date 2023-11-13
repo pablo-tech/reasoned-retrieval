@@ -91,7 +91,7 @@ class DatasetReducer():
                   rows += ",\n" + str(tuple(values))
         return rows                  
 
-    def enum_values(self, enum_cols, products):
+    def find_enum_values(self, enum_cols, products):
         enum_vals = defaultdict(set)
         for product in products:
             for col in enum_cols:
