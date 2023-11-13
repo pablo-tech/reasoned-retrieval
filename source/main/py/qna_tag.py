@@ -158,7 +158,7 @@ class TagProcessor():
 
     def __init__(self):
         self.part_of_speech = PartOfSpeech()
-        self.brand_recognition = BrandRecognition()
+        ##### self.brand_recognition = BrandRecognition()
         # self.entity_recognition = EntityRecognition()
         self.text_normalizer = TextNormalizer()
         # self.ngram_extraction = NgramExtraction()
