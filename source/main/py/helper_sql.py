@@ -1,3 +1,6 @@
+from langchain.chat_models import ChatOpenAI
+
+
 class SqlHelper():
 
     def __init__(self, db_cursor,
@@ -15,9 +18,11 @@ class SqlHelper():
                                  self.query_signature,
                                  self.query_enums)
         sql = self.completion_llm.invoke(prompt)
+        if isinstance(self.completion_llm, ChatOpenAI):
+            sql = sql.content
         if self.is_verbose:
             print(sql)
-        response = self.db_cursor.execute(sql.content)
+        response = self.db_cursor.execute(sql)
         return [row for row in response][:n]
             
     def get_prompt(self, question, columns, signature, enums):
