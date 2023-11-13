@@ -49,8 +49,10 @@ Question: "what are the cheapest Carpisa watches?"
 Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
 Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%GW0403L2%';
-Question: "Watches for men?"
-Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%watch%' AND title LIKE ' men ';
+Question: "Bags for men?"
+Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Question: "Glassses for women?"
+Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 
 """
         prompt += f"Question: {question}" + "\n"
