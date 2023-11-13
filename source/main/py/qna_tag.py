@@ -1,158 +1,213 @@
-from collections import defaultdict
-
-from qna_text import TextParser, PartOfSpeech
-##### from qna_entity import BrandRecognition
-# from qna_croma_text import CromaText
-from qna_text import TextNormalizer
-from qna_nltk import NltkProcessor
+import nltk
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+from nltk.corpus import words
+from nltk.stem.lancaster import LancasterStemmer 
+from nltk.util import ngrams
     
 
-# class TagCorpus():
+class TextNormalizer():
+    # https://stackoverflow.com/questions/9227527/are-there-any-classes-in-nltk-for-text-normalizing-and-canonizing
+    def __init__(self):
+        self.abbreviations = { "tv": "television",
+                               "tvs": "television",
+                               "ac": "air conditioner",
+                               "acs": "air conditioner"}
+        self.repetitve = set(self.abbreviations.keys()).union(set(self.abbreviations.values()))
 
-#     primary_global_tokens = defaultdict(set)
-#     secondary_global_tokens = defaultdict(set)
+    def expand_abbreviation(self, txt):
+        parts = []
+        for w in txt.split(" "):
+            if w.lower() not in self.abbreviations:
+                parts.append(w)
+            else:
+                parts.append(self.abbreviations[w.lower()])
+        return " ".join(parts)
+    
+    def is_repetitive(self, txt):
+        return txt in self.repetitve
+    
+    def remove_repetitive(self, txt):
+        parts = []
+        for w in txt.split(" "):
+            if self.is_repetitive(w.lower()):
+                parts.append(w)
+        return " ".join(parts)        
+            
 
-#     def __init__(self, corpus_config, is_log):
-#         self.corpus_config = corpus_config
-#         self.is_log = is_log
+class PartOfSpeech():
 
-#     def add_and_tag(self, examples):
-#         try:
-#             self.add_items(examples)
-#             self.tag_examples(examples)
-#             self.print_knowledge(examples)
-#         except Exception as e:
-#             print("TAGGER_ERROR=" + str(e))
+    def __init__(self):
+        self.noun_part = ['NNP', # proper noun, singular (sarah)
+                          'NN',  # noun, singular (cat, tree)
+                          'NNS'  # noun plural (desks) 
+                         ]
+        self.quant_part = ['CD', # cardinal digit
+                           'JJ'  # adjective (large)
+                          ]
+        self.text_processor = NltkProcessor()
 
-#     ### GETTER
-#     def get_domains(self):
-#         return self.primary_global_tokens.keys()
+    def scaled_nouns(self, sentence):
+        word_tokens = self.pos_tokens(sentence)    
+        word_tokens = self.reduce_nouns(word_tokens)   
+        word_tokens = [ word_token[0] for word_token in word_tokens ]
+        # LogMessage.out("scaled_nouns=" + str(word_tokens))
+        return word_tokens
+    
+    def found_adjectives(self, sentence):
+        word_tokens = self.pos_tokens(sentence)    
+        word_tokens = [ word_token[0] for word_token in word_tokens if word_token[1] == 'JJ']
+        return word_tokens
+    
+    def pos_tokens(self, sentence):
+        # LogMessage.out("sentence=" + str(sentence))
+        tokens = self.text_processor.word_tokenize(sentence)
+        word_tokens = self.text_processor.part_of_speech(tokens)
+        # LogMessage.out("word_tokens=" + str(word_tokens))   
+        return word_tokens
 
-#     ### TOKEN
-#     def add_primary_tokens(self, texts, domain):
-#         for text in texts:
-#             words = self.corpus_config.primary_tagging_func(text)
-#             self.primary_global_tokens[domain].update(words)
+    def reduce_nouns(self, word_tags, min_length = 2):
+        reduced = []
+        separator = " "
+        for i in range(len(word_tags)):
+            word_tag_curr = word_tags[i]
+            curr_word = word_tag_curr[0]
+            curr_label = word_tag_curr[1]
+            curr_is_scalar, _ = TextParser.is_scalar(word_tag_curr[0])
+            # scaled noun
+            if curr_is_scalar and i+1<len(word_tags):
+                word_tag_next = word_tags[i+1]
+                next_word = word_tag_next[0]
+                next_label = word_tag_next[1]
+                if len(next_word) >= min_length:
+                    if curr_label in self.quant_part and next_label in self.noun_part or\
+                       curr_label in self.quant_part and next_label in self.quant_part:
+                            value = curr_word.lower() + separator + next_word.lower()
+                            together = (value, 'NNS')  
+                            reduced.append(together)
+                            i += 2
+            # noun
+            elif len(curr_word) >= min_length:
+                if curr_label in self.noun_part:
+                    value = curr_word.lower()
+                    together = (value, 'NN')
+                    reduced.append(together)
+        return reduced
 
-#     def get_primary_tokens(self, domain):
-#         return self.primary_global_tokens[domain]
 
-#     def add_secondary_tokens(self, texts, domain):
-#         for text in texts:
-#             words = self.corpus_config.secondary_tagging_func(text)
-#             self.secondary_global_tokens[domain].update(words)
+class TextParser():
+        
+    def get_hash(words):
+        return tuple(sorted(list(words)))
 
-#     def get_secondary_tokens(self, domain):
-#         return self.secondary_global_tokens[domain]
+    def answer_punctuation(text):
+        text = text.strip()
+        l = len(text)-1
+        if l >= 0 and text[l] == ".":
+            text = text[:-1]
+        return text
 
-#     def check_belonging(self, words, domain):
-#         for word in words:
-#             print(word +
-#                   "\t" + "in_primary=" + str(word in self.primary_global_tokens[domain]),
-#                   "\t" + "in_secondary=" + str(word in self.secondary_global_tokens[domain]))
+    def combine_scalar(words):
+      # print("the_words=" + str(words))      
+      combined = []
+      prev_word = ""
+      for word in words:
+          try:
+              is_prev_scalar, prev_value = TextParser.is_scalar(prev_word)
+              is_curr_scalar, curr_value = TextParser.is_scalar(word)
+              if is_prev_scalar and prev_value < 1000 and not is_curr_scalar:
+                  combined.remove(prev_word)
+                  combo = prev_word + " " + word
+                  combined.append(combo)
+              else:
+                  combined.append(word)
+              prev_word = word
+          except Exception as e:
+              print("COMBINATION_EXCEPTION=" + str(word) + "\t" + str(e))        
+      # print("words_combined=" + str(combined))
+      return set(combined)
 
-#     def add_to_domain(self, words, name):
-#         for word in words:
-#             self.primary_global_tokens[name].add(word)
+    def is_scalar(n):
+        try:
+            float(n)
+        except ValueError:
+            return False, None
+        else:
+            return True, float(n)  
+        
+    def remove_punctuation(text,
+                           to_remove = ["(", ")", ":", ",", "|", "!", "?", "+", "/"]):
+        try:        
+            # print.write("punctuation_in=" + str(text))        
+            text = text.strip() 
+            for removable in to_remove:
+                text = text.replace(removable, "")
+            # print.write("punctuation_out=" + str(text))
+            return text
+        except Exception as e:
+            print.write(text + str(e))
+            return ""
 
-#     ### TEXT IN EXAMPLE
-#     def add_items(self, examples):
-#         for example in examples:
-#             try:
-#                 self.add_item(example)
-#             except:
-#                 print("ADD_ITEM_ERROR=" + str(example))
+    def post_split_remove(words,
+                          to_remove = [".", "+"]):
+        clean = []
+        for word in words:
+            for removable in to_remove:
+                last = len(word)-1
+                if word[last] == removable: 
+                    word = word[:last]
+            word = word.strip()
+            if word != "":
+                clean.append(word)
+        return clean   
+    
 
-#     def add_item(self, example):
-#         domain = example.get_domain()
-#         # get text
-#         primary_texts = self.corpus_config.get_primary_text(example)
-#         secondary_texts = self.corpus_config.get_secondary_text(example)
-#         ## collect tags
-#         self.add_primary_tokens(primary_texts, domain)
-#         self.add_secondary_tokens(secondary_texts, domain)
+class NltkProcessor():
 
-#     ### TAG IN TEXT
-#     def example_tags(self, example, tags):
-#         words_in = set()
-#         for text in self.corpus_config.get_example_text(example):
-#             words_in.update(self.corpus_config.primary_tagging_func(text))
-#         words_out = { word for word in words_in if word in tags }
-#         return words_out
+    def __init__(self):
+        self.nltk_tokenizer = RegexpTokenizer(r'\w+')
+        self.nltk_stemmer = LancasterStemmer()
+        self.stop_words = set(stopwords.words('english'))
+        self.english_words = set(words.words())
 
-#     def section_tags(self, section, tags):
-#         words_in = set()
-#         for text in self.corpus_config.get_section_text(section):
-#             words_in.update(self.corpus_config.primary_tagging_func(text))
-#         words_out = { word for word in words_in if word in tags }
-#         return words_out
+    ### TOKENIZE
+    def tokenize_text(self, text):
+        return self.nltk_tokenizer.tokenize(text)
+    
+    ### TAG
+    def word_tokenize(self, sentence):
+        return nltk.word_tokenize(sentence)
+    
+    def part_of_speech(self, tokens):
+        return nltk.pos_tag(tokens)
+    
+    def n_gram(self, text, n = 2):
+        return list(ngrams(text.split(" "), n))
+    
+    ### STEM
+    def stem_word(self, word):
+        return self.nltk_stemmer.stem(word)
 
-#     def element_tags(self, element, tags):
-#         words_in = set()
-#         for text in self.corpus_config.get_element_text(element):
-#             words_in.update(self.corpus_config.secondary_tagging_func(text))
-#         words_out = { word for word in words_in if word in tags }
-#         return words_out
+    def stem_words(self, words):
+      stemmed = []
+      for word in words:
+          stemmed.append(self.stem_word(word))
+      return stemmed
 
-#     ### TAG
-#     def tag_section(self, example, tag_list):
-#         knowledge = self.example_tags(example, tag_list)
-#         example.add_example_knowledge(knowledge)
-#         for section in example.get_body():
-#             if self.is_log:
-#                 print("tagging_example_sections=" + str(section.heading))
-#             knowledge = self.section_tags(section, tag_list)
-#             example.add_section_knowledge(section, knowledge)
+    ### PUNCTUATION
+    def remove_punctuation(self, text):
+      try:
+          text = text.strip().lower()
+          words = self.nltk_tokenizer.tokenize(text)
+          return words
+      except Exception as e:
+          print(text + str(e))
+          return []
+      
+    ### STOP
+    def is_stop_word(self, word):
+        return word in self.stop_words
 
-#     def tag_element(self, example, tag_list):
-#         domain = example.get_domain()
-#         for section in example.get_body():
-#             if self.is_log:
-#                 print("tagging_section_elements=" + str(section.heading))
-#             for element in section.elements:
-#                 knowledge = self.element_tags(element, tag_list)
-#                 example.add_element_knowledge(element, knowledge)
-
-#     def tag_domain(self, domain):
-#         if self.is_log:
-#             print("segregating_domain=" +  str(domain))
-#         primary_tokens = self.get_primary_tokens(domain)
-#         secondary_tokens = self.get_secondary_tokens(domain).copy()
-#         for secondary_token in secondary_tokens:
-#             if secondary_token in primary_tokens:
-#               self.secondary_global_tokens[domain].remove(secondary_token)
-
-#     def tag_examples(self, examples):
-#         ### section: apply primary
-#         for example in examples:
-#             try:
-#                 domain = example.get_domain()
-#                 self.tag_section(example, tag_list=self.get_primary_tokens(domain))
-#             except Exception as e:
-#                 print("PRIMARY_TAG_ERROR=" + str(e))
-#         ### clean secondary
-#         for domain in self.get_domains():
-#             try:
-#                 self.tag_domain(domain)
-#             except Exception as e:
-#                 print("DOMAIN_TAG_ERROR=" + str(e))
-#         ### element: apply secondary
-#         for example in examples:
-#             try:
-#                 domain = example.get_domain()
-#                 self.tag_element(example, tag_list=self.get_secondary_tokens(domain))
-#             except Exception as e:
-#                 print("SECONDARY_TAG_ERROR=" + str(e))
-
-#     def print_knowledge(self, examples):
-#         for example in examples:
-#             try:
-#               if self.is_log:
-#                 print("tagged>>> " + str(example.get_title()))
-#                 # print("tagged>>> " + str(example))
-#             except Exception as e:
-#                 print("PRINT_KNOWLEDGE_ERROR=" + str(e))
-  
 
 class TagProcessor():
 
@@ -196,4 +251,3 @@ class TagProcessor():
         words_across = { word for word in words_across if not self.nltk_processor.is_stop_word(word) }
         # print("words_across=" + str(words_across))
         return words_across
-    
