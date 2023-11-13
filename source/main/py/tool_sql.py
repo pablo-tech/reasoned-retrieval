@@ -77,7 +77,8 @@ class ProductLoader(DatasetReducer):
         return insert_sql        
 
     def load_sql(self):
-        return self.get_sql(self.schema_creator.get_domain_name(), self.get_rows())   
+        return self.get_sql(self.schema_creator.get_domain_name(), 
+                            self.get_rows())   
 
     def get_rows(self):
         columns = self.unique_columns(self.domain_schema)
@@ -107,9 +108,8 @@ INSERT INTO {table_name} VALUES {product_rows}
 
 class GiftLoader(ProductLoader):
 
-    def __init__(self, db_cursor, completion_llm):
-        super().__init__(db_cursor,
-                         domain_name="CLIQ",
+    def __init__(self, completion_llm):
+        super().__init__(domain_name="CLIQ",
                          domain_datasets=[GiftDataset()],
                          selected_cols=['id', 'brands', 'colors',
                                         'price', 'title'],
