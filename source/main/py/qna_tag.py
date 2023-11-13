@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from qna_text import TextParser, PartOfSpeech
 ##### from qna_entity import BrandRecognition
-from qna_croma_text import CromaText
+# from qna_croma_text import CromaText
 from qna_text import TextNormalizer
 from qna_nltk import NltkProcessor
     
@@ -162,9 +162,9 @@ class TagProcessor():
         # self.entity_recognition = EntityRecognition()
         self.text_normalizer = TextNormalizer()
         # self.ngram_extraction = NgramExtraction()
-        self.remove_punctuation_func = CromaText.remove_punctuation
+        self.remove_punctuation_func = TextParser.remove_punctuation
         self.combine_scalar_func = TextParser.combine_scalar
-        self.post_split_remove_func = CromaText.post_split_remove 
+        self.post_split_remove_func = TextParser.post_split_remove 
         self.nltk_processor = NltkProcessor()
 
     def tag_words(self, text, min_length=2, is_select_noun=True, is_select_adjective=False):
