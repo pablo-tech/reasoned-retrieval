@@ -183,9 +183,9 @@ class TagProcessor():
                 pos = set(self.part_of_speech.found_adjectives(sentence))
                 words_across = words_across.union(pos)
         ### entities
-        entities = set(self.brand_recognition.brand_entities(sentences))
+        ##### entities = set(self.brand_recognition.brand_entities(sentences))
         # entities = set(self.entity_recognition.org_entities(sentences))
-        words_across = words_across.union(entities)
+        ##### words_across = words_across.union(entities)
 
         ### cleanup
         words_across = { w for w in words_across if len(w) >= min_length }
