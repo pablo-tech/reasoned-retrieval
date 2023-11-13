@@ -71,10 +71,10 @@ class ProductLoader(DatasetReducer):
         self.product_enum_values = self.find_enum_values(self.enum_cols, self.domain_products) 
 
     def get_db_connection(self):
-        self.db_connection
+        return self.db_connection
 
     def get_db_cursor(self):
-        self.db_cursor
+        return self.db_cursor
 
     def load_products(self):
         insert_sql = self.load_sql()
