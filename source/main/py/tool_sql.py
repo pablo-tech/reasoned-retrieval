@@ -91,7 +91,7 @@ INSERT INTO {table_name} VALUES {product_rows}
         return self.product_enum_values
     
     def get_domain_products(self):
-        return self.domain_products
+        return list(self.domain_products)
 
 
 class GiftLoader(ProductLoader):
