@@ -1,14 +1,19 @@
 class SqlHelper():
 
-    def __init__(self, db_cursor, completion_llm):
+    def __init__(self, db_cursor,
+                 query_columns, query_signature, query_enums,
+                 completion_llm):
         self.db_cursor = db_cursor
+        self.query_columns = query_columns
+        self.query_signature = query_signature
+        self.query_enums = query_enums
         self.completion_llm = completion_llm
 
-    def get_result(self, query, columns, signature, enums, n=3):
+    def get_result(self, query, n=3):
         prompt = self.get_prompt(query, 
-                                 columns,
-                                 signature,
-                                 enums)
+                                 self.query_columns,
+                                 self.query_signature,
+                                 self.query_enums)
         sql = self.completion_llm.invoke(prompt)
         return self.execute(sql.content)
             
