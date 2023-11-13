@@ -72,8 +72,8 @@ class DatabaseSchema(DatabaseInstance):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
-                 selected_cols, enum_cols,
-                 completion_llm, primary_key = 'id'):
+                 selected_cols, enum_cols, primary_key,
+                 completion_llm, ):
         super().__init__()
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
@@ -147,10 +147,10 @@ class ProductLoader(DatabaseSchema):
 
     def __init__(self, 
                  domain_name, domain_datasets,
-                 selected_cols, enum_cols,
+                 selected_cols, enum_cols, primary_key,
                  completion_llm):
         super().__init__(domain_name, domain_datasets,
-                         selected_cols, enum_cols,
+                         selected_cols, enum_cols, primary_key,
                          completion_llm)
         # self.db_connection = sqlite3.connect(database_name)
         # self.db_cursor = self.db_connection.cursor()
@@ -199,6 +199,7 @@ class GiftLoader(ProductLoader):
                          selected_cols=['id', 'brands', 'colors',
                                         'price', 'title'],
                          enum_cols=['brands', 'colors'],
+                         primary_key='id',
                          completion_llm=completion_llm)
         
 
