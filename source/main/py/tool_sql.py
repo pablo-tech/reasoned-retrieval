@@ -62,7 +62,7 @@ class DatasetReducer():
         return enum_vals    
 
 
-class DatasetAugmenter(DatasetReducer):
+class DatasetAugmenter():
 
     def __init__(self):
         pass 
@@ -86,10 +86,10 @@ class DatabaseSchema(DatabaseInstance):
                                             completion_llm, False)
         self.domain_schema = self.schema_creator.get_domain_schema()        
         self.domain_products = self.domain_schema.get_clean_products()
-        self.ds_reducer = DatasetReducer(self.get_primary_key())
-        self.ds_augmenter = DatasetAugmenter()
         self.product_enum_values = self.ds_reducer.find_enum_values(self.enum_cols, 
                                                                     self.domain_products) 
+        self.ds_reducer = DatasetReducer(primary_key)
+        self.ds_augmenter = DatasetAugmenter()
 
     def get_primary_key(self):
         return self.primary_key
