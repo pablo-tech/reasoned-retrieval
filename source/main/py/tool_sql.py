@@ -51,7 +51,13 @@ class DatasetReducer():
         return enum_vals    
 
 
-class ProductLoader(DatasetReducer):
+class DatasetAugmenter(DatasetReducer):
+
+    def __init__(self):
+        super().__init__()
+
+
+class ProductLoader(DatasetAugmenter):
 
     def __init__(self, 
                  domain_name, domain_datasets,
