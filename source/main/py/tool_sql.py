@@ -56,14 +56,21 @@ class ProductLoader(DatasetReducer):
                  selected_cols, enum_cols,
                  completion_llm):
         super().__init__()
-        self.schema_creator = SchemaCreator(domain_name, domain_datasets, 
-                                            selected_cols, db_cursor, 
+        self.db_cursor = db_cursor
+        self.schema_creator = SchemaCreator(db_cursor,
+                                            domain_name, domain_datasets, selected_cols,  
                                             completion_llm, False)
         self.selected_cols = selected_cols 
         self.enum_cols = enum_cols        
         self.domain_schema = self.schema_creator.get_domain_schema()
         self.domain_products = self.domain_schema.get_clean_products()
         self.product_enum_values = self.find_enum_values(self.enum_cols, self.domain_products) 
+
+    def load_products(self):
+        insert_sql = self.load_sql()
+        self.db_cursor.execute(insert_sql)
+        self.db_cursor.commit()
+        return insert_sql        
 
     def load_sql(self):
         return self.get_sql(self.schema_creator.get_domain_name(), self.get_rows())   

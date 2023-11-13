@@ -220,13 +220,13 @@ class DomainSchema(DomainIngestion):
 
 class SchemaCreator():
 
-    def __init__(self, domain_name, domain_datasets,
-                 selected_columns,
-                 db_cursor, completion_llm, is_verbose):
+    def __init__(self, db_cursor, 
+                 domain_name, domain_datasets, selected_columns,
+                 completion_llm, is_verbose):
+        self.db_cursor = db_cursor        
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
-        self.db_cursor = db_cursor
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.domain_schema, self.create_sql = self.create_schema()
