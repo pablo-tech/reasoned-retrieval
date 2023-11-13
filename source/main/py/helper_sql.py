@@ -2,7 +2,7 @@ class SqlHelper():
 
     def __init__(self, db_cursor,
                  query_columns, query_signature, query_enums,
-                 completion_llm):
+                 completion_llm, is_verbose=True):
         self.db_cursor = db_cursor
         self.query_columns = query_columns
         self.query_signature = query_signature
@@ -15,6 +15,8 @@ class SqlHelper():
                                  self.query_signature,
                                  self.query_enums)
         sql = self.completion_llm.invoke(prompt)
+        if self.is_verbose:
+            print(sql)
         response = self.db_cursor.execute(sql.content)
         return [row for row in response][:n]
             
