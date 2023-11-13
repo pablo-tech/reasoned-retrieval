@@ -47,6 +47,9 @@ Question: what are the cheapest Scharf products?
 Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
 Answer: SELECT brands, price, title FROM CLIQ WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Question: "What is GW0403L2?"
+Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%GW0403L2%';
+
 """
         prompt += f"Question: {question}" + "\n"
         return prompt            
