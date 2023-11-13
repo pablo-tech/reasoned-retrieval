@@ -105,42 +105,6 @@ class DatabaseSchema(DatabaseInstance):
     
     def get_domain_products(self):
         return list(self.domain_products)
-    
-
-
-
-
-# class DatasetAugmenter(DatasetReducer):
-
-#     def __init__(self, 
-#                  domain_name, domain_datasets, 
-#                  selected_cols, enum_cols,
-#                  completion_llm):
-#         super().__init__()
-#         self.domain_name = domain_name
-#         self.domain_datasets = domain_datasets
-#         self.selected_cols = selected_cols 
-#         self.enum_cols = enum_cols   
-#         self.completion_llm = completion_llm     
-#         self.schema_creator = SchemaCreator(self.get_db_cursor(),
-#                                             domain_name, domain_datasets, selected_cols,  
-#                                             completion_llm, False)
-#         self.domain_schema = self.schema_creator.get_domain_schema()        
-#         self.domain_products = self.domain_schema.get_clean_products()
-#         self.product_enum_values = self.find_enum_values(self.enum_cols, 
-#                                                          self.domain_products) 
-
-#     def get_schema_creator(self):
-#         return self.schema_creator
-
-#     def get_create_sql(self):
-#         return self.schema_creator.get_create_sql()
-
-#     def get_enum_values(self):
-#         return self.product_enum_values
-    
-#     def get_domain_products(self):
-#         return list(self.domain_products)
 
 
 class ProductLoader(DatabaseSchema):
@@ -152,20 +116,6 @@ class ProductLoader(DatabaseSchema):
         super().__init__(domain_name, domain_datasets,
                          selected_cols, enum_cols, primary_key,
                          completion_llm)
-        # self.db_connection = sqlite3.connect(database_name)
-        # self.db_cursor = self.db_connection.cursor()
-        # self.schema_creator = SchemaCreator(self.db_cursor,
-        #                                     domain_name, domain_datasets, selected_cols,  
-        #                                     completion_llm, False)
-        # self.selected_cols = selected_cols 
-        # self.enum_cols = enum_cols        
-        # self.domain_schema = self.schema_creator.get_domain_schema()
-        # self.domain_products = self.domain_schema.get_clean_products()
-        # self.product_enum_values = self.find_enum_values(self.enum_cols, 
-        #                                                  self.domain_products) 
-
-    # def get_db_instance(self):
-    #     return self.db_instance
     
     def load_products(self):
         insert_sql = self.load_sql()
