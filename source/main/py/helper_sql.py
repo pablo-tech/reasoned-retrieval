@@ -18,12 +18,13 @@ class SqlHelper():
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
-        sql = self.completion_llm.invoke(prompt)
+        inferred_sql = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
-            sql = sql.content
+            inferred_sql = inferred_sql.content
+        inferred_sql = inferred_sql.split("Answer:")[1].strip()
         if self.is_verbose:
-            print(sql)
-        response = self.db_cursor.execute(sql)
+            print(inferred_sql)
+        response = self.db_cursor.execute(inferred_sql)
         return [row for row in response][:n]
             
     def get_prompt(self, question, columns, signature, enums):
