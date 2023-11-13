@@ -60,21 +60,19 @@ class ProductLoader(DatasetReducer):
                                             selected_cols, db_cursor, 
                                             completion_llm, False)
         self.selected_cols = selected_cols 
-        self.enum_cols = enum_cols
+        self.enum_cols = enum_cols        
+        self.domain_schema = self.schema_creator.get_domain_schema()
+        self.domain_products = self.domain_schema.get_clean_products()
+        self.product_enum_values = self.find_enum_values(self.enum_cols, self.domain_products) 
 
     def load_sql(self):
-        schema = self.schema_creator.get_domain_schema()
-        table_name = self.schema_creator.get_domain_name()
-        rows = self.get_rows(schema)
-        return self.get_sql(table_name, rows)   
+        return self.get_sql(self.schema_creator.get_domain_name(), self.get_rows())   
 
-    def get_rows(self, schema):
-        products = schema.get_clean_products()
-        self.product_enum_values = self.find_enum_values(self.enum_cols, products)
-        columns = self.unique_columns(schema)
+    def get_rows(self):
+        columns = self.unique_columns(self.domain_schema)
         columns = [col for col in columns if col in self.selected_cols]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        rows = self.product_rows(products, columns)
+        rows = self.product_rows(self.domain_products, columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
 
@@ -91,6 +89,9 @@ INSERT INTO {table_name} VALUES {product_rows}
 
     def get_enum_values(self):
         return self.product_enum_values
+    
+    def get_domain_products(self):
+        return self.domain_products
 
 
 class GiftLoader(ProductLoader):
