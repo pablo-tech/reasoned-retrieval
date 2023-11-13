@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from qna_text import TextParser, PartOfSpeech
-from qna_entity import BrandRecognition
+##### from qna_entity import BrandRecognition
 from qna_croma_text import CromaText
 from qna_text import TextNormalizer
 from qna_nltk import NltkProcessor
