@@ -15,7 +15,7 @@ class SqlHelper():
                                  self.query_signature,
                                  self.query_enums)
         sql = self.completion_llm.invoke(prompt)
-        return self.execute(sql.content)
+        return self.db_cursor.execute(sql.content)
             
     def get_prompt(self, question, columns, signature, enums):
         prompt = "You are an AI expert semantic parser."
