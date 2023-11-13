@@ -20,47 +20,9 @@ class DatabaseInstance():
         return self.db_cursor
 
 
-class DatabaseSchema(DatabaseInstance):
-
-    def __init__(self, 
-                 domain_name, domain_datasets, 
-                 selected_cols, enum_cols,
-                 completion_llm, primary_key = 'id'):
-        super().__init__()
-        self.domain_name = domain_name
-        self.domain_datasets = domain_datasets
-        self.selected_cols = selected_cols 
-        self.enum_cols = enum_cols           
-        self.completion_llm = completion_llm     
-        self.primary_key = primary_key,
-        self.schema_creator = SchemaCreator(self.get_db_cursor(),
-                                            domain_name, domain_datasets, selected_cols,  
-                                            completion_llm, False)
-        self.domain_schema = self.schema_creator.get_domain_schema()        
-        self.domain_products = self.domain_schema.get_clean_products()
-        self.product_enum_values = DatasetReducer().find_enum_values(self.enum_cols, 
-                                                                     self.domain_products) 
-
-    def get_primary_key(self):
-        return self.primary_key
-    
-    def get_schema_creator(self):
-        return self.schema_creator
-
-    def get_create_sql(self):
-        return self.schema_creator.get_create_sql()
-
-    def get_enum_values(self):
-        return self.product_enum_values
-    
-    def get_domain_products(self):
-        return list(self.domain_products)
-    
-
 class DatasetReducer():
 
     def __init__(self, primary_key):
-        super().__init__()
         self.primary_key = primary_key
 
     def unique_columns(self, schema:DomainSchema):
@@ -106,6 +68,48 @@ class DatasetAugmenter(DatasetReducer):
         pass 
 
 
+class DatabaseSchema(DatabaseInstance):
+
+    def __init__(self, 
+                 domain_name, domain_datasets, 
+                 selected_cols, enum_cols,
+                 completion_llm, primary_key = 'id'):
+        super().__init__()
+        self.domain_name = domain_name
+        self.domain_datasets = domain_datasets
+        self.selected_cols = selected_cols 
+        self.enum_cols = enum_cols           
+        self.completion_llm = completion_llm     
+        self.primary_key = primary_key,
+        self.schema_creator = SchemaCreator(self.get_db_cursor(),
+                                            domain_name, domain_datasets, selected_cols,  
+                                            completion_llm, False)
+        self.domain_schema = self.schema_creator.get_domain_schema()        
+        self.domain_products = self.domain_schema.get_clean_products()
+        self.ds_reducer = DatasetReducer(self.get_primary_key())
+        self.ds_augmenter = DatasetAugmenter()
+        self.product_enum_values = self.ds_reducer.find_enum_values(self.enum_cols, 
+                                                                    self.domain_products) 
+
+    def get_primary_key(self):
+        return self.primary_key
+    
+    def get_schema_creator(self):
+        return self.schema_creator
+
+    def get_create_sql(self):
+        return self.schema_creator.get_create_sql()
+
+    def get_enum_values(self):
+        return self.product_enum_values
+    
+    def get_domain_products(self):
+        return list(self.domain_products)
+    
+
+
+
+
 # class DatasetAugmenter(DatasetReducer):
 
 #     def __init__(self, 
@@ -139,17 +143,15 @@ class DatasetAugmenter(DatasetReducer):
 #         return list(self.domain_products)
 
 
-class ProductLoader():
+class ProductLoader(DatabaseSchema):
 
     def __init__(self, 
                  domain_name, domain_datasets,
                  selected_cols, enum_cols,
                  completion_llm):
-        self.db_schema = DatabaseSchema(domain_name, domain_datasets,
-                                        selected_cols, enum_cols,
-                                        completion_llm)
-        self.ds_reducer = DatasetReducer(self.db_schema.get_primary_key())
-        self.ds_augmenter = DatasetAugmenter()
+        super().__init__(domain_name, domain_datasets,
+                         selected_cols, enum_cols,
+                         completion_llm)
         # self.db_connection = sqlite3.connect(database_name)
         # self.db_cursor = self.db_connection.cursor()
         # self.schema_creator = SchemaCreator(self.db_cursor,
@@ -167,19 +169,19 @@ class ProductLoader():
     
     def load_products(self):
         insert_sql = self.load_sql()
-        self.db_schema.get_db_cursor().execute(insert_sql)
-        self.db_schema.get_db_connection().commit()
+        self.get_db_cursor().execute(insert_sql)
+        self.get_db_connection().commit()
         return insert_sql        
 
     def load_sql(self):
-        return self.get_sql(self.db_schema.schema_creator.get_domain_name(), 
+        return self.get_sql(self.schema_creator.get_domain_name(), 
                             self.get_rows())   
 
     def get_rows(self):
-        columns = self.unique_columns(self.db_schema.domain_schema)
-        columns = [col for col in columns if col in self.db_schema.selected_cols]
+        columns = self.ds_reducer.unique_columns(self.domain_schema)
+        columns = [col for col in columns if col in self.selected_cols]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        rows = self.ds_reducer.product_rows(self.db_schema.domain_products, columns)
+        rows = self.ds_reducer.product_rows(self.domain_products, columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
 
