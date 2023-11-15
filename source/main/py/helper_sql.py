@@ -35,7 +35,7 @@ class SqlSemanticParser(RunInference):
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
-        inferred_sql = self.run_inference.invoke(prompt)
+        inferred_sql = self.run_inference(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response][:n]
             
