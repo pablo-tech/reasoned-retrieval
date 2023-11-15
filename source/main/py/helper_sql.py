@@ -5,7 +5,7 @@ from langchain.chat_models import ChatOpenAI
 
 class RunInference():
 
-    def __init__(self, completion_llm, is_verbose=True):
+    def __init__(self, completion_llm, is_verbose=False):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
@@ -13,12 +13,13 @@ class RunInference():
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
-        # if self.is_verbose:            
-        print(inferred)
+        if self.is_verbose:            
+            print(inferred)
         try:
             inferred = inferred.split("Answer:")[1].strip()
         except: 
             inferred = inferred.strip() 
+        print("INFERRED=" + str(inferred))            
         return inferred
 
 

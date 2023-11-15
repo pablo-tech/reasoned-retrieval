@@ -132,7 +132,8 @@ class DatabaseSchema(DatabaseInstance):
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
-    def get_augmentation_columns(self):
+    def get_augmentation_columns(self, n):
+        products = self.get_domain_products()[:n]
         return self.ds_augmenter.unique_columns(self.get_domain_products()) 
         
 
@@ -146,21 +147,21 @@ class ProductLoader(DatabaseSchema):
                          picked_columns, picked_enums, primary_key, summarize_columns,
                          completion_llm)
     
-    def load_products(self):
+    def load_products(self, n=None):
         insert_sql = self.load_sql()
         self.get_db_cursor().execute(insert_sql)
         self.get_db_connection().commit()
         return insert_sql        
 
-    def load_sql(self):
+    def load_sql(self, n):
         return self.get_sql(self.get_domain_name(), 
-                            self.get_rows())   
+                            self.get_rows(n))   
 
-    def get_rows(self):
+    def get_rows(self, n):
         columns = self.get_unique_columns()
         columns = [col for col in columns if col in self.picked_columns]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns()))
+        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns(n)))
         rows = self.get_product_rows(columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
