@@ -35,7 +35,7 @@ class SqlSemanticParser(RunInference):
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
-        inferred_sql = self.invoke(prompt)
+        inferred_sql = self.completion_llm.invoke(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response][:n]
             
@@ -80,7 +80,7 @@ class SummaryTagger(RunInference):
         product_tags = defaultdict(dict)
         slot_values = defaultdict(set)
         for product in products:
-            query = ""
+            query = "" # TODO: if too long, summarize
             for column in text_columns:
                 if column != primary_key:
                     col = product[col]
