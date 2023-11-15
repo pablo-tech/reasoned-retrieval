@@ -102,5 +102,4 @@ Question: Guess Analog Clear Dial Women's Watch GW0403L2
 Answer:
 [('product gender', 'for women'), ('product type', 'watch'), ('watch type', 'analog'), ('watch dial type', 'clear'), ('product model', 'GW0403L2'), ('product collection', 'Guess')]
 Question: {query}
-Answer:
 """
