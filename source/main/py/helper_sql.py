@@ -94,7 +94,7 @@ class SummaryTagger(RunInference):
                 slot_values[slot].add(value)
                 if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "slot_value="+str(slot_value))
-                i+=1
+            i+=1
         return product_tags, slot_values 
             
     def get_prompt(self, query):
