@@ -13,9 +13,9 @@ class RunInference():
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
+        # if self.is_verbose:
+        print(inferred)
         inferred = inferred.split("Answer:")[1].strip()
-        if self.is_verbose:
-            print(inferred)
         return inferred
 
 
