@@ -151,7 +151,7 @@ class ProductLoader(DatabaseSchema):
                          completion_llm)
     
     def load_products(self, n=None):
-        insert_sql = self.load_sql()
+        insert_sql = self.load_sql(n)
         self.get_db_cursor().execute(insert_sql)
         self.get_db_connection().commit()
         return insert_sql        
