@@ -65,21 +65,21 @@ class DatasetReducer():
 
 class DatasetAugmenter():
 
-    def __init__(self, tag_columns, primary_key,
+    def __init__(self, summarize_columns, primary_key,
                  completion_llm, is_verbose):
-        self.tagger = SummaryTagger(tag_columns, primary_key,
+        self.tagger = SummaryTagger(summarize_columns, primary_key,
                                     completion_llm, is_verbose) 
 
 
     def slot_values(self, products):
-        product_tags, tag_values = self.tagger.invoke(products)
+        product_tags, summary_values = self.tagger.invoke(products)
 
 
 class DatabaseSchema(DatabaseInstance):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
-                 picked_columns, picked_enums, primary_key,
+                 picked_columns, picked_enums, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
         super().__init__()
         self.domain_name = domain_name
@@ -92,8 +92,7 @@ class DatabaseSchema(DatabaseInstance):
                                             domain_name, domain_datasets, picked_columns,  
                                             completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key)
-        tag_columns = []
-        self.ds_augmenter = DatasetAugmenter(tag_columns, primary_key,
+        self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
 
     def get_primary_key(self):
@@ -135,10 +134,10 @@ class ProductLoader(DatabaseSchema):
 
     def __init__(self, 
                  domain_name, domain_datasets,
-                 picked_columns, picked_enums, primary_key,
+                 picked_columns, picked_enums, primary_key, summarize_columns,
                  completion_llm):
         super().__init__(domain_name, domain_datasets,
-                         picked_columns, picked_enums, primary_key,
+                         picked_columns, picked_enums, primary_key, summarize_columns,
                          completion_llm)
     
     def load_products(self):
@@ -174,6 +173,7 @@ class GiftLoader(ProductLoader):
                                         'price', 'title'],
                          picked_enums=['brands', 'colors'],
                          primary_key='id',
+                         summarize_columns=['title']
                          completion_llm=completion_llm)
         
 
