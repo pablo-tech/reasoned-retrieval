@@ -13,9 +13,9 @@ class RunInference():
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
-        # if self.is_verbose:
-        print(inferred)
         inferred = inferred.split("Answer:")[1].strip()
+        if self.is_verbose:
+            print(inferred)
         return inferred
 
 
@@ -79,6 +79,7 @@ class SummaryTagger(RunInference):
     def invoke(self, products, text_columns, primary_key):
         product_tags = defaultdict(dict)
         slot_values = defaultdict(set)
+        i = 0
         for product in products:
             query = "" # TODO: if too long, summarize
             for column in text_columns:
@@ -91,6 +92,8 @@ class SummaryTagger(RunInference):
                 value = slot_value[1]
                 product_tags[product[primary_key]][slot] = value
                 slot_values[slot].add(value)
+                if self.s_verbose:
+                    print(str(i) + "/" + str(len(products)) + "\t" + "slot_value="+str(slot_value))
         return product_tags, slot_values 
             
     def get_prompt(self, query):
