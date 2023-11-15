@@ -30,14 +30,14 @@ class SqlSemanticParser(RunInference):
         self.query_signature = query_signature
         self.query_enums = query_enums
 
-    def invoke(self, query, n=3):
+    def invoke(self, query):
         prompt = self.get_prompt(query, 
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
         inferred_sql = self.run_inference(prompt)
         response = self.db_cursor.execute(inferred_sql)
-        return [row for row in response][:n]
+        return [row for row in response]
             
     def get_prompt(self, question, columns, signature, enums):
         prompt = "You are an AI expert semantic parser."
@@ -76,7 +76,7 @@ class SummaryTagger(RunInference):
     def __init__(self, completion_llm, is_verbose):
         super().__init__(completion_llm, is_verbose)
             
-    def invoke(self, query, products, text_columns, primary_key, n=3):
+    def invoke(self, products, text_columns, primary_key):
         product_tags = defaultdict(dict)
         slot_values = defaultdict(set)
         for product in products:
