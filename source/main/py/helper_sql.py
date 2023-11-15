@@ -1,7 +1,7 @@
 from langchain.chat_models import ChatOpenAI
 
 
-class SqlHelper():
+class SqlSemanticParser():
 
     def __init__(self, db_cursor,
                  query_columns, query_signature, query_enums,
