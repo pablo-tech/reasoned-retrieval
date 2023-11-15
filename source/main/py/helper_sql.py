@@ -1,29 +1,41 @@
+from collections import defaultdict
+
 from langchain.chat_models import ChatOpenAI
 
 
-class SqlSemanticParser():
+class RunInference():
+
+    def __init__(self, completion_llm, is_verbose=True):
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
+
+    def invoke(self, prompt):
+        inferred = self.completion_llm.invoke(prompt)
+        if isinstance(self.completion_llm, ChatOpenAI):
+            inferred = inferred.content
+        inferred = inferred.split("Answer:")[1].strip()
+        if self.is_verbose:
+            print(inferred)
+        return inferred
+
+
+class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
                  query_columns, query_signature, query_enums,
                  completion_llm, is_verbose=True):
+        super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
         self.query_columns = query_columns
         self.query_signature = query_signature
         self.query_enums = query_enums
-        self.completion_llm = completion_llm
-        self.is_verbose = is_verbose
 
-    def get_result(self, query, n=3):
+    def invoke(self, query, n=3):
         prompt = self.get_prompt(query, 
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
-        inferred_sql = self.completion_llm.invoke(prompt)
-        if isinstance(self.completion_llm, ChatOpenAI):
-            inferred_sql = inferred_sql.content
-        inferred_sql = inferred_sql.split("Answer:")[1].strip()
-        if self.is_verbose:
-            print(inferred_sql)
+        inferred_sql = self.invoke(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response][:n]
             
@@ -57,3 +69,39 @@ Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%glass%' AND tit
 """
         prompt += f"Question: {question}" + "\n"
         return prompt            
+
+
+class SummaryTagger(RunInference):
+
+    def __init__(self, completion_llm, is_verbose):
+        super().__init__(completion_llm, is_verbose)
+            
+    def invoke(self, query, products, text_columns, primary_key, n=3):
+        product_tags = defaultdict(dict)
+        slot_values = defaultdict(set)
+        for product in products:
+            query = ""
+            for column in text_columns:
+                if column != primary_key:
+                    col = product[col]
+                    query += product[col] + "\n"
+            prompt = self.get_prompt(query)
+            inferred_tags = self.invoke(prompt)
+            for slot, value in inferred_tags:
+                product_tags[product[primary_key]][slot] = value
+                slot_values[slot].add(value)
+        return product_tags, slot_values 
+            
+    def get_prompt(self, query):
+        return f"""
+You are an AI expert at asking at formulating brief classifications that can be answered by a text,
+as well as identifying the instantiation of that classification.
+Respond with a python list of string tuples, where the first value is the category classification,
+and the second is the instance.
+Examples:
+Question: Guess Analog Clear Dial Women's Watch GW0403L2
+Answer:
+[('product gender', 'for women'), ('product type', 'watch'), ('watch type', 'analog'), ('watch dial type', 'clear'), ('product model', 'GW0403L2'), ('product collection', 'Guess')]
+Question: {query}
+Answer:
+"""
