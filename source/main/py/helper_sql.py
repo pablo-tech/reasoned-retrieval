@@ -83,8 +83,7 @@ class SummaryTagger(RunInference):
             query = "" # TODO: if too long, summarize
             for column in text_columns:
                 if column != primary_key:
-                    col = product[col]
-                    query += product[col] + "\n"
+                    query += product[column] + "\n"
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
             for slot, value in inferred_tags:
