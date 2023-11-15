@@ -126,14 +126,17 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
-    def get_product_rows(self, columns):
+    def get_product_rows(self, columns, n):
+        if n is not None:
+            products = self.get_domain_products()[:n]
         return self.ds_reducer.product_rows(self.get_domain_products(), columns)
 
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
     def get_augmentation_columns(self, n):
-        products = self.get_domain_products()[:n]
+        if n is not None:
+            products = self.get_domain_products()[:n]
         return self.ds_augmenter.unique_columns(self.get_domain_products()) 
         
 
@@ -162,7 +165,7 @@ class ProductLoader(DatabaseSchema):
         columns = [col for col in columns if col in self.picked_columns]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
         print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns(n)))
-        rows = self.get_product_rows(columns)
+        rows = self.get_product_rows(columns, n)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
 
