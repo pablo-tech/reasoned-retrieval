@@ -90,7 +90,8 @@ class DatabaseSchema(DatabaseInstance):
                                             domain_name, domain_datasets, picked_columns,  
                                             completion_llm, False)
         self.ds_reducer = DatasetReducer(primary_key)
-        self.ds_augmenter = DatasetAugmenter()
+        tag_columns = []
+        self.ds_augmenter = DatasetAugmenter(tag_columns, primary_key)
 
     def get_primary_key(self):
         return self.primary_key

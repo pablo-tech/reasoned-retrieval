@@ -93,13 +93,13 @@ class SummaryTagger(RunInference):
                     query += product[column] + "\n"
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
-            for slot_value in eval(inferred_tags):
-                slot = slot_value[0]
-                value = slot_value[1]
-                product_tags[product[f.primary_key]][slot] = value
-                tag_values[slot].add(value)
+            for tag_value in eval(inferred_tags):
+                tag = tag_value[0]
+                value = tag_value[1]
+                product_tags[product[self.primary_key]][tag] = value
+                tag_values[tag].add(value)
                 if self.is_verbose:
-                    print(str(i) + "/" + str(len(products)) + "\t" + "slot_value="+str(slot_value))
+                    print(str(i) + "/" + str(len(products)) + "\t" + "tag_value="+str(tag_value))
             i+=1
         return product_tags, tag_values 
             
