@@ -65,8 +65,10 @@ class DatasetReducer():
 
 class DatasetAugmenter():
 
-    def __init__(self, tag_columns, primary_key):
-        self.tagger = SummaryTagger(tag_columns, primary_key) 
+    def __init__(self, tag_columns, primary_key,
+                 completion_llm, is_verbose):
+        self.tagger = SummaryTagger(tag_columns, primary_key,
+                                    completion_llm, is_verbose) 
 
 
     def slot_values(self, products):
@@ -78,7 +80,7 @@ class DatabaseSchema(DatabaseInstance):
     def __init__(self, 
                  domain_name, domain_datasets, 
                  picked_columns, picked_enums, primary_key,
-                 completion_llm):
+                 completion_llm, is_verbose=False):
         super().__init__()
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
@@ -88,10 +90,11 @@ class DatabaseSchema(DatabaseInstance):
         self.completion_llm = completion_llm     
         self.schema_creator = SchemaCreator(self.get_db_cursor(),
                                             domain_name, domain_datasets, picked_columns,  
-                                            completion_llm, False)
+                                            completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key)
         tag_columns = []
-        self.ds_augmenter = DatasetAugmenter(tag_columns, primary_key)
+        self.ds_augmenter = DatasetAugmenter(tag_columns, primary_key,
+                                             completion_llm, is_verbose)
 
     def get_primary_key(self):
         return self.primary_key
