@@ -76,29 +76,32 @@ Answer: SELECT brands, price, title FROM CLIQ WHERE title LIKE '%glass%' AND tit
 
 class SummaryTagger(RunInference):
 
-    def __init__(self, completion_llm, is_verbose):
+    def __init__(self, tag_columns, primary_key,
+                 completion_llm, is_verbose):
         super().__init__(completion_llm, is_verbose)
+        self.tag_columns = tag_columns
+        self.primary_key = primary_key
             
-    def invoke(self, products, text_columns, primary_key):
+    def invoke(self, products):
         product_tags = defaultdict(dict)
-        slot_values = defaultdict(set)
+        tag_values = defaultdict(set)
         i = 0
         for product in products:
             query = "" # TODO: if too long, summarize
-            for column in text_columns:
-                if column != primary_key:
+            for column in self.tag_columns:
+                if column != self.primary_key:
                     query += product[column] + "\n"
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
             for slot_value in eval(inferred_tags):
                 slot = slot_value[0]
                 value = slot_value[1]
-                product_tags[product[primary_key]][slot] = value
-                slot_values[slot].add(value)
+                product_tags[product[f.primary_key]][slot] = value
+                tag_values[slot].add(value)
                 if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "slot_value="+str(slot_value))
             i+=1
-        return product_tags, slot_values 
+        return product_tags, tag_values 
             
     def get_prompt(self, query):
         return f"""

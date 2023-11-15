@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from domain_product import SchemaCreator, DomainSchema
 from domain_product import GiftDataset, TvDataset, AcDataset
+from helper_sql import SummaryTagger
 
 import sqlite3
 
@@ -49,10 +50,10 @@ class DatasetReducer():
                   rows += ",\n" + str(tuple(values))
         return rows                  
 
-    def find_enum_values(self, enum_cols, products):
+    def find_enum_values(self, picked_enums, products):
         enum_vals = defaultdict(set)
         for product in products:
-            for col in enum_cols:
+            for col in picked_enums:
                 try:
                   vals = product[col]
                   enum_vals[col].add(vals)
@@ -64,25 +65,29 @@ class DatasetReducer():
 
 class DatasetAugmenter():
 
-    def __init__(self):
-        pass 
+    def __init__(self, tag_columns, primary_key):
+        self.tagger = SummaryTagger(tag_columns, primary_key) 
+
+
+    def slot_values(self, products):
+        product_tags, tag_values = self.tagger.invoke(products)
 
 
 class DatabaseSchema(DatabaseInstance):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
-                 selected_cols, enum_cols, primary_key,
+                 picked_columns, picked_enums, primary_key,
                  completion_llm):
         super().__init__()
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
-        self.selected_cols = selected_cols 
-        self.enum_cols = enum_cols           
+        self.picked_columns = picked_columns 
+        self.picked_enums = picked_enums           
         self.primary_key = primary_key
         self.completion_llm = completion_llm     
         self.schema_creator = SchemaCreator(self.get_db_cursor(),
-                                            domain_name, domain_datasets, selected_cols,  
+                                            domain_name, domain_datasets, picked_columns,  
                                             completion_llm, False)
         self.ds_reducer = DatasetReducer(primary_key)
         self.ds_augmenter = DatasetAugmenter()
@@ -112,7 +117,7 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.unique_columns(self.get_domain_schema())
     
     def get_enum_values(self):
-        return self.ds_reducer.find_enum_values(self.enum_cols, 
+        return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
     def get_product_rows(self, columns):
@@ -126,10 +131,10 @@ class ProductLoader(DatabaseSchema):
 
     def __init__(self, 
                  domain_name, domain_datasets,
-                 selected_cols, enum_cols, primary_key,
+                 picked_columns, picked_enums, primary_key,
                  completion_llm):
         super().__init__(domain_name, domain_datasets,
-                         selected_cols, enum_cols, primary_key,
+                         picked_columns, picked_enums, primary_key,
                          completion_llm)
     
     def load_products(self):
@@ -144,7 +149,7 @@ class ProductLoader(DatabaseSchema):
 
     def get_rows(self):
         columns = self.get_unique_columns()
-        columns = [col for col in columns if col in self.selected_cols]
+        columns = [col for col in columns if col in self.picked_columns]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
         rows = self.get_product_rows(columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
@@ -161,9 +166,9 @@ class GiftLoader(ProductLoader):
     def __init__(self, completion_llm):
         super().__init__(domain_name="CLIQ",
                          domain_datasets=[GiftDataset()],
-                         selected_cols=['id', 'brands', 'colors',
+                         picked_columns=['id', 'brands', 'colors',
                                         'price', 'title'],
-                         enum_cols=['brands', 'colors'],
+                         picked_enums=['brands', 'colors'],
                          primary_key='id',
                          completion_llm=completion_llm)
         
