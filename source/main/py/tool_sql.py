@@ -72,7 +72,7 @@ class DatasetAugmenter():
 
 
     def slot_values(self, products):
-        product_tags, summary_values = self.tagger.invoke(products)
+        product_summary, summary_values = self.tagger.invoke(products)
 
 
 class DatabaseSchema(DatabaseInstance):
@@ -173,7 +173,7 @@ class GiftLoader(ProductLoader):
                                         'price', 'title'],
                          picked_enums=['brands', 'colors'],
                          primary_key='id',
-                         summarize_columns=['title']
+                         summarize_columns=['title'],
                          completion_llm=completion_llm)
         
 
