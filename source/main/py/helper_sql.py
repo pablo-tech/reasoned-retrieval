@@ -9,7 +9,7 @@ class RunInference():
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def invoke(self, prompt):
+    def run_inference(self, prompt):
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
@@ -35,7 +35,7 @@ class SqlSemanticParser(RunInference):
                                  self.query_columns,
                                  self.query_signature,
                                  self.query_enums)
-        inferred_sql = self.completion_llm.invoke(prompt)
+        inferred_sql = self.run_inference.invoke(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response][:n]
             
@@ -86,7 +86,7 @@ class SummaryTagger(RunInference):
                     col = product[col]
                     query += product[col] + "\n"
             prompt = self.get_prompt(query)
-            inferred_tags = self.invoke(prompt)
+            inferred_tags = self.run_inference(prompt)
             for slot, value in inferred_tags:
                 product_tags[product[primary_key]][slot] = value
                 slot_values[slot].add(value)
