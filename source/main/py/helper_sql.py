@@ -86,7 +86,7 @@ class SummaryTagger(RunInference):
                     query += product[column] + "\n"
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
-            for slot_value in inferred_tags:
+            for slot_value in eval(inferred_tags):
                 slot = slot_value[0]
                 value = slot_value[1]
                 product_tags[product[primary_key]][slot] = value
