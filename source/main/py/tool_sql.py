@@ -28,7 +28,7 @@ class DatasetReducer():
 
     def unique_columns(self, schema:DomainSchema):
         return [self.primary_key] + [col for col in schema.column_names() 
-                                           if col!=self.primary_key]
+                                     if col!=self.primary_key]
 
     def product_rows(self, products, all_columns):
         rows = ""
@@ -71,9 +71,12 @@ class DatasetAugmenter():
                                     completion_llm, is_verbose) 
 
 
-    def slot_values(self, products):
+    def unique_columns(self, products): 
         product_summary, summary_values = self.tagger.invoke(products)
-
+        columns = sorted(list(summary_values.keys()))
+        columns = [col.replace(" ", "_") for col in summary_values]
+        return columns
+    
 
 class DatabaseSchema(DatabaseInstance):
 
@@ -113,8 +116,8 @@ class DatabaseSchema(DatabaseInstance):
     def get_domain_products(self):
         return list(self.get_domain_schema().get_clean_products())
     
-    def get_ds_reducer(self):
-        return self.ds_reducer
+    # def get_ds_reducer(self):
+    #     return self.ds_reducer
 
     def get_unique_columns(self):
         return self.ds_reducer.unique_columns(self.get_domain_schema())
@@ -126,9 +129,12 @@ class DatabaseSchema(DatabaseInstance):
     def get_product_rows(self, columns):
         return self.ds_reducer.product_rows(self.get_domain_products(), columns)
 
-    def get_ds_augmenter(self):
-        return self.ds_augmenter
-    
+    # def get_ds_augmenter(self):
+    #     return self.ds_augmenter
+
+    def get_augmentation_columns(self):
+        return self.ds_augmenter.unique_columns(self.get_domain_products()) 
+        
 
 class ProductLoader(DatabaseSchema):
 
@@ -154,6 +160,7 @@ class ProductLoader(DatabaseSchema):
         columns = self.get_unique_columns()
         columns = [col for col in columns if col in self.picked_columns]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
+        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns())
         rows = self.get_product_rows(columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
