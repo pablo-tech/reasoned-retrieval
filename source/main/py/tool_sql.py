@@ -127,17 +127,19 @@ class DatabaseSchema(DatabaseInstance):
                                                 self.get_domain_products())
 
     def get_product_rows(self, columns, n):
+        products = self.get_domain_products()        
         if n is not None:
-            products = self.get_domain_products()[:n]
-        return self.ds_reducer.product_rows(self.get_domain_products(), columns)
+            products = products[:n]
+        return self.ds_reducer.product_rows(products, columns)
 
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
     def get_augmentation_columns(self, n):
+        products = self.get_domain_products()
         if n is not None:
-            products = self.get_domain_products()[:n]
-        return self.ds_augmenter.unique_columns(self.get_domain_products()) 
+            products = products[:n]
+        return self.ds_augmenter.unique_columns(products) 
         
 
 class ProductLoader(DatabaseSchema):
