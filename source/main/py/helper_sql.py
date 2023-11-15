@@ -17,7 +17,7 @@ class RunInference():
         print(inferred)
         try:
             inferred = inferred.split("Answer:")[1].strip()
-        except 
+        except: 
             inferred = inferred.strip() 
         return inferred
 
