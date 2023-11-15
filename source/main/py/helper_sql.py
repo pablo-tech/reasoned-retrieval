@@ -92,7 +92,7 @@ class SummaryTagger(RunInference):
                 value = slot_value[1]
                 product_tags[product[primary_key]][slot] = value
                 slot_values[slot].add(value)
-                if self.s_verbose:
+                if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "slot_value="+str(slot_value))
         return product_tags, slot_values 
             
