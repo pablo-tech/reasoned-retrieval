@@ -160,7 +160,7 @@ class ProductLoader(DatabaseSchema):
         columns = self.get_unique_columns()
         columns = [col for col in columns if col in self.picked_columns]
         print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns())
+        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns()))
         rows = self.get_product_rows(columns)
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         return rows
