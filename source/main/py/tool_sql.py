@@ -216,8 +216,8 @@ class GiftLoader():
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
         self.products = self.get_products(n=3)
-        self.context_loader = ContextLoader(self.database_schema, products)
-        self.inference_loader = InferenceLoader(self.database_schema, products)
+        self.context_loader = ContextLoader(self.database_schema, self.products)
+        self.inference_loader = InferenceLoader(self.database_schema, self.products)
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
