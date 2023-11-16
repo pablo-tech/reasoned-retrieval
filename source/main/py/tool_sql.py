@@ -70,12 +70,11 @@ class DatasetAugmenter():
         self.tagger = SummaryTagger(summarize_columns, primary_key,
                                     completion_llm, is_verbose) 
 
-
-    def unique_columns(self, products): 
-        product_summary, summary_values = self.tagger.invoke(products)
+    def column_products(self, products): 
+        summary_values, product_summary = self.tagger.invoke(products)
         columns = sorted(list(summary_values.keys()))
         columns = [col.replace(" ", "_") for col in summary_values]
-        return columns
+        return columns, product_summary
     
 
 class DatabaseSchema(DatabaseInstance):
@@ -135,11 +134,12 @@ class DatabaseSchema(DatabaseInstance):
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
-    def get_augmentation_columns(self, n):
+    def get_augmentation_tuples(self, n):
         products = self.get_domain_products()
         if n is not None:
             products = products[:n]
-        return self.ds_augmenter.unique_columns(products) 
+        columns, products = self.ds_augmenter.column_products(products) 
+        return columns, self.ds_reducer.product_rows(products, columns)
         
 
 class ProductLoader(DatabaseSchema):
@@ -162,18 +162,17 @@ class ProductLoader(DatabaseSchema):
         return self.get_sql(self.get_domain_name(), 
                             self.get_rows(n))   
 
-    def get_rows(self, n):
-        columns = self.get_unique_columns()
-        columns = [col for col in columns if col in self.picked_columns]
-        print("SELECTED_UNIQUE_COLUMNS=" + str(columns))
-        print("AUGMENTATION_COLUMNS=" + str(self.get_augmentation_columns(n)))
-        rows = self.get_product_rows(columns, n)
+    def get_rows(self, n, is_view=False):
+        phisical_columns = self.get_unique_columns()
+        print("SELECTED_COLUMNS=" + str(phisical_columns))
+        phisical_rows = self.get_product_rows(phisical_columns, n)
+        question_columns, question_rows = str(self.get_augmentation_tuples(n))
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
-        return rows
-
-    def get_sql(self, table_name, product_rows):
+        return phisical_rows
+    
+    def get_sql(self, table_name, table_rows):
         return f"""
-INSERT INTO {table_name} VALUES {product_rows}
+INSERT INTO {table_name} VALUES {table_rows}
 """    
 
 

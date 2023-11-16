@@ -19,7 +19,7 @@ class RunInference():
             inferred = inferred.split("Answer:")[1].strip()
         except: 
             inferred = inferred.strip() 
-        print("INFERRED=" + str(inferred))            
+        # print("INFERRED=" + str(inferred))            
         return inferred
 
 
@@ -102,7 +102,7 @@ class SummaryTagger(RunInference):
                 if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
             i+=1
-        return product_summary, summary_values 
+        return summary_values, product_summary 
             
     def get_prompt(self, query):
         return f"""
