@@ -162,8 +162,7 @@ class TableLoader():
         self.execute_load(columns, insert_sql)
         return columns, rows
 
-    def prepare_load(self, products):
-        # products = self.get_products(n)
+    def prepare_load(self):
         columns = self.get_columns()
         print("COLUMNS=" + str(columns))
         rows = self.database_schema.get_tuple_strs(self.products, columns)
