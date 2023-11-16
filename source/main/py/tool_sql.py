@@ -131,15 +131,13 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
-    def get_product_rows(self, products, columns, n):
-        if n is not None:
-            products = products[:n]
+    def get_reduced_tuples(self, products, columns):
         return self.ds_reducer.product_rows(products, columns)
 
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
-    def get_augmentation_tuples(products, self, n):
+    def get_augmentation_tuples(products, self):
         columns, products = self.ds_augmenter.column_products(products) 
         return columns, products
         # return columns, self.ds_reducer.product_rows(products, columns)
@@ -189,7 +187,7 @@ class ProductLoader(DatabaseSchema):
         products = self.get_domain_products()[:n]
         if n is not None:
             products = products[:n]
-        physical_rows = self.get_product_rows(products, physical_columns)
+        physical_rows = self.get_reduced_tuples(products, physical_columns)
         virtual_columns, virtual_rows = self.get_augmentation_tuples(products)
         print("VIRTUAL_COLUMNS=" + str(virtual_columns))
         return physical_rows
