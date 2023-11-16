@@ -177,9 +177,9 @@ class TableLoader():
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
+        print("get_domain_products=" + str(len(products)) + str(type(products)))
         if n is not None:
             products = products[:n]
-        print("get_domain_products=" + str(len(products)) + str(type(products)))
         return products
     
     def get_sql(self, table_name, table_rows):
