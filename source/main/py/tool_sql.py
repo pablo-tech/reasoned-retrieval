@@ -76,7 +76,7 @@ class DatasetAugmenter():
         columns, product_summary = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        columns = [col.replace(" ", "_") for col in columns]
+        # columns = [col.replace(" ", "_") for col in columns]
         return columns, product_summary
     
 
