@@ -205,7 +205,7 @@ class InferenceLoader(TableLoader):
     def __init__(self, database_schema:DatabaseSchema):
         super().__init__(database_schema)
 
-    def get_columns(self, n=None):
+    def get_columns(self, n):
         products = self.get_products(n)
         products, columns = self.database_schema.get_augmentation_tuples(products)
         return columns
