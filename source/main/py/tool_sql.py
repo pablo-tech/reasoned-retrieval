@@ -201,7 +201,8 @@ class InferenceLoader(TableLoader):
 
     def product_columns(self):
         augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
-        return augmented_products.values(), columns
+        return augmented_products, columns
+        # return augmented_products.values(), columns
     
 
 class GiftLoader():

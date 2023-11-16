@@ -84,10 +84,13 @@ class SummaryTagger(RunInference):
         self.primary_key = primary_key
             
     def invoke(self, products):
-        product_summary = defaultdict(dict)
+        product_summaries= []
+        # product_summary = defaultdict(dict)
         summary_values = defaultdict(set)
         i = 0
         for product in products:
+            product_summary = {}
+            product_summary[self.primary_key] = product[self.primary_key]
             query = "" # TODO: if too long, summarize
             for column in self.summarize_columns:
                 if column != self.primary_key:
@@ -97,12 +100,14 @@ class SummaryTagger(RunInference):
             for summary_value in eval(inferred_tags):
                 tag = summary_value[0]
                 value = summary_value[1]
-                product_summary[product[self.primary_key]][tag] = value
+                product_summary[tag] = value
+                # product_summary[product[self.primary_key]][tag] = value
+                product_summaries.append(product_summary)
                 summary_values[tag].add(value)
                 if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
             i+=1
-        return summary_values, product_summary 
+        return summary_values, product_summaries 
             
     def get_prompt(self, query):
         return f"""
