@@ -161,6 +161,7 @@ class TableLoader():
         return columns, rows
 
     def prepare_load(self):
+        print("PRODUCTS=>" + str(self.products))
         columns = self.get_columns()
         print("COLUMNS=>" + str(columns))
         rows = self.database_schema.get_tuple_strs(self.products, columns)
