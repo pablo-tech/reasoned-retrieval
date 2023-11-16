@@ -164,12 +164,13 @@ class ProductLoader(DatabaseSchema):
                             self.get_rows(n))   
 
     def get_rows(self, n, is_view=False):
-        phisical_columns = self.get_unique_columns()
-        print("SELECTED_COLUMNS=" + str(phisical_columns))
-        phisical_rows = self.get_product_rows(phisical_columns, n)
-        question_columns, question_rows = str(self.get_augmentation_tuples(n))
+        physical_columns = self.get_unique_columns()
+        print("PHYSICAL_COLUMNS=" + str(physical_columns))
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
-        return phisical_rows
+        physical_rows = self.get_product_rows(physical_columns, n)
+        virtual_columns, virtual_rows = self.get_augmentation_tuples(n)
+        print("VIRTUAL_COLUMNS=" + str(virtual_columns))
+        return physical_rows
     
     def get_sql(self, table_name, table_rows):
         return f"""
