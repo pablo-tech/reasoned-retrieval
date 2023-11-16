@@ -5,7 +5,7 @@ from langchain.chat_models import ChatOpenAI
 
 class RunInference():
 
-    def __init__(self, completion_llm, is_verbose=True):
+    def __init__(self, completion_llm, is_verbose=False):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
@@ -13,8 +13,8 @@ class RunInference():
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
-        # if self.is_verbose:            
-        print(inferred)
+        if self.is_verbose:            
+            print(inferred)
         try:
             inferred = inferred.split("Answer:")[1].strip()
         except: 
@@ -42,6 +42,7 @@ class SqlSemanticParser(RunInference):
                                  self.schema_signature,
                                  self.query_enums)
         inferred_sql = self.run_inference(prompt)
+        print(inferred_sql)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response]
             
