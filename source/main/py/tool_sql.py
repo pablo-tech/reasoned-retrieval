@@ -139,7 +139,8 @@ class DatabaseSchema(DatabaseInstance):
         if n is not None:
             products = products[:n]
         columns, products = self.ds_augmenter.column_products(products) 
-        return columns, self.ds_reducer.product_rows(products, columns)
+        return columns, products
+        # return columns, self.ds_reducer.product_rows(products, columns)
         
 
 class ProductLoader(DatabaseSchema):
