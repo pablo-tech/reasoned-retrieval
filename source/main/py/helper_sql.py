@@ -5,7 +5,7 @@ from langchain.chat_models import ChatOpenAI
 
 class RunInference():
 
-    def __init__(self, completion_llm, is_verbose=False):
+    def __init__(self, completion_llm, is_verbose=True):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
