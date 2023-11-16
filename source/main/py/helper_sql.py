@@ -50,7 +50,7 @@ class SqlSemanticParser(RunInference):
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
         prompt += f"{table_signature}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in query_enums:
+        for column, values in query_enums.items():
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
