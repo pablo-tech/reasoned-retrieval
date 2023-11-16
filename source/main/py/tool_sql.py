@@ -202,6 +202,10 @@ class ContextLoader(TableLoader):
         print("CONTEXT_ROWS=" + str(context_rows))
         return context_columns, context_rows
     
+    def schema_sql(self):
+        columns = self.database_schema.get_reduced_columns()
+        return self.database_schema.create_sql(columns)
+    
 
 class InferenceLoader(TableLoader):
 
