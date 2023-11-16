@@ -71,6 +71,7 @@ class DatasetAugmenter():
                                     completion_llm, is_verbose) 
 
     def column_products(self, products): 
+        print("CLEANIFY PRODS" + str(products))
         summary_values, product_summary = self.tagger.invoke(products)
         columns = sorted(list(summary_values.keys()))
         columns = [col.replace(" ", "_") for col in summary_values]
