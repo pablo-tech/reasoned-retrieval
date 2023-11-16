@@ -156,6 +156,7 @@ class TableLoader():
 
     def load_items(self, columns, insert_sql, n=None):
         self.database_schema.create_table(columns)
+        print("insert_sql="+str(insert_sql))
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
 
