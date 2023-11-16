@@ -30,7 +30,7 @@ class DatasetReducer():
         return [self.primary_key] + [col for col in schema.column_names() 
                                      if col!=self.primary_key]
 
-    def product_rows(self, products, all_columns):
+    def product_strs(self, products, all_columns):
         rows = ""
         unique_id = set()
         for product in products:
@@ -122,9 +122,9 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
-    def get_reduced_tuples(self, products, columns):
-        products = self.ds_reducer.product_rows(products, columns)
-        return products
+    def get_tuples(self, products, columns):
+        return self.ds_reducer.product_strs(products, columns)
+        # return products
         # rows = {}
         # for product in products:
         #     rows[product[self.primary_key]] = product
@@ -171,17 +171,24 @@ class ProductLoader(DatabaseSchema):
         return self.get_sql(self.get_domain_name(), rows), columns
 
     def get_tuples(self, is_view, n=None):
+        products = self.get_products(n)
+
         context_columns = self.get_reduced_columns()
+        # context_rows = self.get_reduced_tuples(products, context_columns)
+        inferred_products, inferred_columns = self.get_augmentation_tuples(products)
+        print("INFERRED_COLUMNS=" + str(inferred_columns))
+        print("INFERRED_PRODUCTS=" + str(inferred_products))
+
+        context_rows = self.get_tuples(products)
+        print("CONTEXT_COLUMNS=" + str(context_columns))
+        print("CONTEXT_ROWS=" + str(context_rows))
+        return context_columns, context_rows
+    
+    def get_products(self, n):
         products = self.get_domain_products()[:n]
         if n is not None:
             products = products[:n]
-        context_rows = self.get_reduced_tuples(products, context_columns)
-        print("CONTEXT_COLUMNS=" + str(context_columns))
-        print("CONTEXT_ROWS=" + str(context_rows))
-        inferred_rows, inferred_columns = self.get_augmentation_tuples(products)
-        print("INFERRED_COLUMNS=" + str(inferred_columns))
-        print("INFERRED_ROWS=" + str(inferred_rows))
-        return context_columns, context_rows
+        return products
     
     def get_sql(self, table_name, table_rows):
         return f"""
