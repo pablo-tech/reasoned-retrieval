@@ -167,6 +167,7 @@ class TableLoader():
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
+        print("get_domain_products=" + str(products))
         if n is not None:
             products = products[:n]
         return products
