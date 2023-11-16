@@ -162,11 +162,11 @@ class TableLoader():
 
     def prepare_load(self):
         columns = self.get_columns()
-        print("COLUMNS=" + str(columns))
+        # print("COLUMNS=" + str(columns))
         rows = self.database_schema.get_tuple_strs(self.products, columns)
-        print("ROWS=" + str(rows))
+        # print("ROWS=" + str(rows))
         insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
-        print("insert_sql="+str(insert_sql))
+        print("INSERT_SQL="+str(insert_sql))
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql, n=None):
