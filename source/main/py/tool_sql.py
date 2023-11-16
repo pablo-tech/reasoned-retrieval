@@ -160,11 +160,6 @@ class TableLoader():
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
 
-    # def load_sql(self, columns, rows,
-    #              is_view=False, n=None):
-    #     insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
-    #     return insert_sql, columns
-
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
         print("get_domain_products=" + str(products))
@@ -228,20 +223,19 @@ class InferenceLoader(TableLoader):
         return context_columns, context_rows
 
 
-class GiftLoader():
+class GiftLoader(DatabaseSchema):
 
     def __init__(self, completion_llm):
-        super().__init__()
-        self.database_schema = DatabaseSchema(domain_name="CLIQ",
-                                              domain_datasets=[GiftDataset()],
-                                              picked_columns=['id', 'brands', 'colors',
-                                                             'price', 'title'],
-                                              picked_enums=['brands', 'colors'],
-                                              primary_key='id',
-                                              summarize_columns=['title'],
-                                              completion_llm=completion_llm)
-        self.context_loader = ContextLoader(self.database_schema)
-        self.inference_loader = InferenceLoader(self.database_schema)
+        super().__init__(domain_name="CLIQ",
+                         domain_datasets=[GiftDataset()],
+                         picked_columns=['id', 'brands', 'colors',
+                                         'price', 'title'],
+                         picked_enums=['brands', 'colors'],
+                         primary_key='id',
+                         summarize_columns=['title'],
+                         completion_llm=completion_llm)
+        self.context_loader = ContextLoader(self)
+        self.inference_loader = InferenceLoader(self)
         
 
 class ProductRetriever():
