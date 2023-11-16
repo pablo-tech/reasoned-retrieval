@@ -31,8 +31,6 @@ class DatasetReducer():
                                      if col!=self.primary_key]
 
     def product_strs(self, products, all_columns):
-        print("STRS_PROD" + str(products))
-        print("STRS_COL" + str(all_columns))
         rows = ""
         unique_id = set()
         for product in products:

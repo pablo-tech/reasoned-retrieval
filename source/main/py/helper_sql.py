@@ -13,8 +13,8 @@ class RunInference():
         inferred = self.completion_llm.invoke(prompt)
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
-        if self.is_verbose:            
-            print(inferred)
+        # if self.is_verbose:            
+        print(inferred)
         try:
             inferred = inferred.split("Answer:")[1].strip()
         except: 
