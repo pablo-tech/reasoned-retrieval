@@ -154,17 +154,15 @@ class TableLoader():
     def __init__(self, database_schema:DatabaseSchema):
         self.database_schema = database_schema
 
-    def load_products(self, n=None):
-        insert_sql, columns = self.load_sql(n)
+    def load_items(self, columns, insert_sql, n=None):
         self.database_schema.create_table(columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
-        return insert_sql    
 
-    def load_sql(self, columns, rows,
-                 is_view=False, n=None):
-        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
-        return insert_sql, columns
+    # def load_sql(self, columns, rows,
+    #              is_view=False, n=None):
+    #     insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+    #     return insert_sql, columns
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
@@ -185,7 +183,8 @@ class ContextLoader(TableLoader):
 
     def load_context(self, is_view=False, n=None):
         columns, rows  = self.get_tuples(n, is_view)
-        self.load_sql(columns, rows)
+        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+        self.load_items(columns, insert_sql)
 
     def get_tuples(self, is_view, n=None):
         products = self.get_products(n)
