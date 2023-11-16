@@ -184,7 +184,7 @@ class ContextLoader(TableLoader):
         super().__init__(database_schema)
 
     def load_context(self, is_view=False, n=None):
-        columns, rows  = self.get_tuples(n, is_view)
+        columns, rows  = self.get_tuples(is_view, n)
         insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
         self.load_items(columns, insert_sql)
 
@@ -208,7 +208,7 @@ class InferenceLoader(TableLoader):
     def __init__(self, database_schema:DatabaseSchema):
         super().__init__(database_schema)
 
-    def get_tuples(self, is_view, n=None):
+    def get_tuples(self, is_view=False, n=None):
         products = self.get_products(n)
 
         context_columns = self.get_reduced_columns()
