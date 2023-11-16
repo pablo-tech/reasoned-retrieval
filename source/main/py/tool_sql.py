@@ -164,7 +164,7 @@ class TableLoader():
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql):
-        columns = [col.replace(" ", "_") for col in columns]
+        columns = self.fill_col(columns)
         self.database_schema.create_table(self.table_name, columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
@@ -176,7 +176,11 @@ INSERT INTO {table_name} VALUES {table_rows}
 
     def schema_sql(self):
         products, columns = self.product_columns()
+        columns = self.fill_col(columns)
         return self.database_schema.create_sql(self.table_name, columns)
+    
+    def fill_col(self, columns):
+        return [col.replace(" ", "_") for col in columns]
 
 
 class ContextLoader(TableLoader):
