@@ -181,8 +181,7 @@ INSERT INTO {table_name} VALUES {table_rows}
 class ContextLoader(TableLoader):
 
     def __init__(self, database_schema):
-        super().__init__()
-        self.database_schema = database_schema
+        super().__init__(database_schema)
 
     def load_context(self, is_view=False, n=None):
         columns, rows  = self.get_tuples(n, is_view)
@@ -205,8 +204,7 @@ class ContextLoader(TableLoader):
 class InferenceLoader(TableLoader):
 
     def __init__(self, database_schema:DatabaseSchema):
-        super().__init__()
-        self.database_schema = database_schema
+        super().__init__(database_schema)
 
     def get_tuples(self, is_view, n=None):
         products = self.get_products(n)
