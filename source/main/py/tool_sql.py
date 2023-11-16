@@ -76,7 +76,6 @@ class DatasetAugmenter():
         columns, product_summary = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        # columns = [col.replace(" ", "_") for col in columns]
         return columns, product_summary
     
 
@@ -157,11 +156,11 @@ class TableLoader():
     def __init__(self, database_schema:DatabaseSchema, nick_name):
         self.database_schema = database_schema
         self.nick_name = nick_name
+        self.table_name = self.database_schema.get_domain_name() + "_" + self.nick_name
 
     def load_items(self):
-        table_name = self.database_schema.get_domain_name() + "_" + self.nick_name
-        columns, rows, insert_sql = self.prepare_load(table_name)
-        self.execute_load(table_name, columns, insert_sql)
+        columns, rows, insert_sql = self.prepare_load(self.table_name)
+        self.execute_load(self.table_name, columns, insert_sql)
         return columns, rows
 
     def prepare_load(self, table_name):
@@ -175,6 +174,7 @@ class TableLoader():
         return columns, rows, insert_sql
 
     def execute_load(self, table_name, columns, insert_sql):
+        columns = [col.replace(" ", "_") for col in columns]
         self.database_schema.create_table(table_name, columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
