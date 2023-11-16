@@ -154,7 +154,7 @@ class TableLoader():
     def __init__(self, database_schema:DatabaseSchema):
         self.database_schema = database_schema
 
-    def load_context(self, n=None):
+    def load_items(self, n=None):
         columns, insert_sql = self.prepare_load(n)
         self.execute_load(columns, insert_sql)
 
