@@ -172,7 +172,7 @@ class ProductLoader(DatabaseSchema):
         physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
         # create_sql = self.create_table(self.domain_name, 'id', physical_columns)
-        self.create_table(self, self.get_domain_name(), self.primary_key, physical_columns)
+        self.create_table(self.get_domain_name(), self.primary_key, physical_columns)
 
 
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
