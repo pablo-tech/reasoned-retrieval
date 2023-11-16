@@ -211,10 +211,10 @@ class InferenceLoader(TableLoader):
         return columns
     
 
-class GiftLoader(DatabaseSchema):
+class GiftLoader():
 
     def __init__(self, completion_llm):
-        super().__init__(domain_name="CLIQ",
+        self.database_schema = DatabaseSchema(domain_name="CLIQ",
                          domain_datasets=[GiftDataset()],
                          picked_columns=['id', 'brands', 'colors',
                                          'price', 'title'],
@@ -222,8 +222,8 @@ class GiftLoader(DatabaseSchema):
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
-        self.context_loader = ContextLoader(self)
-        self.inference_loader = InferenceLoader(self)
+        self.context_loader = ContextLoader(self.database_schema)
+        self.inference_loader = InferenceLoader(self.database_schema)
         
 
 class ProductRetriever():
