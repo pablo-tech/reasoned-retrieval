@@ -154,11 +154,24 @@ class TableLoader():
     def __init__(self, database_schema:DatabaseSchema):
         self.database_schema = database_schema
 
-    def load_items(self, columns, insert_sql, n=None):
+    def load_context(self, n=None):
+        columns, insert_sql = self.prepare_load()
+        self.execute_load(columns, insert_sql)
+
+    def prepare_load(self):
+        products = self.get_products(n)
+        columns = self.get_columns()
+        rows = self.database_schema.get_tuple_strs(products, columns)
+        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+        print("COLUMNS=" + str(columns))
+        print("ROWS=" + str(rows))
+        return columns, insert_sql
+
+    def execute_load(self, columns, insert_sql, n=None):
         self.database_schema.create_table(columns)
-        print("insert_sql="+str(insert_sql))
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
+        print("insert_sql="+str(insert_sql))
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
@@ -178,28 +191,11 @@ class ContextLoader(TableLoader):
     def __init__(self, database_schema):
         super().__init__(database_schema)
 
-    def load_context(self, is_view=False, n=None):
-        columns, rows  = self.get_tuples(is_view, n)
-        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
-        self.load_items(columns, insert_sql)
-
-    def get_tuples(self, is_view, n=None):
-        products = self.get_products(n)
-        print("get_products=" + str(products))
-        context_columns = self.database_schema.get_reduced_columns()
-
-        # inferred_products, inferred_columns = self.get_augmentation_tuples(products)
-        # print("INFERRED_COLUMNS=" + str(inferred_columns))
-        # print("INFERRED_PRODUCTS=" + str(inferred_products))
-
-        context_rows = self.database_schema.get_tuple_strs(products, context_columns)
-        print("CONTEXT_COLUMNS=" + str(context_columns))
-        print("CONTEXT_ROWS=" + str(context_rows))
-        return context_columns, context_rows
-    
     def schema_sql(self):
-        columns = self.database_schema.get_reduced_columns()
-        return self.database_schema.create_sql(columns)
+        return self.database_schema.create_sql(self.get_columns())
+    
+    def get_columns(self):
+        return self.database_schema.get_reduced_columns()
     
 
 class InferenceLoader(TableLoader):
