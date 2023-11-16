@@ -166,31 +166,31 @@ class ProductLoader(DatabaseSchema):
                          completion_llm)
     
     def load_products(self, n=None):
-        insert_sql = self.load_sql(n)
+        insert_sql, columns = self.load_sql(n)
+        self.create_table(columns)
         self.get_db_cursor().execute(insert_sql)
         self.get_db_connection().commit()
         return insert_sql    
 
-    def load_sql(self, n):
-        return self.get_sql(self.get_domain_name(), 
-                            self.get_rows(n))   
+    def load_sql(self, is_view=False, n=None):
+        columns, rows  = self.get_tuples(n, is_view)
+        return self.get_sql(self.get_domain_name(), rows), columns
 
-    def get_rows(self, n=None, is_view=False):
-        physical_columns = self.get_reduced_columns()
-        print("PHYSICAL_COLUMNS=" + str(physical_columns))
-        self.create_table(physical_columns)
+    def get_tuples(self, is_view, n=None):
+        context_columns = self.get_reduced_columns()
         # create_sql = self.create_table(self.domain_name, 'id', physical_columns)
         # self.create_table(self.get_domain_name(), self.primary_key, physical_columns)
 
-
-        # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         products = self.get_domain_products()[:n]
         if n is not None:
             products = products[:n]
-        context_rows = self.get_reduced_tuples(products, physical_columns)
+        context_rows = self.get_reduced_tuples(products, context_columns)
+        print("CONTEXT_COLUMNS=" + str(context_columns))
+        # print("CONTEXT_ROWS=" + str(rows))
         inferred_columns, inferred_rows = self.get_augmentation_tuples(products)
         print("INFERRED_COLUMNS=" + str(inferred_columns))
-        return context_rows
+        # print("INFERRED_ROWS=" + str(inferred_rows))
+        return context_columns, context_rows
     
     def get_sql(self, table_name, table_rows):
         return f"""
