@@ -204,7 +204,7 @@ class InferenceLoader(TableLoader):
 
 class GiftLoader():
 
-    def __init__(self, completion_llm):
+    def __init__(self, n, completion_llm):
         self.database_schema = DatabaseSchema(domain_name="CLIQ",
                          domain_datasets=[GiftDataset()],
                          picked_columns=['id', 'brands', 'colors',
@@ -213,13 +213,12 @@ class GiftLoader():
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
-        self.products = self.get_products(n=3)
+        self.products = self.get_products(n)
         self.context_loader = ContextLoader(self.database_schema, self.products)
         self.inference_loader = InferenceLoader(self.database_schema, self.products)
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
-        print("get_domain_products=" + str(len(products)) + str(type(products)))
         if n is not None:
             products = products[:n]
         return products
