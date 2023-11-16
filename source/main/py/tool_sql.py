@@ -133,10 +133,11 @@ class DatabaseSchema(DatabaseInstance):
 
     def get_augmentation_tuples(self, products):
         columns, products = self.ds_augmenter.column_products(products) 
-        rows = {}
-        for product in products:
-            rows[product[self.primary_key]] = product
-        return rows, columns
+        # rows = {}
+        # for product in products:
+        #     rows[product[self.primary_key]] = product
+        # return rows, columns
+        return products, columns
         
     def get_picked_columns(self):
         return self.picked_columns
