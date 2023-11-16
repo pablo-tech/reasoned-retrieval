@@ -133,6 +133,7 @@ class DatabaseSchema(DatabaseInstance):
 
 
     def get_augmentation_tuples(self, products):
+        print("AUGPROD"+str(products))
         columns, products = self.ds_augmenter.column_products(products) 
         # rows = {}
         # for product in products:
@@ -166,13 +167,13 @@ class TableLoader():
         rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=" + str(rows))
         insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+        print("insert_sql="+str(insert_sql))
         return columns, insert_sql
 
     def execute_load(self, columns, insert_sql, n=None):
         self.database_schema.create_table(columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
-        print("insert_sql="+str(insert_sql))
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
@@ -206,9 +207,8 @@ class InferenceLoader(TableLoader):
 
     def get_columns(self, n=None):
         products = self.get_products(n)
-        return []
-        # products, columns = self.database_schema.get_augmentation_tuples(products)
-        # return columns
+        products, columns = self.database_schema.get_augmentation_tuples(products)
+        return columns
     
 
 class GiftLoader(DatabaseSchema):
