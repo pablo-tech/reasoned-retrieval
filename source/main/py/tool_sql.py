@@ -176,7 +176,7 @@ INSERT INTO {table_name} VALUES {table_rows}
 
     def schema_sql(self):
         products, columns = self.product_columns()
-        return self.database_schema.create_sql(columns)
+        return self.database_schema.create_sql(self.table_name, columns)
 
 
 class ContextLoader(TableLoader):
