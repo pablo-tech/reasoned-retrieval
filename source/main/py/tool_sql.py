@@ -185,7 +185,7 @@ class ProductLoader(DatabaseSchema):
         return context_columns, context_rows
     
     def get_products(self, n):
-        products = self.get_domain_products()[:n]
+        products = self.get_domain_products()
         if n is not None:
             products = products[:n]
         return products
