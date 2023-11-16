@@ -123,11 +123,20 @@ class DatabaseSchema(DatabaseInstance):
                                                 self.get_domain_products())
 
     def get_reduced_tuples(self, products, columns):
-        return self.ds_reducer.product_rows(products, columns)
+        products = self.ds_reducer.product_rows(products, columns)
+        return products
+        # rows = {}
+        # for product in products:
+        #     rows[product[self.primary_key]] = product
+        # return rows
+
 
     def get_augmentation_tuples(self, products):
         columns, products = self.ds_augmenter.column_products(products) 
-        return columns, products
+        rows = {}
+        for product in products:
+            rows[product[self.primary_key]] = product
+        return rows, columns
         
     def get_picked_columns(self):
         return self.picked_columns
@@ -168,7 +177,7 @@ class ProductLoader(DatabaseSchema):
         context_rows = self.get_reduced_tuples(products, context_columns)
         print("CONTEXT_COLUMNS=" + str(context_columns))
         # print("CONTEXT_ROWS=" + str(rows))
-        inferred_columns, inferred_rows = self.get_augmentation_tuples(products)
+        inferred_rows, inferred_columns = self.get_augmentation_tuples(products)
         print("INFERRED_COLUMNS=" + str(inferred_columns))
         # print("INFERRED_ROWS=" + str(inferred_rows))
         return context_columns, context_rows
