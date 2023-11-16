@@ -137,7 +137,7 @@ class DatabaseSchema(DatabaseInstance):
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
-    def get_augmentation_tuples(products, self):
+    def get_augmentation_tuples(self, products):
         columns, products = self.ds_augmenter.column_products(products) 
         return columns, products
         # return columns, self.ds_reducer.product_rows(products, columns)
@@ -187,10 +187,10 @@ class ProductLoader(DatabaseSchema):
         products = self.get_domain_products()[:n]
         if n is not None:
             products = products[:n]
-        physical_rows = self.get_reduced_tuples(products, physical_columns)
-        virtual_columns, virtual_rows = self.get_augmentation_tuples(products)
-        print("VIRTUAL_COLUMNS=" + str(virtual_columns))
-        return physical_rows
+        context_rows = self.get_reduced_tuples(products, physical_columns)
+        inferred_columns, inferred_rows = self.get_augmentation_tuples(products)
+        print("INFERRED_COLUMNS=" + str(inferred_columns))
+        return context_rows
     
     def get_sql(self, table_name, table_rows):
         return f"""
