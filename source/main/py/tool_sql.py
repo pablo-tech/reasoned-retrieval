@@ -179,7 +179,7 @@ class ProductLoader(DatabaseSchema):
         print("INFERRED_COLUMNS=" + str(inferred_columns))
         print("INFERRED_PRODUCTS=" + str(inferred_products))
 
-        context_rows = self.get_tuple_strs(products)
+        context_rows = self.get_tuple_strs(products, context_columns)
         print("CONTEXT_COLUMNS=" + str(context_columns))
         print("CONTEXT_ROWS=" + str(context_rows))
         return context_columns, context_rows
