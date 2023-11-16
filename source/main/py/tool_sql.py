@@ -122,7 +122,7 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
-    def get_tuples(self, products, columns):
+    def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
         # return products
         # rows = {}
@@ -179,7 +179,7 @@ class ProductLoader(DatabaseSchema):
         print("INFERRED_COLUMNS=" + str(inferred_columns))
         print("INFERRED_PRODUCTS=" + str(inferred_products))
 
-        context_rows = self.get_tuples(products)
+        context_rows = self.get_tuple_strs(products)
         print("CONTEXT_COLUMNS=" + str(context_columns))
         print("CONTEXT_ROWS=" + str(context_rows))
         return context_columns, context_rows
