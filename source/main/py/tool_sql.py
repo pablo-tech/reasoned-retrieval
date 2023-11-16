@@ -131,8 +131,7 @@ class DatabaseSchema(DatabaseInstance):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
                                                 self.get_domain_products())
 
-    def get_product_rows(self, columns, n):
-        products = self.get_domain_products()        
+    def get_product_rows(self, products, columns, n):
         if n is not None:
             products = products[:n]
         return self.ds_reducer.product_rows(products, columns)
@@ -140,10 +139,7 @@ class DatabaseSchema(DatabaseInstance):
     # def get_ds_augmenter(self):
     #     return self.ds_augmenter
 
-    def get_augmentation_tuples(self, n):
-        products = self.get_domain_products()
-        if n is not None:
-            products = products[:n]
+    def get_augmentation_tuples(products, self, n):
         columns, products = self.ds_augmenter.column_products(products) 
         return columns, products
         # return columns, self.ds_reducer.product_rows(products, columns)
@@ -181,7 +177,7 @@ class ProductLoader(DatabaseSchema):
         return self.get_sql(self.get_domain_name(), 
                             self.get_rows(n))   
 
-    def get_rows(self, n, is_view=False):
+    def get_rows(self, n=None, is_view=False):
         physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
         self.create_table(physical_columns)
@@ -190,8 +186,11 @@ class ProductLoader(DatabaseSchema):
 
 
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
-        physical_rows = self.get_product_rows(physical_columns, n)
-        virtual_columns, virtual_rows = self.get_augmentation_tuples(n)
+        products = self.get_domain_products()[:n]
+        if n is not None:
+            products = products[:n]
+        physical_rows = self.get_product_rows(products, physical_columns)
+        virtual_columns, virtual_rows = self.get_augmentation_tuples(products)
         print("VIRTUAL_COLUMNS=" + str(virtual_columns))
         return physical_rows
     
