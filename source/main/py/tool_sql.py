@@ -204,7 +204,12 @@ class InferenceLoader(TableLoader):
     def product_columns(self):
         augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
         return augmented_products, columns
-    
+
+    def get_enum_values(self, picked_enums):
+        augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
+        return self.database_schema.enum_values(picked_enums,
+                                                augmented_products)
+
 
 class GiftLoader():
 
