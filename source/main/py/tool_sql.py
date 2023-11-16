@@ -200,6 +200,7 @@ class InferenceLoader(TableLoader):
 
     def get_columns(self):
         products, columns = self.database_schema.get_augmentation_tuples(self.products)
+        print("AUGPROD" + str(products))
         return columns
     
 
