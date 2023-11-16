@@ -151,9 +151,8 @@ class DatabaseSchema(DatabaseInstance):
 
 class TableLoader():
 
-    def __init__(self, database_schema:DatabaseSchema, products):
+    def __init__(self, database_schema:DatabaseSchema):
         self.database_schema = database_schema
-        self.products = products
 
     def load_items(self):
         columns, rows, insert_sql = self.prepare_load()
@@ -161,10 +160,10 @@ class TableLoader():
         return columns, rows
 
     def prepare_load(self):
-        print("PRODUCTS=>" + str(self.products))
-        columns = self.get_columns()
+        products, columns = self.product_columns()
+        print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
-        rows = self.database_schema.get_tuple_strs(self.products, columns)
+        rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=>" + str(rows))
         insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
         print("INSERT_SQL=>"+str(insert_sql))
@@ -187,21 +186,23 @@ INSERT INTO {table_name} VALUES {table_rows}
 class ContextLoader(TableLoader):
 
     def __init__(self, database_schema, products):
-        super().__init__(database_schema, products)
+        super().__init__(database_schema)
+        self.products = products
     
-    def get_columns(self):
-        return self.database_schema.get_reduced_columns()
+    def product_columns(self):
+        return self.products, self.database_schema.get_reduced_columns()
     
 
 class InferenceLoader(TableLoader):
 
     def __init__(self, database_schema:DatabaseSchema, products):
-        super().__init__(database_schema, products)
+        super().__init__(database_schema)
+        self.products = products
 
-    def get_columns(self):
+    def product_columns(self):
         products, columns = self.database_schema.get_augmentation_tuples(self.products)
         print("AUGPROD" + str(products))
-        return columns
+        return self.products.values(), columns
     
 
 class GiftLoader():
