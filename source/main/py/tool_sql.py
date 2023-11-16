@@ -97,13 +97,13 @@ class DatabaseSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    def create_sql(self, column_names):
-        return self.schema_creator.create_sql(schema_name=self.get_domain_name(), 
+    def create_sql(self, table_name, column_names):
+        return self.schema_creator.create_sql(schema_name=table_name, 
                                               primary_key=self.primary_key, 
                                               column_names=column_names)
 
-    def create_table(self, column_names):
-        self.schema_creator.execute_query(self.create_sql(column_names))
+    def create_table(self, table_name, column_names):
+        self.schema_creator.execute_query(self.create_sql(table_name, column_names))
 
     def get_domain_name(self):
         return self.schema_creator.get_domain_name()
@@ -151,26 +151,28 @@ class DatabaseSchema(DatabaseInstance):
 
 class TableLoader():
 
-    def __init__(self, database_schema:DatabaseSchema):
+    def __init__(self, database_schema:DatabaseSchema, nick_name):
         self.database_schema = database_schema
+        self.nick_name = nick_name
 
     def load_items(self):
-        columns, rows, insert_sql = self.prepare_load()
-        self.execute_load(columns, insert_sql)
+        table_name = self.database_schema.get_domain_name() + self.nick_name
+        columns, rows, insert_sql = self.prepare_load(table_name)
+        self.execute_load(table_name, columns, insert_sql)
         return columns, rows
 
-    def prepare_load(self):
+    def prepare_load(self, table_name):
         products, columns = self.product_columns()
         print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=>" + str(rows))
-        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+        insert_sql = self.get_sql(table_name, rows)
         print("INSERT_SQL=>"+str(insert_sql))
         return columns, rows, insert_sql
 
-    def execute_load(self, columns, insert_sql, n=None):
-        self.database_schema.create_table(columns)
+    def execute_load(self, table_name, columns, insert_sql):
+        self.database_schema.create_table(table_name, columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
     
@@ -188,6 +190,7 @@ class ContextLoader(TableLoader):
     def __init__(self, database_schema, context_products):
         super().__init__(database_schema)
         self.context_products = context_products
+        self.nick_name = "CONTEXT"
     
     def product_columns(self):
         return self.context_products, self.database_schema.get_reduced_columns()
@@ -198,6 +201,7 @@ class InferenceLoader(TableLoader):
     def __init__(self, database_schema:DatabaseSchema, context_products):
         super().__init__(database_schema)
         self.context_products = context_products
+        self.nick_name = "INFERENCE"
 
     def product_columns(self):
         augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
