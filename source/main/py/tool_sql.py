@@ -155,10 +155,10 @@ class TableLoader():
         self.database_schema = database_schema
 
     def load_context(self, n=None):
-        columns, insert_sql = self.prepare_load()
+        columns, insert_sql = self.prepare_load(n)
         self.execute_load(columns, insert_sql)
 
-    def prepare_load(self):
+    def prepare_load(self, n):
         products = self.get_products(n)
         columns = self.get_columns()
         rows = self.database_schema.get_tuple_strs(products, columns)
