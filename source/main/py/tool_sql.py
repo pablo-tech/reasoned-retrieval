@@ -118,8 +118,9 @@ class DatabaseSchema(DatabaseInstance):
     # def get_ds_reducer(self):
     #     return self.ds_reducer
 
-    def get_unique_columns(self):
-        return self.ds_reducer.unique_columns(self.get_domain_schema())
+    def get_reduced_columns(self):
+        columns = self.ds_reducer.unique_columns(self.get_domain_schema())
+        return [col for col in columns if col in self.picked_columns]
     
     def get_enum_values(self):
         return self.ds_reducer.find_enum_values(self.picked_enums, 
@@ -164,7 +165,7 @@ class ProductLoader(DatabaseSchema):
                             self.get_rows(n))   
 
     def get_rows(self, n, is_view=False):
-        physical_columns = self.get_unique_columns()
+        physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         physical_rows = self.get_product_rows(physical_columns, n)
