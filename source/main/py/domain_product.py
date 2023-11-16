@@ -253,14 +253,14 @@ class SchemaCreator():
     #     self.execute_query(self.domain_name, create_sql)
     #     return domain_schema, create_sql
 
-    def execute_query(self, domain_name, create_sql):
+    def execute_query(self, create_sql):
         try:
-          self.db_cursor.execute(f"DROP TABLE IF EXISTS {domain_name};")
+          self.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
           self.db_cursor.execute(create_sql)
           if self.is_verbose:
               print(create_sql)
         except Exception as e:
-          print("CREATION_ERROR=" + domain_name + " " + str(e) + "\n" + str(create_sql))
+          print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
 
     def create_sql(self, schema_name, primary_key, column_names):
         column_names = self.non_primary(primary_key, column_names)

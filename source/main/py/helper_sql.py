@@ -26,18 +26,18 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 query_columns, query_signature, query_enums,
+                 query_columns, schema_signature, query_enums,
                  completion_llm, is_verbose=True):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
         self.query_columns = query_columns
-        self.query_signature = query_signature
+        self.schema_signature = schema_signature
         self.query_enums = query_enums
 
     def invoke(self, query):
         prompt = self.get_prompt(query, 
                                  self.query_columns,
-                                 self.query_signature,
+                                 self.schema_signature,
                                  self.query_enums)
         inferred_sql = self.run_inference(prompt)
         response = self.db_cursor.execute(inferred_sql)

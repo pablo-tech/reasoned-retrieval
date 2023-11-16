@@ -96,16 +96,17 @@ class DatabaseSchema(DatabaseInstance):
         self.ds_reducer = DatasetReducer(primary_key)
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
-
-    def get_primary_key(self):
-        return self.primary_key
     
     # def get_schema_creator(self):
     #     return self.schema_creator
 
-    def create_table(self, schema_name, primary_key, column_names):
-        create_sql = self.schema_creator.create_sql(schema_name, primary_key, column_names)
-        self.schema_creator.execute_query(schema_name, create_sql)
+    def create_sql(self, column_names):
+        return self.schema_creator.create_sql(schema_name=self.get_domain_name(), 
+                                              primary_key=self.primary_key, 
+                                              column_names=column_names)
+
+    def create_table(self, column_names):
+        self.schema_creator.execute_query(self.create_sql(column_names))
 
     # def get_create_sql(self):
     #     return self.schema_creator.get_create_sql()
@@ -147,6 +148,18 @@ class DatabaseSchema(DatabaseInstance):
         return columns, products
         # return columns, self.ds_reducer.product_rows(products, columns)
         
+    def get_picked_columns(self):
+        return self.picked_columns
+    
+    def get_picked_enums(self):
+        return self.picked_enums
+    
+    def get_primary_key(self):
+        return self.primary_key
+    
+    # def get_unique_columns(self):
+    #     return self.ds_reducer.unique_columns()
+
 
 class ProductLoader(DatabaseSchema):
 
@@ -162,7 +175,7 @@ class ProductLoader(DatabaseSchema):
         insert_sql = self.load_sql(n)
         self.get_db_cursor().execute(insert_sql)
         self.get_db_connection().commit()
-        return insert_sql        
+        return insert_sql    
 
     def load_sql(self, n):
         return self.get_sql(self.get_domain_name(), 
@@ -171,6 +184,7 @@ class ProductLoader(DatabaseSchema):
     def get_rows(self, n, is_view=False):
         physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
+        self.create_table(physical_columns)
         # create_sql = self.create_table(self.domain_name, 'id', physical_columns)
         self.create_table(self.get_domain_name(), self.primary_key, physical_columns)
 
