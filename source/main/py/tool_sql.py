@@ -97,9 +97,6 @@ class DatabaseSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    # def get_schema_creator(self):
-    #     return self.schema_creator
-
     def create_sql(self, column_names):
         return self.schema_creator.create_sql(schema_name=self.get_domain_name(), 
                                               primary_key=self.primary_key, 
@@ -108,9 +105,6 @@ class DatabaseSchema(DatabaseInstance):
     def create_table(self, column_names):
         self.schema_creator.execute_query(self.create_sql(column_names))
 
-    # def get_create_sql(self):
-    #     return self.schema_creator.get_create_sql()
-    
     def get_domain_name(self):
         return self.schema_creator.get_domain_name()
     
@@ -120,9 +114,6 @@ class DatabaseSchema(DatabaseInstance):
     def get_domain_products(self):
         return list(self.get_domain_schema().get_clean_products())
     
-    # def get_ds_reducer(self):
-    #     return self.ds_reducer
-
     def get_reduced_columns(self):
         columns = self.ds_reducer.unique_columns(self.get_domain_schema())
         return [col for col in columns if col in self.picked_columns]
@@ -134,13 +125,9 @@ class DatabaseSchema(DatabaseInstance):
     def get_reduced_tuples(self, products, columns):
         return self.ds_reducer.product_rows(products, columns)
 
-    # def get_ds_augmenter(self):
-    #     return self.ds_augmenter
-
     def get_augmentation_tuples(self, products):
         columns, products = self.ds_augmenter.column_products(products) 
         return columns, products
-        # return columns, self.ds_reducer.product_rows(products, columns)
         
     def get_picked_columns(self):
         return self.picked_columns
@@ -150,9 +137,6 @@ class DatabaseSchema(DatabaseInstance):
     
     def get_primary_key(self):
         return self.primary_key
-    
-    # def get_unique_columns(self):
-    #     return self.ds_reducer.unique_columns()
 
 
 class ProductLoader(DatabaseSchema):
@@ -178,9 +162,6 @@ class ProductLoader(DatabaseSchema):
 
     def get_tuples(self, is_view, n=None):
         context_columns = self.get_reduced_columns()
-        # create_sql = self.create_table(self.domain_name, 'id', physical_columns)
-        # self.create_table(self.get_domain_name(), self.primary_key, physical_columns)
-
         products = self.get_domain_products()[:n]
         if n is not None:
             products = products[:n]
