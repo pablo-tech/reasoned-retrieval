@@ -26,24 +26,26 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 query_columns, schema_signature, query_enums,
+                 query_columns, schema_name, schema_signature, query_enums,
                  completion_llm, is_verbose=True):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
         self.query_columns = query_columns
+        self.schema_name = schema_name
         self.schema_signature = schema_signature
         self.query_enums = query_enums
 
     def invoke(self, query):
         prompt = self.get_prompt(query, 
                                  self.query_columns,
+                                 self.schema_name,
                                  self.schema_signature,
                                  self.query_enums)
         inferred_sql = self.run_inference(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response]
             
-    def get_prompt(self, question, columns, table_signature, query_enums):
+    def get_prompt(self, question, columns, schema_name, table_signature, query_enums):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += f"The only table columns to return are {columns}"
@@ -56,19 +58,19 @@ class SqlSemanticParser(RunInference):
         prompt += "EXAMPLES:" + "\n"
         prompt += f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE brands = 'Aristocrat';
+Answer: SELECT brands, price, title FROM {schema_name} WHERE brands = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE brands = 'Guess';
+Answer: SELECT brands, price, title FROM {schema_name} WHERE brands = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE brands = 'Scharf' ORDER BY price ASC;
+Answer: SELECT brands, price, title FROM {schema_name} WHERE brands = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT brands, price, title FROM {schema_name} WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE title LIKE '%GW0403L2%';
+Answer: SELECT brands, price, title FROM {schema_name} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Answer: SELECT brands, price, title FROM {schema_name} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
 Question: "Glassses for women?"
-Answer: SELECT brands, price, title FROM TABLE_NAME WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+Answer: SELECT brands, price, title FROM {schema_name} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 
 """
         prompt += f"Question: {question}" + "\n"
