@@ -153,34 +153,29 @@ class DatabaseSchema(DatabaseInstance):
 
 class TableLoader():
 
-    def __init__(self, database_schema:DatabaseSchema):
+    def __init__(self, database_schema:DatabaseSchema, products):
         self.database_schema = database_schema
+        self.products = products
 
-    def load_items(self, n=None):
-        columns, insert_sql = self.prepare_load(n)
+    def load_items(self):
+        columns, rows, insert_sql = self.prepare_load()
         self.execute_load(columns, insert_sql)
+        return columns, rows
 
-    def prepare_load(self, n):
-        products = self.get_products(n)
+    def prepare_load(self, products):
+        # products = self.get_products(n)
         columns = self.get_columns()
         print("COLUMNS=" + str(columns))
-        rows = self.database_schema.get_tuple_strs(products, columns)
+        rows = self.database_schema.get_tuple_strs(self.products, columns)
         print("ROWS=" + str(rows))
         insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
         print("insert_sql="+str(insert_sql))
-        return columns, insert_sql
+        return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql, n=None):
         self.database_schema.create_table(columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
-
-    def get_products(self, n):
-        products = self.database_schema.get_domain_products()
-        print("get_domain_products=" + str(len(products)) + str(type(products)))
-        if n is not None:
-            products = products[:n]
-        return products
     
     def get_sql(self, table_name, table_rows):
         return f"""
@@ -193,8 +188,8 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextLoader(TableLoader):
 
-    def __init__(self, database_schema):
-        super().__init__(database_schema)
+    def __init__(self, database_schema, products):
+        super().__init__(database_schema, products)
     
     def get_columns(self):
         return self.database_schema.get_reduced_columns()
@@ -202,12 +197,11 @@ class ContextLoader(TableLoader):
 
 class InferenceLoader(TableLoader):
 
-    def __init__(self, database_schema:DatabaseSchema):
-        super().__init__(database_schema)
+    def __init__(self, database_schema:DatabaseSchema, products):
+        super().__init__(database_schema, products)
 
-    def get_columns(self, n):
-        products = self.get_products(n)
-        products, columns = self.database_schema.get_augmentation_tuples(products)
+    def get_columns(self):
+        products, columns = self.database_schema.get_augmentation_tuples(self.products)
         return columns
     
 
@@ -222,8 +216,16 @@ class GiftLoader():
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
-        self.context_loader = ContextLoader(self.database_schema)
-        self.inference_loader = InferenceLoader(self.database_schema)
+        products = self.get_products(n=3)
+        self.context_loader = ContextLoader(self.database_schema, products)
+        self.inference_loader = InferenceLoader(self.database_schema, products)
+
+    def get_products(self, n):
+        products = self.database_schema.get_domain_products()
+        print("get_domain_products=" + str(len(products)) + str(type(products)))
+        if n is not None:
+            products = products[:n]
+        return products
         
 
 class ProductRetriever():
