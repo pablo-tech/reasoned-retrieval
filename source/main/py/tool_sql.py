@@ -149,43 +149,25 @@ class DatabaseSchema(DatabaseInstance):
         return self.primary_key
 
 
-class ProductLoader(DatabaseSchema):
+class TableLoader():
 
-    def __init__(self, 
-                 domain_name, domain_datasets,
-                 picked_columns, picked_enums, primary_key, summarize_columns,
-                 completion_llm):
-        super().__init__(domain_name, domain_datasets,
-                         picked_columns, picked_enums, primary_key, summarize_columns,
-                         completion_llm)
-    
+    def __init__(self, database_schema:DatabaseSchema):
+        self.database_schema = database_schema
+
     def load_products(self, n=None):
         insert_sql, columns = self.load_sql(n)
-        self.create_table(columns)
-        self.get_db_cursor().execute(insert_sql)
-        self.get_db_connection().commit()
+        self.database_schema.create_table(columns)
+        self.database_schema.get_db_cursor().execute(insert_sql)
+        self.database_schema.get_db_connection().commit()
         return insert_sql    
 
-    def load_sql(self, is_view=False, n=None):
-        columns, rows  = self.get_tuples(n, is_view)
-        return self.get_sql(self.get_domain_name(), rows), columns
+    def load_sql(self, columns, rows,
+                 is_view=False, n=None):
+        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
+        return insert_sql, columns
 
-    def get_tuples(self, is_view, n=None):
-        products = self.get_products(n)
-
-        context_columns = self.get_reduced_columns()
-        # context_rows = self.get_reduced_tuples(products, context_columns)
-        inferred_products, inferred_columns = self.get_augmentation_tuples(products)
-        print("INFERRED_COLUMNS=" + str(inferred_columns))
-        print("INFERRED_PRODUCTS=" + str(inferred_products))
-
-        context_rows = self.get_tuple_strs(products, context_columns)
-        print("CONTEXT_COLUMNS=" + str(context_columns))
-        print("CONTEXT_ROWS=" + str(context_rows))
-        return context_columns, context_rows
-    
     def get_products(self, n):
-        products = self.get_domain_products()
+        products = self.database_schema.get_domain_products()
         if n is not None:
             products = products[:n]
         return products
@@ -196,17 +178,66 @@ INSERT INTO {table_name} VALUES {table_rows}
 """    
 
 
-class GiftLoader(ProductLoader):
+class ContextLoader(TableLoader):
+
+    def __init__(self, database_schema):
+        super().__init__()
+        self.database_schema = database_schema
+
+    def load_context(self, is_view=False, n=None):
+        columns, rows  = self.get_tuples(n, is_view)
+        self.load_sql(columns, rows)
+
+    def get_tuples(self, is_view, n=None):
+        products = self.get_products(n)
+        context_columns = self.database_schema.get_reduced_columns()
+
+        # inferred_products, inferred_columns = self.get_augmentation_tuples(products)
+        # print("INFERRED_COLUMNS=" + str(inferred_columns))
+        # print("INFERRED_PRODUCTS=" + str(inferred_products))
+
+        context_rows = self.database_schema.get_tuple_strs(products, context_columns)
+        print("CONTEXT_COLUMNS=" + str(context_columns))
+        print("CONTEXT_ROWS=" + str(context_rows))
+        return context_columns, context_rows
+    
+
+class InferenceLoader(TableLoader):
+
+    def __init__(self, database_schema:DatabaseSchema):
+        super().__init__()
+        self.database_schema = database_schema
+
+    def get_tuples(self, is_view, n=None):
+        products = self.get_products(n)
+
+        context_columns = self.get_reduced_columns()
+        context_rows = self.get_tuple_strs(products, context_columns)
+        print("CONTEXT_COLUMNS=" + str(context_columns))
+        print("CONTEXT_ROWS=" + str(context_rows))
+
+        # context_rows = self.get_reduced_tuples(products, context_columns)
+        inferred_products, inferred_columns = self.get_augmentation_tuples(products)
+        print("INFERRED_COLUMNS=" + str(inferred_columns))
+        print("INFERRED_PRODUCTS=" + str(inferred_products))
+
+        return context_columns, context_rows
+
+
+class GiftLoader():
 
     def __init__(self, completion_llm):
-        super().__init__(domain_name="CLIQ",
-                         domain_datasets=[GiftDataset()],
-                         picked_columns=['id', 'brands', 'colors',
-                                        'price', 'title'],
-                         picked_enums=['brands', 'colors'],
-                         primary_key='id',
-                         summarize_columns=['title'],
-                         completion_llm=completion_llm)
+        super().__init__()
+        self.database_schema = DatabaseSchema(domain_name="CLIQ",
+                                              domain_datasets=[GiftDataset()],
+                                              picked_columns=['id', 'brands', 'colors',
+                                                             'price', 'title'],
+                                              picked_enums=['brands', 'colors'],
+                                              primary_key='id',
+                                              summarize_columns=['title'],
+                                              completion_llm=completion_llm)
+        self.context_loader = ContextLoader(self.database_schema)
+        self.inference_loader = InferenceLoader(self.database_schema)
         
 
 class ProductRetriever():
