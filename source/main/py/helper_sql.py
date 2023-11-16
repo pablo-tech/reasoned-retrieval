@@ -27,7 +27,7 @@ class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
                  query_columns, schema_name, schema_signature, query_enums,
-                 completion_llm, is_verbose=True):
+                 completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
         self.query_columns = query_columns
@@ -74,7 +74,8 @@ Answer: SELECT brands, price, title FROM {schema_name} WHERE title LIKE '%glass%
 
 """
         prompt += f"Question: {question}" + "\n"
-        print("PROMPT=>"+str(prompt))
+        if self.is_verbose:
+            print("PROMPT=>"+str(prompt))
         return prompt            
 
 
