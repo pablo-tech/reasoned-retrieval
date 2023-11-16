@@ -165,6 +165,7 @@ class ProductLoader(DatabaseSchema):
                             self.get_rows(n))   
 
     def get_rows(self, n, is_view=False):
+        self.schema_creator.create_schema()
         physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
