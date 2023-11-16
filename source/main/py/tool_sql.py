@@ -156,7 +156,7 @@ class TableLoader():
         self.nick_name = nick_name
 
     def load_items(self):
-        table_name = self.database_schema.get_domain_name() + self.nick_name
+        table_name = self.database_schema.get_domain_name() + "_" + self.nick_name
         columns, rows, insert_sql = self.prepare_load(table_name)
         self.execute_load(table_name, columns, insert_sql)
         return columns, rows
@@ -188,9 +188,8 @@ INSERT INTO {table_name} VALUES {table_rows}
 class ContextLoader(TableLoader):
 
     def __init__(self, database_schema, context_products):
-        super().__init__(database_schema)
+        super().__init__(database_schema, "CONTEXT")
         self.context_products = context_products
-        self.nick_name = "CONTEXT"
     
     def product_columns(self):
         return self.context_products, self.database_schema.get_reduced_columns()
@@ -199,9 +198,8 @@ class ContextLoader(TableLoader):
 class InferenceLoader(TableLoader):
 
     def __init__(self, database_schema:DatabaseSchema, context_products):
-        super().__init__(database_schema)
+        super().__init__(database_schema, "INFERENCE")
         self.context_products = context_products
-        self.nick_name = "INFERENCE"
 
     def product_columns(self):
         augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
