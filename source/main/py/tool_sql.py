@@ -185,24 +185,23 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextLoader(TableLoader):
 
-    def __init__(self, database_schema, products):
+    def __init__(self, database_schema, context_products):
         super().__init__(database_schema)
-        self.products = products
+        self.context_products = context_products
     
     def product_columns(self):
-        return self.products, self.database_schema.get_reduced_columns()
+        return self.context_products, self.database_schema.get_reduced_columns()
     
 
 class InferenceLoader(TableLoader):
 
-    def __init__(self, database_schema:DatabaseSchema, products):
+    def __init__(self, database_schema:DatabaseSchema, context_products):
         super().__init__(database_schema)
-        self.products = products
+        self.context_products = context_products
 
     def product_columns(self):
-        products, columns = self.database_schema.get_augmentation_tuples(self.products)
-        print("AUGPROD" + str(products))
-        return self.products.values(), columns
+        augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
+        return augmented_products.values(), columns
     
 
 class GiftLoader():
