@@ -189,6 +189,7 @@ class ContextLoader(TableLoader):
 
     def get_tuples(self, is_view, n=None):
         products = self.get_products(n)
+        print("get_products=" + str(products))
         context_columns = self.database_schema.get_reduced_columns()
 
         # inferred_products, inferred_columns = self.get_augmentation_tuples(products)
