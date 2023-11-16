@@ -126,19 +126,9 @@ class DatabaseSchema(DatabaseInstance):
 
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
-        # return products
-        # rows = {}
-        # for product in products:
-        #     rows[product[self.primary_key]] = product
-        # return rows
-
 
     def get_augmentation_tuples(self, products):
         columns, products = self.ds_augmenter.column_products(products) 
-        # rows = {}
-        # for product in products:
-        #     rows[product[self.primary_key]] = product
-        # return rows, columns
         return products, columns
         
     def get_picked_columns(self):
@@ -159,23 +149,23 @@ class TableLoader():
         self.table_name = self.database_schema.get_domain_name() + "_" + self.nick_name
 
     def load_items(self):
-        columns, rows, insert_sql = self.prepare_load(self.table_name)
-        self.execute_load(self.table_name, columns, insert_sql)
+        columns, rows, insert_sql = self.prepare_load()
+        self.execute_load(columns, insert_sql)
         return columns, rows
 
-    def prepare_load(self, table_name):
+    def prepare_load(self):
         products, columns = self.product_columns()
         print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=>" + str(rows))
-        insert_sql = self.get_sql(table_name, rows)
+        insert_sql = self.get_sql(self.table_name, rows)
         print("INSERT_SQL=>"+str(insert_sql))
         return columns, rows, insert_sql
 
-    def execute_load(self, table_name, columns, insert_sql):
+    def execute_load(self, columns, insert_sql):
         columns = [col.replace(" ", "_") for col in columns]
-        self.database_schema.create_table(table_name, columns)
+        self.database_schema.create_table(self.table_name, columns)
         self.database_schema.get_db_cursor().execute(insert_sql)
         self.database_schema.get_db_connection().commit()
     
@@ -185,7 +175,8 @@ INSERT INTO {table_name} VALUES {table_rows}
 """    
 
     def schema_sql(self):
-        return self.database_schema.create_sql(self.get_columns())
+        products, columns = self.product_columns()
+        return self.database_schema.create_sql(columns)
 
 
 class ContextLoader(TableLoader):
@@ -207,7 +198,6 @@ class InferenceLoader(TableLoader):
     def product_columns(self):
         augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
         return augmented_products, columns
-        # return augmented_products.values(), columns
     
 
 class GiftLoader():
