@@ -83,13 +83,12 @@ class DatabaseSchema(DatabaseInstance):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
-                 picked_columns, picked_enums, primary_key, summarize_columns,
+                 picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
         super().__init__()
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
-        self.picked_columns = picked_columns 
-        self.picked_enums = picked_enums           
+        self.picked_columns = picked_columns        
         self.primary_key = primary_key
         self.completion_llm = completion_llm     
         self.schema_creator = SchemaCreator(self.get_db_cursor(),
@@ -120,9 +119,9 @@ class DatabaseSchema(DatabaseInstance):
         columns = self.ds_reducer.unique_columns(self.get_domain_schema())
         return [col for col in columns if col in self.picked_columns]
     
-    def get_enum_values(self):
-        return self.ds_reducer.find_enum_values(self.picked_enums, 
-                                                self.get_domain_products())
+    def enum_values(self, picked_enums, from_products):
+        return self.ds_reducer.find_enum_values(picked_enums, 
+                                                from_products)
 
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
@@ -192,6 +191,9 @@ class ContextLoader(TableLoader):
     def product_columns(self):
         return self.context_products, self.database_schema.get_reduced_columns()
     
+    def get_enum_values(self, picked_enums):
+        return self.database_schema.enum_values(picked_enums,
+                                                self.context_products)
 
 class InferenceLoader(TableLoader):
 
@@ -211,7 +213,6 @@ class GiftLoader():
                          domain_datasets=[GiftDataset()],
                          picked_columns=['id', 'brands', 'colors',
                                          'price', 'title'],
-                         picked_enums=['brands', 'colors'],
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)

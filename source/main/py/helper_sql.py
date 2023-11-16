@@ -26,33 +26,31 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 query_columns, schema_name, schema_signature, query_enums,
+                 query_columns, schema_signature, query_enums,
                  completion_llm, is_verbose=True):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
         self.query_columns = query_columns
-        self.schema_name = schema_name
         self.schema_signature = schema_signature
         self.query_enums = query_enums
 
     def invoke(self, query):
         prompt = self.get_prompt(query, 
                                  self.query_columns,
-                                 self.schema_name,
                                  self.schema_signature,
                                  self.query_enums)
         inferred_sql = self.run_inference(prompt)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response]
             
-    def get_prompt(self, question, columns, schema_name, table_signature, enums):
+    def get_prompt(self, question, columns, schema_name, table_signature, query_enums):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += f"The only table columns to return are {columns}"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
         prompt += f"{table_signature}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in enums:
+        for column, values in query_enums:
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
