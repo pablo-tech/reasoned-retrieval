@@ -215,7 +215,7 @@ class GiftLoader():
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
-        products = self.get_products(n=3)
+        self.products = self.get_products(n=3)
         self.context_loader = ContextLoader(self.database_schema, products)
         self.inference_loader = InferenceLoader(self.database_schema, products)
 
