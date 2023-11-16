@@ -74,6 +74,7 @@ Answer: SELECT brands, price, title FROM {schema_name} WHERE title LIKE '%glass%
 
 """
         prompt += f"Question: {question}" + "\n"
+        print("PROMPT=>"+str(prompt))
         return prompt            
 
 
