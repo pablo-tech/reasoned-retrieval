@@ -102,10 +102,10 @@ class SummaryTagger(RunInference):
                 value = summary_value[1]
                 product_summary[tag] = value
                 # product_summary[product[self.primary_key]][tag] = value
-                product_summaries.append(product_summary)
                 summary_values[tag].add(value)
                 if self.is_verbose:
                     print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
+            product_summaries.append(product_summary)                    
             i+=1
         return summary_values, product_summaries 
             
