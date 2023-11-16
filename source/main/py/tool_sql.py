@@ -177,10 +177,10 @@ class ProductLoader(DatabaseSchema):
             products = products[:n]
         context_rows = self.get_reduced_tuples(products, context_columns)
         print("CONTEXT_COLUMNS=" + str(context_columns))
-        # print("CONTEXT_ROWS=" + str(rows))
+        print("CONTEXT_ROWS=" + str(context_rows))
         inferred_rows, inferred_columns = self.get_augmentation_tuples(products)
         print("INFERRED_COLUMNS=" + str(inferred_columns))
-        # print("INFERRED_ROWS=" + str(inferred_rows))
+        print("INFERRED_ROWS=" + str(inferred_rows))
         return context_columns, context_rows
     
     def get_sql(self, table_name, table_rows):
