@@ -229,13 +229,16 @@ class SchemaCreator():
         self.selected_columns = selected_columns
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
+        self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
+                                          completion_llm=self.completion_llm,
+                                          is_verbose=self.is_verbose)
         # self.domain_schema, self.create_sql = self.create_schema()
 
     def get_domain_schema(self):
         return self.domain_schema
 
-    def get_create_sql(self):
-        return self.create_sql
+    # def get_create_sql(self):
+    #     return self.create_sql
 
     def get_domain_name(self):
         return self.domain_name
@@ -259,7 +262,7 @@ class SchemaCreator():
         except Exception as e:
           print("CREATION_ERROR=" + domain_name + " " + str(e) + "\n" + str(create_sql))
 
-    def create_table(self, schema_name, primary_key, column_names):
+    def create_sql(self, schema_name, primary_key, column_names):
         column_names = self.non_primary(primary_key, column_names)
         column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
         column_names = " ".join(column_names)

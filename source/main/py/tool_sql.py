@@ -100,11 +100,15 @@ class DatabaseSchema(DatabaseInstance):
     def get_primary_key(self):
         return self.primary_key
     
-    def get_schema_creator(self):
-        return self.schema_creator
+    # def get_schema_creator(self):
+    #     return self.schema_creator
 
-    def get_create_sql(self):
-        return self.schema_creator.get_create_sql()
+    def create_table(self, schema_name, primary_key, column_names):
+        create_sql = self.schema_creator.create_sql(schema_name, primary_key, column_names)
+        self.schema_creator.execute_query(schema_name, create_sql)
+
+    # def get_create_sql(self):
+    #     return self.schema_creator.get_create_sql()
     
     def get_domain_name(self):
         return self.schema_creator.get_domain_name()
@@ -165,9 +169,12 @@ class ProductLoader(DatabaseSchema):
                             self.get_rows(n))   
 
     def get_rows(self, n, is_view=False):
-        self.schema_creator.create_schema()
         physical_columns = self.get_reduced_columns()
         print("PHYSICAL_COLUMNS=" + str(physical_columns))
+        # create_sql = self.create_table(self.domain_name, 'id', physical_columns)
+        self.create_table(self, self.get_domain_name(), self.primary_key, physical_columns)
+
+
         # print("ACTUAL_PRODUCT_ROWS=" + str(rows))
         physical_rows = self.get_product_rows(physical_columns, n)
         virtual_columns, virtual_rows = self.get_augmentation_tuples(n)
