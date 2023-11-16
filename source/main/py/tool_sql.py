@@ -161,10 +161,10 @@ class TableLoader():
     def prepare_load(self, n):
         products = self.get_products(n)
         columns = self.get_columns()
-        rows = self.database_schema.get_tuple_strs(products, columns)
-        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
         print("COLUMNS=" + str(columns))
+        rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=" + str(rows))
+        insert_sql = self.get_sql(self.database_schema.get_domain_name(), rows)
         return columns, insert_sql
 
     def execute_load(self, columns, insert_sql, n=None):
@@ -185,14 +185,14 @@ class TableLoader():
 INSERT INTO {table_name} VALUES {table_rows}
 """    
 
+    def schema_sql(self):
+        return self.database_schema.create_sql(self.get_columns())
+
 
 class ContextLoader(TableLoader):
 
     def __init__(self, database_schema):
         super().__init__(database_schema)
-
-    def schema_sql(self):
-        return self.database_schema.create_sql(self.get_columns())
     
     def get_columns(self):
         return self.database_schema.get_reduced_columns()
@@ -203,21 +203,11 @@ class InferenceLoader(TableLoader):
     def __init__(self, database_schema:DatabaseSchema):
         super().__init__(database_schema)
 
-    def get_tuples(self, is_view=False, n=None):
+    def get_columns(self, n=None):
         products = self.get_products(n)
-
-        context_columns = self.get_reduced_columns()
-        context_rows = self.get_tuple_strs(products, context_columns)
-        print("CONTEXT_COLUMNS=" + str(context_columns))
-        print("CONTEXT_ROWS=" + str(context_rows))
-
-        # context_rows = self.get_reduced_tuples(products, context_columns)
-        inferred_products, inferred_columns = self.get_augmentation_tuples(products)
-        print("INFERRED_COLUMNS=" + str(inferred_columns))
-        print("INFERRED_PRODUCTS=" + str(inferred_products))
-
-        return context_columns, context_rows
-
+        products, columns = self.get_augmentation_tuples(products)
+        return columns
+    
 
 class GiftLoader(DatabaseSchema):
 
