@@ -197,6 +197,25 @@ class ContextLoader(TableLoader):
         return self.database_schema.enum_values(self.picked_enums,
                                                 self.context_products)
 
+    def get_fewshot_examples(self):
+        return f"""        
+Question: what ARISTOCRAT products do you have? 
+Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Aristocrat';
+Question: what GESTS products do you have?
+Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Guess';
+Question: what are the cheapest Scharf products?
+Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Scharf' ORDER BY price ASC;
+Question: "what are the cheapest Carpisa watches?"
+Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Question: "What is GW0403L2?"
+Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Question: "Bags for men?"
+Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Question: "Glassses for women?"
+Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+"""
+    
+
 class InferenceLoader(TableLoader):
 
     def __init__(self, database_schema, context_products, picked_enums):
@@ -212,6 +231,16 @@ class InferenceLoader(TableLoader):
     def get_enum_values(self):
         return self.database_schema.enum_values(self.picked_enums,
                                                 self.augmented_products)
+
+    def get_fewshot_examples(self):
+        return f"""        
+Question: what types of products do you have? 
+Answer: SELECT * FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Question: what 22 ltrs backpacks do you have?
+Answer: SELECT * FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Question: what 2 wheel trolleys do your products have?
+Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+"""
 
 
 class GiftLoader():

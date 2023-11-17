@@ -26,16 +26,14 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 query_columns, product_loader,
+                 product_loader,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
-        self.query_columns = query_columns
         self.product_loader = product_loader
 
     def invoke(self, query):
         prompt = self.get_prompt(query, 
-                                 self.query_columns,
                                  self.product_loader)
         inferred_sql = self.run_inference(prompt)
         print(inferred_sql)
