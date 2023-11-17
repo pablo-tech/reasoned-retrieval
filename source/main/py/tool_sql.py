@@ -152,12 +152,12 @@ class TableLoader():
 
     def prepare_load(self):
         products, columns = self.product_columns()
-        print("PRODUCTS=>" + str(products))
+        # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = self.database_schema.get_tuple_strs(products, columns)
         print("ROWS=>" + str(rows))
         insert_sql = self.get_sql(self.table_name, rows)
-        print("INSERT_SQL=>"+str(insert_sql))
+        # print("INSERT_SQL=>"+str(insert_sql))
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql):
@@ -182,36 +182,39 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextLoader(TableLoader):
 
-    def __init__(self, database_schema, context_products):
+    def __init__(self, database_schema, context_products, picked_enums):
         super().__init__(database_schema, "CONTEXT")
         self.context_products = context_products
+        self.picked_enums = picked_enums
     
     def product_columns(self):
         return self.context_products, self.database_schema.get_reduced_columns()
     
-    def get_enum_values(self, picked_enums):
-        return self.database_schema.enum_values(picked_enums,
+    def get_enum_values(self):
+        return self.database_schema.enum_values(self.picked_enums,
                                                 self.context_products)
 
 class InferenceLoader(TableLoader):
 
-    def __init__(self, database_schema:DatabaseSchema, context_products):
+    def __init__(self, database_schema, context_products, picked_enums):
         super().__init__(database_schema, "INFERENCE")
         self.context_products = context_products
+        self.picked_enums = picked_enums
+        self.augmented_products, self.augmented_columns =\
+            self.database_schema.get_augmentation_tuples(self.context_products)
 
     def product_columns(self):
-        augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
-        return augmented_products, columns
+        return self.augmented_products, self.augmented_columns
 
-    def get_enum_values(self, picked_enums):
-        augmented_products, columns = self.database_schema.get_augmentation_tuples(self.context_products)
-        return self.database_schema.enum_values(picked_enums,
-                                                augmented_products)
+    def get_enum_values(self):
+        return self.database_schema.enum_values(self.picked_enums,
+                                                self.augmented_products)
 
 
 class GiftLoader():
 
-    def __init__(self, n, completion_llm):
+    def __init__(self, n, 
+                 completion_llm):
         self.database_schema = DatabaseSchema(domain_name="CLIQ",
                          domain_datasets=[GiftDataset()],
                          picked_columns=['id', 'brands', 'colors',
@@ -220,15 +223,25 @@ class GiftLoader():
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
         self.products = self.get_products(n)
-        self.context_loader = ContextLoader(self.database_schema, self.products)
-        self.inference_loader = InferenceLoader(self.database_schema, self.products)
+        self.context_loader = ContextLoader(self.database_schema, 
+                                            self.products,
+                                            picked_enums=['brands', 'colors'])
+        self.inference_loader = InferenceLoader(self.database_schema, 
+                                                self.products,
+                                                picked_enums=['product_brand', 'product_color'])
 
     def get_products(self, n):
         products = self.database_schema.get_domain_products()
         if n is not None:
             products = products[:n]
         return products
-        
+    
+    def get_context_enums(self):
+        pass
+
+    def get_inference_enums(self):
+        pass
+
 
 class ProductRetriever():
 
