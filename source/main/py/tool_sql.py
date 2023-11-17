@@ -178,6 +178,9 @@ INSERT INTO {table_name} VALUES {table_rows}
     
     def fill_col(self, columns):
         return [col.replace(" ", "_") for col in columns]
+    
+    def get_table_name(self):
+        return self.table_name
 
 
 class ContextLoader(TableLoader):
@@ -236,12 +239,6 @@ class GiftLoader():
             products = products[:n]
         return products
     
-    def get_context_enums(self):
-        pass
-
-    def get_inference_enums(self):
-        pass
-
 
 class ProductRetriever():
 
