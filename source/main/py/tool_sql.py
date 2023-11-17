@@ -254,7 +254,7 @@ class GiftLoader():
                          primary_key='id',
                          summarize_columns=['title'],
                          completion_llm=completion_llm)
-        self.products = self.get_products(n)
+        self.products = self.set_products(n)
         self.context_loader = ContextLoader(self.database_schema, 
                                             self.products,
                                             picked_enums=['brands', 'colors'])
@@ -262,11 +262,14 @@ class GiftLoader():
                                                 self.products,
                                                 picked_enums=['product_brand', 'product_color'])
 
-    def get_products(self, n):
+    def set_products(self, n):
         products = self.database_schema.get_domain_products()
         if n is not None:
             products = products[:n]
         return products
+    
+    def get_products(self):
+        return self.products
     
 
 class ProductRetriever():
