@@ -7,7 +7,7 @@ from vector_embed import BytePairEmbedding
 import pinecone
 from langchain.vectorstores import Pinecone
 
-from tqdm.auto import tqdm
+# from tqdm.auto import tqdm
 from uuid import uuid4
 
 
@@ -75,8 +75,10 @@ class PineconeDb(PineconeEnv):
                               metric='cosine') # "euclidean"
       self.index = pinecone.Index(self.index_name)
 
-  def read_files(self, file_names):
-      return self.text_documents(file_names)
+  def read_files(self, file_names,
+                 directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
+      files = [directory_path+"/"+name for name in file_names]      
+      return self.text_documents(files)
 
   def read_faq(self, file_names):
       return self.csv_documents(file_names)
