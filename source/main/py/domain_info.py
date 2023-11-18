@@ -46,7 +46,7 @@ class FaqReader():
 
 class FaqData():
    
-    def __init__(self, directory_path='/content/drive/MyDrive/TataLLM/FAQs/'):
+    def __init__(self, directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/faq_qa/'):
         self.reader = FaqReader(directory_path)
 
     def get_faq(self):

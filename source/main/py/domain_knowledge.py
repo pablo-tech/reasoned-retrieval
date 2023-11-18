@@ -106,19 +106,19 @@ class CromaDataset(DomainDataset):
 
 class TvDataset(CromaDataset):
 
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/tv_qa/"):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/tv_qa/"):
         super().__init__(dir_path)
     
 
 class AcDataset(CromaDataset):
 
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/ac_qa/"):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/ac_qa/"):
         super().__init__(dir_path)
 
 
 class GiftDataset(DomainDataset):
 
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/gift_qa/"):
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift_qa/"):
         super().__init__(dir_path)
     
     def get_corpus(self, domain_name):
