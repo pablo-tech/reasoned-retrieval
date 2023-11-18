@@ -77,7 +77,7 @@ class PineconeDb(PineconeEnv):
 
   def read_files(self, file_names,
                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
-      files = [directory_path+"/"+name for name in file_names]      
+      files = [directory_path+name for name in file_names]      
       return self.text_documents(files)
 
   def read_faq(self, file_names):
