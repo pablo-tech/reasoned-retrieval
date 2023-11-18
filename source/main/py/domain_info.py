@@ -47,13 +47,14 @@ class FaqReader():
 class FaqData():
    
     def __init__(self, directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/faq_qa/'):
-        self.reader = FaqReader(directory_path)
+        self.directory_path = directory_path
+        self.reader = FaqReader(directory_path+'faq_source/')
 
     def get_faq(self):
         return self.reader.read_faq()
     
-    def export_faq(self, faqs, file_path):
-        data_file = open(file_path, 'w')
+    def export_faq(self, faqs):
+        data_file = open(self.directory_path+'joined_faq.csv', 'w')
         csv_writer = csv.writer(data_file)
         for faq in faqs:
             text = faq['user_question'] + "? " + faq['agent_answer']
