@@ -3,7 +3,6 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 
 from vector_embed import BytePairEmbedding
-from qna_similarity import SimilarityProcessor
 
 import pinecone
 from langchain.vectorstores import Pinecone
