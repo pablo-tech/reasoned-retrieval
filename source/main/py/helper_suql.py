@@ -1,4 +1,4 @@
-from domain_product import SchemaCreator, DomainSchema
+from domain_knowledge import SchemaCreator, DomainSchema
 from helper_sql import SummaryTagger
 
 import sqlite3

@@ -1,5 +1,5 @@
 from helper_suql import DatabaseSchema, ContextLoader, InferenceLoader
-from domain_product import GiftDataset, TvDataset, AcDataset
+from domain_knowledge import GiftDataset, TvDataset, AcDataset
 
 
 class GiftLoader():
