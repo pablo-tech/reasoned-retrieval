@@ -80,6 +80,16 @@ class PineconeCore(PineconeEnv):
                                 shards=self.shard_count) 
         return pinecone.Index(self.index_name)
 
+    def get_index(self):
+        return self.db_index
+
+    def __str__(self):
+        return f"""
+  {pinecone.list_indexes()}
+  {self.get_index().describe_index_stats()}
+  """
+        # print(pinecone.describe_index(self.index_name))
+
 
 class PineconeIO(PineconeCore):
 
@@ -89,9 +99,6 @@ class PineconeIO(PineconeCore):
         super().__init__(index_name, is_create)
         self.CHUNK_COL = "chunk"
         self.TEXT_COL = "text"
-
-    def get_index(self):
-        return self.db_index
 
     def new_ids(self, items):
         return [str(uuid4()) for _ in range(len(items))]
@@ -111,13 +118,6 @@ class PineconeIO(PineconeCore):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
         self.get_index().upsert(vectors=insertable)
-
-    def __str__(self):
-        return f"""
-  {pinecone.list_indexes()}
-  {self.get_index().describe_index_stats()}
-  """
-        # print(pinecone.describe_index(self.index_name))
 
     def select_by_text(self, 
                       search_txt, 
