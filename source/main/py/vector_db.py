@@ -73,7 +73,8 @@ class PineconeCore(PineconeEnv):
         self.is_create = is_create
         self.similarity_metric = similarity_metric
         self.shard_count = shard_count
-        self.db_index = self.db_init()
+        self.db_init()
+        self.db_index = pinecone.Index(self.index_name)
 
     def db_init(self):
         pinecone.init(api_key=self.api_key, environment=self.environment)
@@ -87,7 +88,6 @@ class PineconeCore(PineconeEnv):
                                 dimension=self.embed_dimension, 
                                 metric=self.similarity_metric,
                                 shards=self.shard_count) 
-        return pinecone.Index(self.index_name)
 
     def get_index(self):
         return self.db_index
