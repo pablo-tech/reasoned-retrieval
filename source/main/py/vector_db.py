@@ -154,6 +154,9 @@ class PineconeIO(PineconeCore):
                                                      include_metadata=include_metadata,
                                                      include_values=include_vectors)
         return results_with_scores    
+    
+    def fetch_by_id(self, ids):
+        return self.get_index().fetch(ids)
 
 
 class PineconeDb(PineconeIO):
