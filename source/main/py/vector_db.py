@@ -61,7 +61,10 @@ class PineconeDb(PineconeEnv):
       super().__init__()
       self.index_name = index_name
 
-  def db_init(self, is_create=False):
+  def db_init(self, 
+              is_create=False,
+              metric='cosine' # "euclidean"
+              shards=1):
       pinecone.init(api_key=self.api_key, environment=self.environment)
       if is_create:
         try:
@@ -72,7 +75,8 @@ class PineconeDb(PineconeEnv):
         vector_length = len(self.get_vector("x"))
         pinecone.create_index(self.index_name, 
                               dimension=vector_length, 
-                              metric='cosine') # "euclidean"
+                              metric=metric,
+                              shards=shards) 
       self.index = pinecone.Index(self.index_name)
 
   def read_files(self, file_names,
