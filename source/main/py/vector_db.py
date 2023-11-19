@@ -57,16 +57,20 @@ class PineconeDb(PineconeEnv):
   TEXT_COL = "text"
 
   def __init__(self,
-               index_name):
+               index_name,
+               is_create=False,
+               metric='cosine', # "euclidean"
+               shards=1):
       super().__init__()
       self.index_name = index_name
+      self.is_create = is_create
+      self.metric = metric
+      self.shards = shards
+      self.db_index = self.db_init()
 
-  def db_init(self, 
-              is_create=False,
-              metric='cosine', # "euclidean"
-              shards=1):
+  def db_init(self):
       pinecone.init(api_key=self.api_key, environment=self.environment)
-      if is_create:
+      if self.is_create:
         try:
           pinecone.delete_index(self.index_name)
           # index = pinecone.GRPCIndex(index_name)
@@ -75,9 +79,9 @@ class PineconeDb(PineconeEnv):
         vector_length = len(self.get_vector("x"))
         pinecone.create_index(self.index_name, 
                               dimension=vector_length, 
-                              metric=metric,
-                              shards=shards) 
-      self.index = pinecone.Index(self.index_name)
+                              metric=self.metric,
+                              shards=self.shards) 
+      return pinecone.Index(self.index_name)
 
   def read_files(self, file_names,
                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
@@ -125,7 +129,7 @@ class PineconeDb(PineconeEnv):
   def join_batch(self, ids, embeds, metadatas):
       insertable = zip(ids, embeds, metadatas)
       # print("000" + str(list(insertable)[0][2]))
-      self.index.upsert(vectors=insertable)
+      self.db_index.upsert(vectors=insertable)
 
   def __str__(self):
       print(pinecone.list_indexes())
