@@ -77,7 +77,7 @@ class PineconeCore(PineconeEnv):
           pinecone.create_index(self.index_name, 
                                 dimension=self.embed_dimension, 
                                 metric=self.similarity_metric,
-                                shards=self.shards) 
+                                shards=self.shard_count) 
         return pinecone.Index(self.index_name)
 
 
