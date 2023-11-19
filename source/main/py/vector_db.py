@@ -26,11 +26,13 @@ class PineconeCore(PineconeEnv):
     def __init__(self,
                 index_name,
                 is_create,
+                vector_length,
                 metric,
                 shards):
         super().__init__()   
         self.index_name = index_name
         self.is_create = is_create
+        self.vector_length = vector_length
         self.metric = metric
         self.shards = shards
         self.db_index = self.db_init()
@@ -43,9 +45,8 @@ class PineconeCore(PineconeEnv):
             # index = pinecone.GRPCIndex(index_name)
           except:
             pass
-          vector_length = len(self.get_vector("x"))
           pinecone.create_index(self.index_name, 
-                                dimension=vector_length, 
+                                dimension=self.vector_length, 
                                 metric=self.metric,
                                 shards=self.shards) 
         return pinecone.Index(self.index_name)
@@ -80,7 +81,7 @@ class VectorDb():
     def get_vector(self, text):
         return self.embedding_model.embed_query(text)
     
-    
+
 class PineconeIO(VectorDb):
 
     def __init__(self, db_core):
@@ -168,9 +169,10 @@ class PineconeDb(PineconeIO):
 
     def __init__(self, index_name, is_create=False):
         super().__init__(PineconeCore(index_name,
-                                    is_create,
-                                    metric='cosine', # "euclidean"
-                                    shards=1))
+                                      is_create,
+                                      len(self.get_vector("x")),
+                                      metric='cosine', # "euclidean"
+                                      shards=1))
 
     def read_files(self, file_names,
                   directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
