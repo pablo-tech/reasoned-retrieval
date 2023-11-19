@@ -128,12 +128,12 @@ class PineconeIO(PineconeCore):
     def join_batch(self, ids, embeds, metadatas):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
-        self.get_index.upsert(vectors=insertable)
+        self.get_index().upsert(vectors=insertable)
 
     def __str__(self):
         return f"""
   {pinecone.list_indexes()}
-  {self.get_index.describe_index_stats()}
+  {self.get_index().describe_index_stats()}
   """
         # print(pinecone.describe_index(self.index_name))
 
