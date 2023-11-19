@@ -152,7 +152,7 @@ class PineconeDb(PineconeEnv):
                        k=3,
                        include_metadata=True,
                        include_values=False):
-      results_with_scores = self.index.query(
+      results_with_scores = self.db_index.query(
         vector=search_vec,
         top_k=k,
         filter=search_filter,
