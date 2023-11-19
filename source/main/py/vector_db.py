@@ -124,24 +124,24 @@ class PineconeIO(PineconeCore):
                       k,
                       search_filter={},
                       include_metadata=True,
-                      include_values=False):
+                      include_vectors=False):
         return self.select_by_vector(search_vec=self.get_list_vector(search_txt),
                                      k=k,
                                      search_filter=search_filter,
                                      include_metadata=include_metadata,
-                                     include_values=include_values)
+                                     include_vectors=include_vectors)
 
     def select_by_vector(self, 
                          search_vec,
                          k,                        
                          search_filter,
                          include_metadata,
-                         include_values):
+                         include_vectors):
         results_with_scores = self.get_index().query(vector=search_vec,
                                                      top_k=k,
                                                      filter=search_filter,
                                                      include_metadata=include_metadata,
-                                                     include_values=include_values)
+                                                     include_values=include_vectors)
         return results_with_scores    
 
     # def lang_store(self):
