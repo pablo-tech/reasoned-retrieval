@@ -123,7 +123,7 @@ class PineconeIO(PineconeCore):
             for j, doc in enumerate(docs) 
         ]
 
-    def join_batch(self, ids, embeds, metadatas):
+    def join_upsert(self, ids, embeds, metadatas):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
         self.get_index().upsert(vectors=insertable)
@@ -184,4 +184,4 @@ class PineconeDb(PineconeIO):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
         metadatas = self.doc_metadata(docs)
-        self.join_batch(ids, embeds, metadatas)
+        self.join_upsert(ids, embeds, metadatas)
