@@ -127,7 +127,8 @@ class PineconeIO(PineconeCore):
     def join_upsert(self, ids, embeds, metadatas):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
-        self.get_index().upsert(vectors=insertable)
+        self.get_index().upsert(vectors=insertable,
+                                async_req=False)
 
     def select_by_text(self, 
                       search_txt, 
