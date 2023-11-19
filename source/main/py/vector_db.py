@@ -132,8 +132,11 @@ class PineconeDb(PineconeEnv):
       self.db_index.upsert(vectors=insertable)
 
   def __str__(self):
-      print(pinecone.list_indexes())
-      print(pinecone.describe_index(self.index_name))
+      return f"""
+{pinecone.list_indexes()}
+{self.db_index.describe_index_stats()}
+"""
+      # print(pinecone.describe_index(self.index_name))
 
   def select_by_text(self, 
                      search_txt, 
