@@ -9,47 +9,6 @@ from langchain.vectorstores import Pinecone
 
 # from tqdm.auto import tqdm
 from uuid import uuid4
-
-
-class PineconeEnv():
-
-    def __init__(self,
-                api_key="9be7c0e1-612e-43f4-ae72-b572832f3131",
-                environment="gcp-starter"):
-        super().__init__()
-        self.api_key = api_key
-        self.environment = environment
-
-
-class PineconeCore(PineconeEnv):
-    
-    def __init__(self,
-                index_name,
-                is_create,
-                vector_length,
-                metric,
-                shards):
-        super().__init__()   
-        self.index_name = index_name
-        self.is_create = is_create
-        self.vector_length = vector_length
-        self.metric = metric
-        self.shards = shards
-        self.db_index = self.db_init()
-
-    def db_init(self):
-        pinecone.init(api_key=self.api_key, environment=self.environment)
-        if self.is_create:
-          try:
-            pinecone.delete_index(self.index_name)
-            # index = pinecone.GRPCIndex(index_name)
-          except:
-            pass
-          pinecone.create_index(self.index_name, 
-                                dimension=self.vector_length, 
-                                metric=self.metric,
-                                shards=self.shards) 
-        return pinecone.Index(self.index_name)
     
 
 class VectorDb():
@@ -63,6 +22,7 @@ class VectorDb():
                                                             length_function = len,
                                                             separators = ["\n\n", "\n", " ", ""],
                                                             is_separator_regex = False)
+        self.embed_dimension = len(self.get_vector("x"))
 
     def text_documents(self, file_names):
         split_documents = []
@@ -80,17 +40,58 @@ class VectorDb():
 
     def get_vector(self, text):
         return self.embedding_model.embed_query(text)
+
+
+class PineconeEnv(VectorDb):
+
+    def __init__(self,
+                api_key="9be7c0e1-612e-43f4-ae72-b572832f3131",
+                environment="gcp-starter"):
+        super().__init__()
+        self.api_key = api_key
+        self.environment = environment
+
+
+class PineconeCore(PineconeEnv):
     
+    def __init__(self,
+                 index_name,
+                 is_create,
+                 similarity_metric='cosine', # "euclidean"
+                 shard_count=1):
+        super().__init__()   
+        self.index_name = index_name
+        self.is_create = is_create
+        self.similarity_metric = similarity_metric
+        self.shard_count = shard_count
+        self.db_index = self.db_init()
 
-class PineconeIO(VectorDb):
+    def db_init(self):
+        pinecone.init(api_key=self.api_key, environment=self.environment)
+        if self.is_create:
+          try:
+            pinecone.delete_index(self.index_name)
+            # index = pinecone.GRPCIndex(index_name)
+          except:
+            pass
+          pinecone.create_index(self.index_name, 
+                                dimension=self.embed_dimension, 
+                                metric=self.similarity_metric,
+                                shards=self.shards) 
+        return pinecone.Index(self.index_name)
 
-    def __init__(self, db_core):
-        self.db_core = db_core
+
+class PineconeIO(PineconeCore):
+
+    def __init__(self, 
+                 index_name, 
+                 is_create):
+        super().__init__(index_name, is_create)
         self.CHUNK_COL = "chunk"
         self.TEXT_COL = "text"
 
     def get_index(self):
-        return self.db_core.db_index
+        return self.db_index
 
     def load_docs(self, items):
         self.batch_upsert(items, self.doc_upsert)
@@ -168,11 +169,8 @@ class PineconeIO(VectorDb):
 class PineconeDb(PineconeIO):
 
     def __init__(self, index_name, is_create=False):
-        super().__init__(PineconeCore(index_name,
-                                      is_create,
-                                      len(self.get_vector("x")),
-                                      metric='cosine', # "euclidean"
-                                      shards=1))
+        super().__init__(index_name,
+                         is_create)
 
     def read_files(self, file_names,
                   directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
