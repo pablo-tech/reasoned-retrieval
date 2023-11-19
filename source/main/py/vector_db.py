@@ -93,24 +93,6 @@ class PineconeIO(PineconeCore):
     def get_index(self):
         return self.db_index
 
-    def load_docs(self, items):
-        self.batch_upsert(items, self.doc_upsert)
-
-    def batch_upsert(self, items, upsert_func, size=100):
-        i = 0
-        while i < len(items):
-          j = i+size
-          if j > len(items):
-            j = len(items)
-          upsert_func(items[i:j])
-          i+=size
-
-    def doc_upsert(self, docs):
-        ids = self.new_ids(docs)
-        embeds = self.calc_embeds([doc.page_content for doc in docs])
-        metadatas = self.doc_metadata(docs)
-        self.join_batch(ids, embeds, metadatas)
-
     def new_ids(self, items):
         return [str(uuid4()) for _ in range(len(items))]
     
@@ -151,7 +133,7 @@ class PineconeIO(PineconeCore):
                         k=3,
                         include_metadata=True,
                         include_values=False):
-        results_with_scores = self.get_index.query(
+        results_with_scores = self.get_index().query(
           vector=search_vec,
           top_k=k,
           filter=search_filter,
@@ -182,3 +164,21 @@ class PineconeDb(PineconeIO):
     
     def get_list_vector(self, text):
         return self.get_vector(text).tolist()
+
+    def load_docs(self, items):
+        self.batch_upsert(items, self.doc_upsert)
+
+    def batch_upsert(self, items, upsert_func, size=100):
+        i = 0
+        while i < len(items):
+          j = i+size
+          if j > len(items):
+            j = len(items)
+          upsert_func(items[i:j])
+          i+=size
+
+    def doc_upsert(self, docs):
+        ids = self.new_ids(docs)
+        embeds = self.calc_embeds([doc.page_content for doc in docs])
+        metadatas = self.doc_metadata(docs)
+        self.join_batch(ids, embeds, metadatas)
