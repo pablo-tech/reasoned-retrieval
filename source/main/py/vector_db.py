@@ -41,6 +41,12 @@ class VectorDb():
     def get_vector(self, text):
         return self.embedding_model.embed_query(text)
 
+    def get_list_vector(self, text):
+        return self.get_vector(text).tolist()
+
+    def new_ids(self, items):
+        return [str(uuid4()) for _ in range(len(items))]
+
 
 class PineconeEnv(VectorDb):
 
@@ -99,9 +105,6 @@ class PineconeIO(PineconeCore):
         super().__init__(index_name, is_create)
         self.CHUNK_COL = "chunk"
         self.TEXT_COL = "text"
-
-    def new_ids(self, items):
-        return [str(uuid4()) for _ in range(len(items))]
     
     def calc_embeds(self, texts):
         return [self.get_list_vector(text) for text in texts]
@@ -165,9 +168,6 @@ class PineconeDb(PineconeIO):
     def read_faq(self, file_names):
         return self.csv_documents(file_names)
     
-    def get_list_vector(self, text):
-        return self.get_vector(text).tolist()
-
     def load_docs(self, items):
         self.batch_upsert(items, self.doc_upsert)
 
