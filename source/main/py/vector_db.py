@@ -121,8 +121,8 @@ class PineconeIO(PineconeCore):
 
     def select_by_text(self, 
                       search_txt, 
+                      k,
                       search_filter={},
-                      k=3,
                       include_values=False):
         return self.select_by_vector(search_vec=self.get_list_vector(search_txt),
                                     search_filter=search_filter)
@@ -130,7 +130,7 @@ class PineconeIO(PineconeCore):
     def select_by_vector(self, 
                         search_vec,
                         search_filter,
-                        k=3,
+                        k,
                         include_metadata=True,
                         include_values=False):
         results_with_scores = self.get_index().query(
