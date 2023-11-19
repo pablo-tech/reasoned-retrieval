@@ -11,37 +11,7 @@ from langchain.vectorstores import Pinecone
 from uuid import uuid4
 
 
-class VectorDb():
-
-    def __init__(self,
-                chunk_size=1000,
-                chunk_overlap=100):
-        self.embedding_model = BytePairEmbedding
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size,
-                                                            chunk_overlap  = chunk_overlap,
-                                                            length_function = len,
-                                                            separators = ["\n\n", "\n", " ", ""],
-                                                            is_separator_regex = False)
-
-    def text_documents(self, file_names):
-        split_documents = []
-        for file_name in file_names:
-          whole_document = TextLoader(file_name).load()
-          split_documents += self.text_splitter.split_documents(whole_document)    
-        return split_documents
-
-    def csv_documents(self, file_names):
-        split_documents = []
-        for file_name in file_names:
-          whole_document = CSVLoader(file_name).load()
-          split_documents += self.text_splitter.split_documents(whole_document)    
-        return split_documents
-
-    def get_vector(self, text):
-        return self.embedding_model.embed_query(text)
-
-
-class PineconeEnv(VectorDb):
+class PineconeEnv():
 
     def __init__(self,
                 api_key="9be7c0e1-612e-43f4-ae72-b572832f3131",
@@ -50,7 +20,8 @@ class PineconeEnv(VectorDb):
         self.api_key = api_key
         self.environment = environment
 
-class PineconeInit(PineconeEnv):
+
+class PineconeCore(PineconeEnv):
     
     def __init__(self,
                 index_name,
@@ -80,26 +51,45 @@ class PineconeInit(PineconeEnv):
         return pinecone.Index(self.index_name)
     
 
-class PineconeDb(PineconeInit):
-
-    CHUNK_COL = "chunk"
-    TEXT_COL = "text"
+class VectorDb():
 
     def __init__(self,
-                index_name,
-                is_create=False,
-                metric='cosine', # "euclidean"
-                shards=1):
-        super().__init__(index_name, is_create,
-                         metric, shards)
+                chunk_size=1000,
+                chunk_overlap=100):
+        self.embedding_model = BytePairEmbedding
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size,
+                                                            chunk_overlap  = chunk_overlap,
+                                                            length_function = len,
+                                                            separators = ["\n\n", "\n", " ", ""],
+                                                            is_separator_regex = False)
 
-    def read_files(self, file_names,
-                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
-        files = [directory_path+name for name in file_names]      
-        return self.text_documents(files)
+    def text_documents(self, file_names):
+        split_documents = []
+        for file_name in file_names:
+          whole_document = TextLoader(file_name).load()
+          split_documents += self.text_splitter.split_documents(whole_document)    
+        return split_documents
 
-    def read_faq(self, file_names):
-        return self.csv_documents(file_names)
+    def csv_documents(self, file_names):
+        split_documents = []
+        for file_name in file_names:
+          whole_document = CSVLoader(file_name).load()
+          split_documents += self.text_splitter.split_documents(whole_document)    
+        return split_documents
+
+    def get_vector(self, text):
+        return self.embedding_model.embed_query(text)
+    
+    
+class PineconeIO(VectorDb):
+
+    def __init__(self, db_core):
+        self.db_core = db_core
+        self.CHUNK_COL = "chunk"
+        self.TEXT_COL = "text"
+
+    def get_index(self):
+        return self.db_core.db_index
 
     def load_docs(self, items):
         self.batch_upsert(items, self.doc_upsert)
@@ -112,9 +102,6 @@ class PineconeDb(PineconeInit):
             j = len(items)
           upsert_func(items[i:j])
           i+=size
-
-    def get_list_vector(self, text):
-        return self.get_vector(text).tolist()
 
     def doc_upsert(self, docs):
         ids = self.new_ids(docs)
@@ -130,8 +117,8 @@ class PineconeDb(PineconeInit):
     
     def doc_metadata(self, docs):
         return [
-            { PineconeDb.CHUNK_COL: j, 
-              PineconeDb.TEXT_COL: doc.page_content, 
+            { self.CHUNK_COL: j, 
+              self.TEXT_COL: doc.page_content, 
               **doc.metadata }  
             for j, doc in enumerate(docs) 
         ]
@@ -139,12 +126,12 @@ class PineconeDb(PineconeInit):
     def join_batch(self, ids, embeds, metadatas):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
-        self.db_index.upsert(vectors=insertable)
+        self.get_index.upsert(vectors=insertable)
 
     def __str__(self):
         return f"""
   {pinecone.list_indexes()}
-  {self.db_index.describe_index_stats()}
+  {self.get_index.describe_index_stats()}
   """
         # print(pinecone.describe_index(self.index_name))
 
@@ -162,16 +149,36 @@ class PineconeDb(PineconeInit):
                         k=3,
                         include_metadata=True,
                         include_values=False):
-        results_with_scores = self.db_index.query(
+        results_with_scores = self.get_index.query(
           vector=search_vec,
           top_k=k,
           filter=search_filter,
           include_metadata=include_metadata,
           include_values=include_values)
-        return results_with_scores
+        return results_with_scores    
 
-    def lang_store(self):
-        index = pinecone.Index(self.index_name)
-        return Pinecone(index, 
-                        self.get_list_vector, # .embed_query
-                        PineconeDb.TEXT_COL)
+    # def lang_store(self):
+    #     index = pinecone.Index(self.index_name)
+    #     return Pinecone(index, 
+    #                     self.get_list_vector, # .embed_query
+    #                     PineconeDb.TEXT_COL)
+
+
+class PineconeDb(PineconeIO):
+
+    def __init__(self, index_name, is_create=False):
+        super().__init__(PineconeCore(index_name,
+                                    is_create,
+                                    metric='cosine', # "euclidean"
+                                    shards=1))
+
+    def read_files(self, file_names,
+                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
+        files = [directory_path+name for name in file_names]      
+        return self.text_documents(files)
+
+    def read_faq(self, file_names):
+        return self.csv_documents(file_names)
+    
+    def get_list_vector(self, text):
+        return self.get_vector(text).tolist()
