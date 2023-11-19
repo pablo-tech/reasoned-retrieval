@@ -99,6 +99,12 @@ class PineconeCore(PineconeEnv):
   """
         # print(pinecone.describe_index(self.index_name))
 
+    # def lang_store(self):
+    #     index = pinecone.Index(self.index_name)
+    #     return Pinecone(index, 
+    #                     self.get_list_vector, # .embed_query
+    #                     PineconeDb.TEXT_COL)
+
 
 class PineconeIO(PineconeCore):
 
@@ -146,12 +152,6 @@ class PineconeIO(PineconeCore):
                                                      include_metadata=include_metadata,
                                                      include_values=include_vectors)
         return results_with_scores    
-
-    # def lang_store(self):
-    #     index = pinecone.Index(self.index_name)
-    #     return Pinecone(index, 
-    #                     self.get_list_vector, # .embed_query
-    #                     PineconeDb.TEXT_COL)
 
 
 class PineconeDb(PineconeIO):
