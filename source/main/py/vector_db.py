@@ -63,7 +63,7 @@ class PineconeDb(PineconeEnv):
 
   def db_init(self, 
               is_create=False,
-              metric='cosine' # "euclidean"
+              metric='cosine', # "euclidean"
               shards=1):
       pinecone.init(api_key=self.api_key, environment=self.environment)
       if is_create:
