@@ -41,6 +41,9 @@ class VectorDb():
     def get_vector(self, text):
         return self.embedding_model.embed_query(text)
 
+    def calc_embeds(self, texts):
+        return [self.get_list_vector(text) for text in texts]
+
     def get_list_vector(self, text):
         return self.get_vector(text).tolist()
 
@@ -105,10 +108,7 @@ class PineconeIO(PineconeCore):
         super().__init__(index_name, is_create)
         self.CHUNK_COL = "chunk"
         self.TEXT_COL = "text"
-    
-    def calc_embeds(self, texts):
-        return [self.get_list_vector(text) for text in texts]
-    
+        
     def doc_metadata(self, docs):
         return [
             { self.CHUNK_COL: j, 
