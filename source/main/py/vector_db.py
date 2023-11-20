@@ -151,6 +151,7 @@ class PineconeIO(PineconeCore):
                          search_filter,
                          include_metadata,
                          include_vectors):
+        print("search_filter="+str(search_filter))
         results_with_scores = self.get_index().query(vector=search_vec,
                                                      top_k=k,
                                                      filter=search_filter,
@@ -182,7 +183,6 @@ class PineconeDb(PineconeIO):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
         metadatas = self.docs_metadata(docs, metadatas)
-        print("metadatas=", metadatas)
         self.join_upsert(ids, embeds, metadatas)
 
     def docs_metadata(self, docs, metadatas):
