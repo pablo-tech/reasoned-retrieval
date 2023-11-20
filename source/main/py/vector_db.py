@@ -173,7 +173,8 @@ class PineconeDb(PineconeIO):
                          is_create)
     
     def load_docs(self, items, metadatas=[]):
-        self.batch_upsert(items, self.doc_upsert)
+        self.batch_upsert(items, metadatas, 
+                          self.doc_upsert)
 
     def doc_upsert(self, docs, metadatas):
         ids = self.new_ids(docs)
