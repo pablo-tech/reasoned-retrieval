@@ -123,13 +123,14 @@ class PineconeIO(PineconeCore):
         self.get_index().upsert(vectors=insertable,
                                 async_req=False)
 
-    def batch_upsert(self, items, upsert_func, batch_size=100):
+    def batch_upsert(self, items, metadatas,
+                     upsert_func, batch_size=100):
         i = 0
         while i < len(items):
           j = i+batch_size
           if j > len(items):
             j = len(items)
-          upsert_func(items[i:j])
+          upsert_func(items[i:j], metadatas[i:j])
           i+=batch_size
 
     def select_by_text(self, 
@@ -171,20 +172,21 @@ class PineconeDb(PineconeIO):
         super().__init__(index_name,
                          is_create)
     
-    def load_docs(self, items):
+    def load_docs(self, items, metadatas=[]):
         self.batch_upsert(items, self.doc_upsert)
 
-    def doc_upsert(self, docs):
+    def doc_upsert(self, docs, metadatas):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
-        metadatas = self.docs_metadata(docs)
+        metadatas = self.docs_metadata(docs, metadatas)
         self.join_upsert(ids, embeds, metadatas)
 
-    def docs_metadata(self, docs):
-        return [self.doc_metadata(doc, j)
-                for j, doc in enumerate(docs)]
+    def docs_metadata(self, docs, metadatas):
+        return [self.doc_metadata(docs[i], metadatas[i], i)
+                for i in range(len(docs))]
 
-    def doc_metadata(self, doc, chunk):
+    def doc_metadata(self, doc, metadata, chunk):
         return { self.CHUNK_COL: chunk, 
                  self.TEXT_COL: doc.page_content, 
-                 **doc.metadata } 
+                 **doc.metadata,
+                 **metadata } 
