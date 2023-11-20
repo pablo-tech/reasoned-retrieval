@@ -177,13 +177,14 @@ class PineconeDb(PineconeIO):
     def doc_upsert(self, docs):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
-        metadatas = self.doc_metadata(docs)
+        metadatas = self.docs_metadata(docs)
         self.join_upsert(ids, embeds, metadatas)
 
-    def doc_metadata(self, docs):
-        return [
-            { self.CHUNK_COL: j, 
-              self.TEXT_COL: doc.page_content, 
-              **doc.metadata }  
-            for j, doc in enumerate(docs) 
-        ]
+    def docs_metadata(self, docs):
+        return [self.doc_metadata(doc, j)
+                for j, doc in enumerate(docs)]
+
+    def doc_metadata(self, doc, chunk):
+        return { self.CHUNK_COL: chunk, 
+                 self.TEXT_COL: doc.page_content, 
+                 **doc.metadata } 
