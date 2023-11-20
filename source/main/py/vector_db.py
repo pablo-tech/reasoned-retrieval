@@ -24,6 +24,14 @@ class VectorDb():
                                                             is_separator_regex = False)
         self.embed_dimension = len(self.get_vector("x"))
 
+    def read_files(self, file_names,
+                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
+        files = [directory_path+name for name in file_names]      
+        return self.text_documents(files)
+
+    def read_faq(self, file_names):
+        return self.csv_documents(file_names)
+
     def text_documents(self, file_names):
         split_documents = []
         for file_name in file_names:
@@ -98,13 +106,6 @@ class PineconeCore(PineconeEnv):
   {pinecone.list_indexes()}
   {self.get_index().describe_index_stats()}
   """
-        # print(pinecone.describe_index(self.index_name))
-
-    # def lang_store(self):
-    #     index = pinecone.Index(self.index_name)
-    #     return Pinecone(index, 
-    #                     self.get_list_vector, # .embed_query
-    #                     PineconeDb.TEXT_COL)
 
 
 class PineconeIO(PineconeCore):
@@ -116,19 +117,20 @@ class PineconeIO(PineconeCore):
         self.CHUNK_COL = "chunk"
         self.TEXT_COL = "text"
         
-    def doc_metadata(self, docs):
-        return [
-            { self.CHUNK_COL: j, 
-              self.TEXT_COL: doc.page_content, 
-              **doc.metadata }  
-            for j, doc in enumerate(docs) 
-        ]
-
     def join_upsert(self, ids, embeds, metadatas):
         insertable = zip(ids, embeds, metadatas)
         # print("000" + str(list(insertable)[0][2]))
         self.get_index().upsert(vectors=insertable,
                                 async_req=False)
+
+    def batch_upsert(self, items, upsert_func, batch_size=100):
+        i = 0
+        while i < len(items):
+          j = i+batch_size
+          if j > len(items):
+            j = len(items)
+          upsert_func(items[i:j])
+          i+=batch_size
 
     def select_by_text(self, 
                       search_txt, 
@@ -157,6 +159,10 @@ class PineconeIO(PineconeCore):
     
     def fetch_by_id(self, ids):
         return self.get_index().fetch(ids)
+    
+    def delete_by_id(self, ids):
+        return self.get_index().delete(ids)
+
 
 
 class PineconeDb(PineconeIO):
@@ -164,29 +170,20 @@ class PineconeDb(PineconeIO):
     def __init__(self, index_name, is_create=False):
         super().__init__(index_name,
                          is_create)
-
-    def read_files(self, file_names,
-                  directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
-        files = [directory_path+name for name in file_names]      
-        return self.text_documents(files)
-
-    def read_faq(self, file_names):
-        return self.csv_documents(file_names)
     
     def load_docs(self, items):
         self.batch_upsert(items, self.doc_upsert)
-
-    def batch_upsert(self, items, upsert_func, size=100):
-        i = 0
-        while i < len(items):
-          j = i+size
-          if j > len(items):
-            j = len(items)
-          upsert_func(items[i:j])
-          i+=size
 
     def doc_upsert(self, docs):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
         metadatas = self.doc_metadata(docs)
         self.join_upsert(ids, embeds, metadatas)
+
+    def doc_metadata(self, docs):
+        return [
+            { self.CHUNK_COL: j, 
+              self.TEXT_COL: doc.page_content, 
+              **doc.metadata }  
+            for j, doc in enumerate(docs) 
+        ]

@@ -52,6 +52,12 @@ class OpenaiBase():
                           temperature=temperature,
                           max_tokens=max_tokens)
     
+    # def chat_llm_40_turbo(self, temperature=0, max_tokens = 256):
+    #     return ChatOpenAI(openai_api_key=self.api_key,
+    #                       engine="gpt-4-1106-preview",
+    #                       temperature=temperature,
+    #                       max_tokens=max_tokens)
+    
 
 class GoogleBase():
 
