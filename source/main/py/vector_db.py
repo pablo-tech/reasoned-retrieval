@@ -182,6 +182,7 @@ class PineconeDb(PineconeIO):
         ids = self.new_ids(docs)
         embeds = self.calc_embeds([doc.page_content for doc in docs])
         metadatas = self.docs_metadata(docs, metadatas)
+        print("metadatas=", metadatas)
         self.join_upsert(ids, embeds, metadatas)
 
     def docs_metadata(self, docs, metadatas):
