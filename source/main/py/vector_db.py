@@ -172,8 +172,10 @@ class PineconeDb(PineconeIO):
         super().__init__(index_name,
                          is_create)
     
-    def load_docs(self, items, metadatas=[]):
-        self.batch_upsert(items, metadatas, 
+    def load_docs(self, items, metas):
+        if len(metas) == 0:
+            metas=[{} for _ in range(len(items))]
+        self.batch_upsert(items, metas, 
                           self.doc_upsert)
 
     def doc_upsert(self, docs, metadatas):
