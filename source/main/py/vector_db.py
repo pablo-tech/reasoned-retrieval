@@ -177,7 +177,7 @@ class PineconeDb(PineconeIO):
         if len(metas) == 0:
             metas=[{} for _ in range(len(items))]
         self.batch_upsert(items, metas, 
-                          self.doc_upsert)
+                          upsert_func=self.doc_upsert)
 
     def doc_upsert(self, docs, metadatas):
         ids = self.new_ids(docs)
