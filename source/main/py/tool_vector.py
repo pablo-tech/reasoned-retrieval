@@ -62,6 +62,8 @@ class VectorSearchReader(VectorRetriever):
         results = []
         try:
           results = self.doc_store.search(query, k)
+          results = results['matches']
+          results = [str(r['text']).strip() for r in results]
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
