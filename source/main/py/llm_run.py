@@ -227,20 +227,20 @@ class ToolRun(ModelRun):
         super().__init__(model_name)
         self.new_journey()
 
-    def invoke(self, query, func):
+    def invoke(self, query_txt, query_filter, invoke_func):
         model_step = None
         try:
             is_hallucination = False
             model_start = time.time()
-            answer = func(query)
-            input_len, output_len = len(str(query)), len(str(answer))
+            answer = invoke_func(query_txt, query_filter)
+            input_len, output_len = len(str(query_txt)), len(str(answer))
             model_step = FinishStep(answer, action_log="")
             model_end = time.time()
             self.get_measure().add_run(is_hallucination, input_len, output_len, 
                                        model_end-model_start)
             self.get_journey().add_run(model_step, model_step.get_answer()) 
         except Exception as e:
-                self.get_error().error_input(self.get_name() + "_RUN_ERROR" + str(e), query)
+                self.get_error().error_input(self.get_name() + "_RUN_ERROR" + str(e), query_txt)
         return RunAnswer(model_step, self.get_journey(), 
                          self.get_error(), self.get_measure(), self.get_name()) 
 

@@ -133,13 +133,13 @@ class PineconeIO(PineconeCore):
           upsert_func(items[i:j], metadatas[i:j])
           i+=batch_size
 
-    def search(self, search_txt, k):
+    def search(self, search_txt, k, search_filter={}):
         return self.select_by_text(search_txt, k)
 
     def select_by_text(self, 
                        search_txt, 
                        k,
-                       search_filter={},
+                       search_filter,
                        include_metadata=True,
                        include_vectors=False):
         return self.select_by_vector(search_vec=self.get_list_vector(search_txt),

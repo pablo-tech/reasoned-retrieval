@@ -51,14 +51,14 @@ class VectorSearchReader(VectorRetriever):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, tool_input, user_query=""):
-        return self.invoke(tool_input, self.select)
+    def run(self, tool_input, user_query="", tool_filter={}):
+        return self.invoke(tool_input, tool_filter, self.select)
 
-    def select(self, query):
-        results = self.subquery(query)
-        return self.answer(self.summarize(results, query), query)
+    def select(self, query_txt, query_filter):
+        results = self.subquery(query_txt, query_filter)
+        return self.answer(self.summarize(results, query_txt), query_txt)
 
-    def subquery(self, query, k=5, n=5):
+    def subquery(self, query_txt, query_filter, k=5, n=5):
         results = []
         try:
         # print("A(id): " + hit['id'].strip())          
@@ -66,7 +66,7 @@ class VectorSearchReader(VectorRetriever):
         # print("A(text): " + hit['metadata']['text'].strip())
         # print("A(source): " + hit['metadata']['source'].strip())
         # print("A(chunk): " + str(hit['metadata']['chunk']))
-          results = self.doc_store.search(query, k)
+          results = self.doc_store.search(query_txt, query_filter, k)
           results = results['matches']
           results = [r['metadata'] for r in results]
           results = [r['text'].lstrip('\"').rstrip('\"') for r in results]
