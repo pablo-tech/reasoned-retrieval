@@ -69,6 +69,7 @@ class VectorSearchReader(VectorRetriever):
           results = self.doc_store.search(query, k)
           results = results['matches']
           results = [r['metadata'] for r in results]
+          results = [r['text'].lstrip('\"') for r in results]
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
