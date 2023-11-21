@@ -134,7 +134,7 @@ class PineconeIO(PineconeCore):
           i+=batch_size
 
     def search(self, search_txt, k, search_filter={}):
-        return self.select_by_text(search_txt, k)
+        return self.select_by_text(search_txt, k, search_filter)
 
     def select_by_text(self, 
                        search_txt, 
