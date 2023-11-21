@@ -61,6 +61,11 @@ class VectorSearchReader(VectorRetriever):
     def subquery(self, query, k=5, n=5):
         results = []
         try:
+        # print("A(id): " + hit['id'].strip())          
+        # print("A(score): " + str(hit['score']))
+        # print("A(text): " + hit['metadata']['text'].strip())
+        # print("A(source): " + hit['metadata']['source'].strip())
+        # print("A(chunk): " + str(hit['metadata']['chunk']))
           results = self.doc_store.search(query, k)
           results = results['matches']
           results = [r['metadata'] for r in results]
