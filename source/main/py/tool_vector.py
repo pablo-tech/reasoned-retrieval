@@ -44,7 +44,7 @@ class VectorRetriever(SelectHelper):
         docs = self.doc_store.read_files(files, path)        
         metas = []
         self.doc_store.load_docs(items=docs, metas=metas)  
-              
+
 
 class VectorSearchReader(VectorRetriever):
 
@@ -65,6 +65,7 @@ class VectorSearchReader(VectorRetriever):
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
+        print("RESULTS="+str(results))
         return results
         # snippets = []
         # for result in results:
