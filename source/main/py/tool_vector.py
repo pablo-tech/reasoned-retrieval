@@ -73,7 +73,7 @@ class VectorSearchReader(VectorRetriever):
         except Exception as e:
           # print("SEARCH_SUBQUERY_ERROR=" + str(e))
           return [str(e)]
-        print("RESULTS="+str(results))
+        # print("RESULTS="+str(results))
         return results
         # snippets = []
         # for result in results:
