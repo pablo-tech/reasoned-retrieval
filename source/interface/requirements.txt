@@ -1,0 +1,9 @@
+langchain
+huggingface_hub
+google-search-results
+tiktoken
+wikipedia
+openai==0.27.8
+google-generativeai
+transformers
+accelerate

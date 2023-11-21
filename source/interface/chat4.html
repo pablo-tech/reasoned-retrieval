@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ShopMate.ai - Your Shopping Assistant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="chat4.css">
+</head>
+<body>
+    <div class=" my-4">
+        <div class="card text-white bg-dark" id="chat">
+            <div class="card-header">
+                <img src="shopmate-logo.png" alt="ShopMate.ai" class="logo"> <!-- Logo -->
+            </div>
+            <div class="card-body chat-window" id="chat-window"></div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Type your message...">
+                    <div class="input-group-append">
+                        <button id="send-button" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card text-white bg-dark" id="thought">
+            <div class="card-header">
+                <img src="thought-tracer.png" alt="ShopMate.ai" class="logo"> <!-- Logo -->
+            </div>
+            <div class="card-body chat-window" id="trace-window"></div>
+        </div>
+    </div>
+    <script src="chat4.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+body, .card {
+    background-color: #343a40; /* Dark theme background */
+    background-image: url('background.png'); /* Background image */
+    background-size: cover;
+    color: white;
+}
+
+.logo {
+    height: 100px;
+    width: auto;
+    border-radius: 50%;
+}
+
+.chat-window {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.message-text {
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.my-message .message-text {
+    background-color: #007bff;
+    color: white;
+    margin-left: 10px;
+}
+
+.bot-message .message-text {
+    background-color: #6c757d;
+    margin-right: 10px;
+}
+
+.my-message {
+    justify-content: end;
+}
+
+.bot-message {
+    justify-content: start;
+}
+
+.avatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.my-4 {
+    display: flex;
+    width: 100%;
+}
+.card {
+    width: 100%;
+    margin: 25px;
+}
+
+#thought {
+    width: 40%;
+}
+
+#chat {
+    width: 60%;
+}
