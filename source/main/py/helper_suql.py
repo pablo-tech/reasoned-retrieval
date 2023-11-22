@@ -113,7 +113,10 @@ class DatabaseSchema(DatabaseInstance):
         return list(self.get_domain_schema().get_clean_products())
     
     def get_reduced_columns(self):
-        columns = self.ds_reducer.unique_columns(self.get_domain_schema())
+        domain_schema = self.get_domain_schema()
+        print("get_domain_schema=>"+str(domain_schema))
+        columns = self.ds_reducer.unique_columns(domain_schema)
+        print("get_domain_columns=>"+str(columns))
         return [col for col in columns if col in self.picked_columns]
     
     def enum_values(self, picked_enums, from_products):
