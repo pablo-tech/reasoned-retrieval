@@ -205,13 +205,13 @@ class ContextLoader(TableLoader):
     def get_fewshot_examples(self):
         return f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Aristocrat';
+Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Guess';
+Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Scharf' ORDER BY price ASC;
+Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT * FROM {self.get_table_name()} WHERE brands = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
 Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
