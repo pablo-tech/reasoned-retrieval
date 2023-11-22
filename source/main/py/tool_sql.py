@@ -1,5 +1,5 @@
 from helper_suql import DatabaseSchema, ContextLoader, InferenceLoader
-from domain_knowledge import GiftDataset, TvDataset, AcDataset
+from domain_knowledge import GiftDataset, GiftDataset2, TvDataset, AcDataset
 
 
 class GiftLoader():
@@ -7,12 +7,12 @@ class GiftLoader():
     def __init__(self, n, 
                  completion_llm):
         self.database_schema = DatabaseSchema(domain_name="CLIQ",
-                         domain_datasets=[GiftDataset()],
-                         picked_columns=['id', 'brands', 'colors',
-                                         'price', 'title'],
-                         primary_key='id',
-                         summarize_columns=['title'],
-                         completion_llm=completion_llm)
+                                              domain_datasets=[GiftDataset2()],
+                                              picked_columns=['id', 'brands', 'colors',
+                                                              'price', 'title'],
+                                              primary_key='id',
+                                              summarize_columns=['title'],
+                                              completion_llm=completion_llm)
         self.products = self.set_products(n)
         self.context_loader = ContextLoader(self.database_schema, 
                                             self.products,
