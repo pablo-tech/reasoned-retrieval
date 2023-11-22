@@ -194,7 +194,7 @@ class ContextLoader(TableLoader):
         super().__init__(database_schema, "CONTEXT")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.context_columns = self.database_schema.get_reduced_columns()
+        self.context_columns = self.fill_col(self.database_schema.get_reduced_columns())
     
     def product_columns(self):
         return self.context_products, self.get_columns()
@@ -233,6 +233,7 @@ class InferenceLoader(TableLoader):
         self.picked_enums = picked_enums
         self.augmented_products, self.augmented_columns =\
             self.database_schema.get_augmentation_tuples(self.context_products)
+        self.augmented_columns = self.fill_col(self.augmented_columns)
 
     def product_columns(self):
         return self.augmented_products, self.get_columns()
