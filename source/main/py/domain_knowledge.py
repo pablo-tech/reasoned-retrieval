@@ -127,6 +127,18 @@ class GiftDataset(DomainDataset):
             corpus[str(uuid.uuid1())] = product
         return DatasetValidation.valid_corpus(corpus)     
 
+
+class GiftDataset2(DomainDataset):
+
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
+        super().__init__(dir_path)
+    
+    def get_corpus(self, domain_name):
+        corpus = {}
+        for product in self.subdomain_corpus(domain_name)['results']:
+            corpus[str(uuid.uuid1())] = product
+        return DatasetValidation.valid_corpus(corpus)     
+
     
 class DomainIngestion():
 
