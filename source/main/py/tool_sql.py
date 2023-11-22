@@ -23,7 +23,8 @@ class GiftLoader():
         self.inference_loader = InferenceLoader(self.database_schema, 
                                                 self.products,
                                                 picked_enums=['product_brand', 'product_color',
-                                                              'product_type', 'product_capacity'])
+                                                              'product_type', 'product_capacity',
+                                                              'product_size', 'product_feature'])
 
     def set_products(self, n):
         products = self.database_schema.get_domain_products()
