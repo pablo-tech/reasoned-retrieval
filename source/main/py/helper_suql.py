@@ -194,13 +194,13 @@ class ContextLoader(TableLoader):
         super().__init__(database_schema, "CONTEXT")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.context_columns = self.get_colunns()
+        self.context_columns = self.database_schema.get_reduced_columns()
     
     def product_columns(self):
         return self.context_products, self.get_colunns()
     
     def get_colunns(self):
-        return self.database_schema.get_reduced_columns()
+        return self.context_columns
     
     def get_enum_values(self):
         return self.database_schema.enum_values(self.picked_enums,
