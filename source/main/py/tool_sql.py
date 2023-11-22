@@ -9,9 +9,9 @@ class GiftLoader():
         self.database_schema = DatabaseSchema(domain_name="CLIQ",
                                               domain_datasets=[GiftDataset2()],
                                               picked_columns=['id', 'price', 
-                                                              'title', 'description',
                                                               'brand', 'colors',
-                                                              'category', 'store', 'gender'],
+                                                              'category', 'store', 'gender',
+                                                              'title', 'description',],
                                               primary_key='id',
                                               summarize_columns=['title', 'description'],
                                               completion_llm=completion_llm)
