@@ -114,12 +114,12 @@ class DatabaseSchema(DatabaseInstance):
     
     def get_reduced_columns(self):
         domain_schema = self.get_domain_schema()
-        print("get_domain_schema=>"+str(domain_schema))
+        # print("get_domain_schema=>"+str(domain_schema))
         columns = self.ds_reducer.unique_columns(domain_schema)
-        print("get_domain_columns=>"+str(columns))
+        # print("get_domain_columns=>"+str(columns))
         reduced = [col for col in columns if col in self.picked_columns]
-        print("get_domain_picked=>"+str(self.picked_columns))
-        print("get_domain_reduced=>"+str(reduced))        
+        # print("get_domain_picked=>"+str(self.picked_columns))
+        # print("get_domain_reduced=>"+str(reduced))        
         return reduced
     
     def enum_values(self, picked_enums, from_products):
@@ -200,7 +200,7 @@ class ContextLoader(TableLoader):
         return self.context_products, self.get_colunns()
     
     def get_colunns(self):
-        return sorted(self.database_schema.get_reduced_columns())
+        return self.database_schema.get_reduced_columns()
     
     def get_enum_values(self):
         return self.database_schema.enum_values(self.picked_enums,
@@ -238,7 +238,7 @@ class InferenceLoader(TableLoader):
         return self.augmented_products, self.get_columns()
     
     def get_columns(self):
-        return sorted(self.augmented_columns)
+        return self.augmented_columns
 
     def get_enum_values(self):
         return self.database_schema.enum_values(self.picked_enums,
