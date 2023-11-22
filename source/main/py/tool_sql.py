@@ -8,15 +8,17 @@ class GiftLoader():
                  completion_llm):
         self.database_schema = DatabaseSchema(domain_name="CLIQ",
                                               domain_datasets=[GiftDataset2()],
-                                              picked_columns=['id', 'brands', 'colors',
-                                                              'price', 'title'],
+                                              picked_columns=['id', 'price', 'title',
+                                                              'brand', 'colors',
+                                                              'category', 'store', 'gender'],
                                               primary_key='id',
                                               summarize_columns=['title'],
                                               completion_llm=completion_llm)
         self.products = self.set_products(n)
         self.context_loader = ContextLoader(self.database_schema, 
                                             self.products,
-                                            picked_enums=['brands', 'colors'])
+                                            picked_enums=['brand', 'colors', 
+                                                          'category', 'store', 'gender'])
         self.inference_loader = InferenceLoader(self.database_schema, 
                                                 self.products,
                                                 picked_enums=['product_brand', 'product_color'])
