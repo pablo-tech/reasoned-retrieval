@@ -135,7 +135,7 @@ class GiftDataset2(DomainDataset):
     
     def get_corpus(self, domain_name):
         corpus = {}
-        for product in self.subdomain_corpus(domain_name)['results']:
+        for product in self.subdomain_corpus(domain_name): # ['results']
             corpus[str(uuid.uuid1())] = product
         return DatasetValidation.valid_corpus(corpus)     
 
