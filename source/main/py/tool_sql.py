@@ -15,7 +15,7 @@ class TableLoader():
         return columns, rows
 
     def prepare_load(self):
-        products, columns = self.product_columns()
+        products, columns = self.get_product_columns()
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = self.dataset_schema.get_tuple_strs(products, columns)
