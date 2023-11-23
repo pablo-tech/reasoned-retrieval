@@ -173,6 +173,10 @@ INSERT INTO {table_name} VALUES {table_rows}
         products, columns = self.product_columns()
         return self.dataset_schema.create_sql(self.table_name, columns)
     
+    def get_enum_values(self):
+        return self.dataset_schema.enum_values(self.get_enums(),
+                                               self.get_products())
+    
     def get_table_name(self):
         return self.table_name
 
@@ -184,17 +188,7 @@ class ContextLoader(TableLoader):
         self.context_products = context_products
         self.picked_enums = picked_enums
         self.context_columns = self.dataset_schema.reduction_columns()
-    
-    def product_columns(self):
-        return self.context_products, self.get_columns()
-    
-    def get_columns(self):
-        return self.context_columns
-    
-    def get_enum_values(self):
-        return self.dataset_schema.enum_values(self.picked_enums,
-                                                self.context_products)
-
+            
     def get_fewshot_examples(self):
         return f"""        
 Question: what ARISTOCRAT products do you have? 
@@ -212,6 +206,19 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title
 Question: "Glassses for women?"
 Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
+
+    def product_columns(self):
+        return self.get_products(), self.get_columns()
+
+    def get_products(self):
+        return self.context_products
+    
+    def get_columns(self):
+        return self.context_columns
+    
+    def get_enums(self):
+        return self.picked_enums
+
     
 
 class InferenceLoader(TableLoader):
@@ -223,15 +230,9 @@ class InferenceLoader(TableLoader):
         self.augmented_columns, self.augmented_products =\
             self.dataset_schema.augmentation_column_products(self.context_products)
 
-    def product_columns(self):
-        return self.augmented_products, self.get_columns()
-    
-    def get_columns(self):
-        return self.augmented_columns
-
     def get_enum_values(self):
-        return self.dataset_schema.enum_values(self.picked_enums,
-                                                self.augmented_products)
+        return self.dataset_schema.enum_values(self.get_enums(),
+                                               self.get_products())
 
     def get_fewshot_examples(self):
         return f"""        
@@ -242,3 +243,15 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE product_size = 'Guess';
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
+
+    def product_columns(self):
+        return self.get_products(), self.get_columns()
+
+    def get_products(self):
+        return self.augmented_products
+
+    def get_columns(self):
+        return self.augmented_columns
+
+    def get_enums(self):
+        return self.picked_enums
