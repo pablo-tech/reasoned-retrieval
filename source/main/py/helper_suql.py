@@ -29,7 +29,7 @@ class DatasetReducer():
         return [self.primary_key] + [col for col in column_names 
                                      if col!=self.primary_key]
 
-    def get_reduced_columns(self, picked_columns, domain_columns):
+    def reduction_columns(self, picked_columns, domain_columns):
         columns = self.unique_columns(domain_columns)
         reduced = [col for col in columns if col in picked_columns]
         return reduced
@@ -80,10 +80,10 @@ class DatasetAugmenter():
                                     completion_llm, is_verbose) 
 
     def column_products(self, products): 
-        columns, product_summary = self.tagger.invoke(products)
+        columns, products = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        return ColumnTransformer.fill_col(columns), product_summary
+        return ColumnTransformer.fill_col(columns), products
     
 
 class DatasetSchema(DatabaseInstance):
@@ -105,9 +105,6 @@ class DatasetSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    def get_ds_augmenter(self):
-        return self.ds_augmenter
-
     def create_sql(self, table_name, column_names):
         return self.schema_creator.create_sql(schema_name=table_name, 
                                               primary_key=self.primary_key, 
@@ -125,9 +122,12 @@ class DatasetSchema(DatabaseInstance):
     def get_domain_products(self):
         return list(self.get_domain_schema().get_clean_products())
     
-    def get_reduced_columns(self):
+    def augmentation_column_products(self, products):
+        return self.ds_augmenter.column_products(products) 
+    
+    def reduction_columns(self):
         domain_cols = self.get_domain_schema().column_names()
-        cols = self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
+        cols = self.ds_reducer.reduction_columns(self.picked_columns, domain_cols)
         return ColumnTransformer.fill_col(cols)    
     
     def enum_values(self, picked_enums, from_products):
@@ -193,7 +193,7 @@ class ContextLoader(TableLoader):
         super().__init__(dataset_schema, "CONTEXT")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.context_columns = self.dataset_schema.get_reduced_columns()
+        self.context_columns = self.dataset_schema.reduction_columns()
     
     def product_columns(self):
         return self.context_products, self.get_columns()
@@ -230,12 +230,8 @@ class InferenceLoader(TableLoader):
         super().__init__(dataset_schema, "INFERENCE")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.augmented_products, self.augmented_columns =\
-            self.get_augmentation_tuples(self.context_products)
-
-    def get_augmentation_tuples(self, products):
-        columns, products = self.dataset_schema.get_ds_augmenter().column_products(products) 
-        return products, columns
+        self.augmented_columns, self.augmented_products =\
+            self.dataset_schema.augmentation_column_products(self.context_products)
 
     def product_columns(self):
         return self.augmented_products, self.get_columns()
