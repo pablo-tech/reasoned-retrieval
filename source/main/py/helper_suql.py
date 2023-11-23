@@ -230,9 +230,9 @@ class InferenceLoader(TableLoader):
         self.augmented_columns, self.augmented_products =\
             self.dataset_schema.augmentation_column_products(self.context_products)
 
-    def get_enum_values(self):
-        return self.dataset_schema.enum_values(self.get_enums(),
-                                               self.get_products())
+    # def get_enum_values(self):
+    #     return self.dataset_schema.enum_values(self.get_enums(),
+    #                                            self.get_products())
 
     def get_fewshot_examples(self):
         return f"""        
