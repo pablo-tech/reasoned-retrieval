@@ -25,9 +25,17 @@ class DatasetReducer():
     def __init__(self, primary_key):
         self.primary_key = primary_key
 
-    def unique_columns(self, schema:DomainSchema):
-        return [self.primary_key] + [col for col in schema.column_names() 
+    def unique_columns(self, column_names):
+        return [self.primary_key] + [col for col in column_names 
                                      if col!=self.primary_key]
+
+    def get_reduced_columns(self, picked_columns, domain_columns):
+        columns = self.unique_columns(domain_columns)
+        # print("get_domain_columns=>"+str(columns))
+        reduced = [col for col in columns if col in picked_columns]
+        # print("get_domain_picked=>"+str(self.picked_columns))
+        # print("get_domain_reduced=>"+str(reduced))        
+        return reduced
 
     def product_strs(self, products, all_columns):
         rows = ""
@@ -95,8 +103,8 @@ class DatasetSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    def get_ds_reducer(self):
-        return self.ds_reducer
+    # def get_ds_reducer(self):
+    #     return self.ds_reducer
 
     def get_ds_augmenter(self):
         return self.ds_augmenter
@@ -119,14 +127,16 @@ class DatasetSchema(DatabaseInstance):
         return list(self.get_domain_schema().get_clean_products())
     
     def get_reduced_columns(self):
-        domain_schema = self.get_domain_schema()
-        # print("get_domain_schema=>"+str(domain_schema))
-        columns = self.ds_reducer.unique_columns(domain_schema)
-        # print("get_domain_columns=>"+str(columns))
-        reduced = [col for col in columns if col in self.picked_columns]
-        # print("get_domain_picked=>"+str(self.picked_columns))
-        # print("get_domain_reduced=>"+str(reduced))        
-        return reduced
+        domain_cols = self.get_domain_schema().column_names()
+        return self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
+    
+    # def get_reduced_columns(self):
+    #     columns = self.ds_reducer.unique_columns(self.get_domain_schema().column_names())
+    #     # print("get_domain_columns=>"+str(columns))
+    #     reduced = [col for col in columns if col in self.picked_columns]
+    #     # print("get_domain_picked=>"+str(self.picked_columns))
+    #     # print("get_domain_reduced=>"+str(reduced))        
+    #     return reduced
     
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 
