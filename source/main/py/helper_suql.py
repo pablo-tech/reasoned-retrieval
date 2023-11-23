@@ -128,7 +128,12 @@ class DatasetSchema(DatabaseInstance):
     
     def get_reduced_columns(self):
         domain_cols = self.get_domain_schema().column_names()
-        return self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
+        cols = self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
+        return self.fill_col(cols)    
+    
+    def fill_col(self, columns):
+        return [col.replace(" ", "_") for col in columns]
+
     
     # def get_reduced_columns(self):
     #     columns = self.ds_reducer.unique_columns(self.get_domain_schema().column_names())
@@ -182,7 +187,7 @@ class TableLoader():
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql):
-        columns = self.fill_col(columns)
+        # columns = self.fill_col(columns)
         self.dataset_schema.create_table(self.table_name, columns)
         self.dataset_schema.get_db_cursor().execute(insert_sql)
         self.dataset_schema.get_db_connection().commit()
@@ -194,11 +199,11 @@ INSERT INTO {table_name} VALUES {table_rows}
 
     def schema_sql(self):
         products, columns = self.product_columns()
-        columns = self.fill_col(columns)
+        # columns = self.fill_col(columns)
         return self.dataset_schema.create_sql(self.table_name, columns)
     
-    def fill_col(self, columns):
-        return [col.replace(" ", "_") for col in columns]
+    # def fill_col(self, columns):
+    #     return [col.replace(" ", "_") for col in columns]
     
     def get_table_name(self):
         return self.table_name
@@ -210,7 +215,8 @@ class ContextLoader(TableLoader):
         super().__init__(dataset_schema, "CONTEXT")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.context_columns = self.fill_col(self.dataset_schema.get_reduced_columns())
+        self.context_columns = self.dataset_schema.get_reduced_columns()
+        # self.context_columns = self.fill_col(self.dataset_schema.get_reduced_columns())
     
     def product_columns(self):
         return self.context_products, self.get_columns()
