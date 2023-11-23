@@ -16,9 +16,9 @@ class SchemaCreator(DomainSchema):
                  domain_name, domain_datasets, 
                  selected_columns, primary_key,
                  completion_llm, is_verbose):
-        super().__init__(data_sets=self.domain_datasets,
-                         completion_llm=self.completion_llm,
-                         is_verbose=self.is_verbose)
+        super().__init__(data_sets=domain_datasets,
+                         completion_llm=completion_llm,
+                         is_verbose=is_verbose)
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
