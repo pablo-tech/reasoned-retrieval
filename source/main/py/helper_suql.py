@@ -136,12 +136,6 @@ class DatasetSchema(DatabaseInstance):
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
 
-    def get_picked_columns(self):
-        return self.picked_columns
-        
-    def get_primary_key(self):
-        return self.primary_key
-
 
 class TableLoader():
 
