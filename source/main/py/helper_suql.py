@@ -22,11 +22,10 @@ class DatabaseInstance():
 
 class SchemaCreator(DatabaseInstance):
 
-    def __init__(self, db_cursor, 
+    def __init__(self, 
                  domain_name, domain_datasets, selected_columns,
                  completion_llm, is_verbose):
         super().__init__()
-        self.db_cursor = db_cursor        
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
@@ -137,8 +136,7 @@ class DatasetSchema(SchemaCreator):
                  domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
-        super().__init__(self.get_db_cursor(),
-                         domain_name, domain_datasets, picked_columns,  
+        super().__init__(domain_name, domain_datasets, picked_columns,  
                          completion_llm, is_verbose)
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
