@@ -29,10 +29,10 @@ class DatasetReducer():
         return [self.primary_key] + [col for col in column_names 
                                      if col!=self.primary_key]
 
-    def reduction_columns(self, picked_columns, domain_columns):
+    def columns(self, picked_columns, domain_columns):
         columns = self.unique_columns(domain_columns)
         reduced = [col for col in columns if col in picked_columns]
-        return reduced
+        return ColumnTransformer.fill_col(reduced)    
 
     def product_strs(self, products, all_columns):
         rows = ""
@@ -127,8 +127,7 @@ class DatasetSchema(DatabaseInstance):
     
     def reduction_columns(self):
         domain_cols = self.get_domain_schema().column_names()
-        cols = self.ds_reducer.reduction_columns(self.picked_columns, domain_cols)
-        return ColumnTransformer.fill_col(cols)    
+        return self.ds_reducer.columns(self.picked_columns, domain_cols) 
     
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 
@@ -139,10 +138,7 @@ class DatasetSchema(DatabaseInstance):
 
     def get_picked_columns(self):
         return self.picked_columns
-    
-    def get_picked_enums(self):
-        return self.picked_enums
-    
+        
     def get_primary_key(self):
         return self.primary_key
 
