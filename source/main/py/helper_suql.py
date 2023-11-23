@@ -141,14 +141,9 @@ class DatasetSchema(SchemaCreator):
             products = products[:n]
         return products
     
-    def get_working_products(self):
+    def reduction_products(self):
         return self.working_products
 
-    def augmentation_column_products(self):
-        return self.ds_augmenter.column_products(self.working_products) 
-    # def augmentation_column_products(self, products):
-    #     return self.ds_augmenter.column_products(products) 
-    
     def reduction_columns(self):
         return self.ds_reducer.columns(self.column_names()) 
     
@@ -159,3 +154,13 @@ class DatasetSchema(SchemaCreator):
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
 
+    def augmentation_products(self):
+        column, products = self.augmentation_column_products()
+        return products
+
+    def augmentation_columns(self):
+        column, products = self.augmentation_column_products()
+        return column
+
+    def augmentation_column_products(self):
+        return self.ds_augmenter.column_products(self.working_products) 

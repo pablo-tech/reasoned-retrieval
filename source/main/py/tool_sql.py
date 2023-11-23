@@ -51,7 +51,8 @@ class ContextLoader(TableLoader):
     def __init__(self, dataset_schema, picked_enums):
         super().__init__(dataset_schema, "CONTEXT")
         self.picked_enums = picked_enums
-        self.context_columns = self.dataset_schema.reduction_columns()
+        self.reduction_products = self.dataset_schema.reduction_products()
+        self.reduction_columns = self.dataset_schema.reduction_columns()
             
     def get_fewshot_examples(self):
         return f"""        
@@ -71,8 +72,11 @@ Question: "Glassses for women?"
 Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
+    def get_products(self):
+        return self.reduction_products
+
     def get_columns(self):
-        return self.context_columns
+        return self.reduction_columns
     
     def get_enums(self):
         return self.picked_enums
@@ -83,8 +87,8 @@ class InferenceLoader(TableLoader):
     def __init__(self, dataset_schema, picked_enums): 
         super().__init__(dataset_schema, "INFERENCE")
         self.picked_enums = picked_enums
-        self.augmented_columns, self.augmented_products =\
-            self.dataset_schema.augmentation_column_products()
+        self.augmentation_columns = self.dataset_schema.augmentation_columns()
+        self.augmentation_products = self.dataset_schema.augmentation_products()
 
     def get_fewshot_examples(self):
         return f"""        
@@ -97,10 +101,10 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 whee
 """
 
     def get_products(self):
-        return self.augmented_products
+        return self.augmentation_products
 
     def get_columns(self):
-        return self.augmented_columns
+        return self.augmentation_columns
 
     def get_enums(self):
         return self.picked_enums
