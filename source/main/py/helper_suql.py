@@ -1,8 +1,6 @@
 from domain_knowledge import DomainSchema
 from helper_sql import SummaryTagger
 
-import sqlite3
-
 from collections import defaultdict
 
 
@@ -12,43 +10,40 @@ class ColumnTransformer():
         return [col.replace(" ", "_") for col in columns]
 
 
-class DatabaseInstance():
-    
-    def __init__(self, 
-                 database_name="tutorial.db"):
-        self.db_connection = sqlite3.connect(database_name)
-        self.db_cursor = self.db_connection.cursor()
-
-    def get_db_connection(self):
-        return self.db_connection
-
-    def get_db_cursor(self):
-        return self.db_cursor
-
-
-class SchemaCreator(DatabaseInstance):
+class SchemaCreator(DomainSchema):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
                  selected_columns, primary_key,
                  completion_llm, is_verbose):
-        super().__init__()
+        super().__init__(data_sets=self.domain_datasets,
+                         completion_llm=self.completion_llm,
+                         is_verbose=self.is_verbose)
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
         self.primary_key = primary_key
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
-        self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
-                                          completion_llm=self.completion_llm,
-                                          is_verbose=self.is_verbose)
+        # self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
+        #                                   completion_llm=self.completion_llm,
+        #                                   is_verbose=self.is_verbose)
+    
+    # def get_domain_products(self):
+    #     return list(self.domain_schema.get_clean_products())
+    
+    # def get_domain_columns(self):
+    #     return self.domain_schema.column_names()
 
-    def get_domain_schema(self):
-        return self.domain_schema
+    # def get_domain_schema(self):
+    #     return self.domain_schema
 
     def get_domain_name(self):
         return self.domain_name
-    
+
+    def create_table(self, table_name, column_names):
+        self.execute_query(self.create_sql(table_name, column_names))
+
     def execute_query(self, create_sql):
         try:
           self.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
@@ -146,48 +141,17 @@ class DatasetSchema(SchemaCreator):
         self.picked_columns = picked_columns        
         self.primary_key = primary_key
         self.completion_llm = completion_llm     
-        # self.schema_creator = SchemaCreator(self.get_db_cursor(),
-        #                                     domain_name, domain_datasets, picked_columns,  
-        #                                     completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key)
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
-    
-    # def create_sql(self, table_name, column_names):
-    #     return self.create_sql(schema_name=table_name, 
-    #                                           primary_key=self.primary_key, 
-    #                                           column_names=column_names)
-
-    def create_table(self, table_name, column_names):
-        self.execute_query(self.create_sql(table_name, column_names))
-
-
-    # def create_sql(self, table_name, column_names):
-    #     return self.schema_creator.create_sql(schema_name=table_name, 
-    #                                           primary_key=self.primary_key, 
-    #                                           column_names=column_names)
-
-    # def create_table(self, table_name, column_names):
-    #     self.schema_creator.execute_query(self.create_sql(table_name, column_names))
-
-    # def get_domain_name(self):
-    #     return self.schema_creator.get_domain_name()
-
-    # def get_domain_schema(self):
-    #     return self.schema_creator.get_domain_schema()
-    
-    def get_domain_products(self):
-        return list(self.get_domain_schema().get_clean_products())
-    
-    def get_domain_columns(self):
-        return self.get_domain_schema().column_names()
     
     def augmentation_column_products(self, products):
         return self.ds_augmenter.column_products(products) 
     
     def reduction_columns(self):
-        return self.ds_reducer.columns(self.picked_columns, 
-                                       self.get_domain_columns()) 
+        return self.ds_reducer.columns(self.picked_columns,
+                                       self.column_names()) 
+                                    #    self.get_domain_columns()) 
     
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 

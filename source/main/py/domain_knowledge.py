@@ -5,6 +5,8 @@ from collections import defaultdict
 
 from flatten_json import flatten
 
+import sqlite3
+
 
 class JsonReader():
 
@@ -140,7 +142,21 @@ class GiftDataset2(DomainDataset):
         return DatasetValidation.valid_corpus(corpus)     
 
     
-class DomainIngestion():
+class DatabaseInstance():
+    
+    def __init__(self, 
+                 database_name="tutorial.db"):
+        self.db_connection = sqlite3.connect(database_name)
+        self.db_cursor = self.db_connection.cursor()
+
+    def get_db_connection(self):
+        return self.db_connection
+
+    def get_db_cursor(self):
+        return self.db_cursor
+
+
+class DomainIngestion(DatabaseInstance):
 
     def __init__(self, data_sets, completion_llm, is_verbose):
         super().__init__()
@@ -193,9 +209,9 @@ class DomainIngestion():
         
     def get_raw_products(self):
         return self.raw_data
-
-    def get_clean_products(self):
-        return self.clean_data.values()
+    
+    def get_domain_products(self):
+        return list(self.clean_data.values())
 
     def get_product(self, key):
         return self.clean_data[key]
