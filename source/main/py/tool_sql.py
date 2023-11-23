@@ -40,6 +40,9 @@ class GiftLoader():
 
     def get_inference_loader(self):
         return self.context_loader
+    
+    def get_dataset_schema(self):
+        return self.dataset_schema
 
 
 class ProductRetriever():
