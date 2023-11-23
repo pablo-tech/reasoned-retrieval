@@ -76,7 +76,7 @@ class DatasetAugmenter():
         return columns, product_summary
     
 
-class DatabaseSchema(DatabaseInstance):
+class DatasetSchema(DatabaseInstance):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
@@ -145,10 +145,10 @@ class DatabaseSchema(DatabaseInstance):
 
 class TableLoader():
 
-    def __init__(self, database_schema:DatabaseSchema, nick_name):
-        self.database_schema = database_schema
+    def __init__(self, dataset_schema:DatasetSchema, nick_name):
+        self.dataset_schema = dataset_schema
         self.nick_name = nick_name
-        self.table_name = self.database_schema.get_domain_name() + "_" + self.nick_name
+        self.table_name = self.dataset_schema.get_domain_name() + "_" + self.nick_name
 
     def load_items(self):
         columns, rows, insert_sql = self.prepare_load()
@@ -159,7 +159,7 @@ class TableLoader():
         products, columns = self.product_columns()
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
-        rows = self.database_schema.get_tuple_strs(products, columns)
+        rows = self.dataset_schema.get_tuple_strs(products, columns)
         print("ROWS=>" + str(rows))
         insert_sql = self.get_sql(self.table_name, rows)
         # print("INSERT_SQL=>"+str(insert_sql))
@@ -167,9 +167,9 @@ class TableLoader():
 
     def execute_load(self, columns, insert_sql):
         columns = self.fill_col(columns)
-        self.database_schema.create_table(self.table_name, columns)
-        self.database_schema.get_db_cursor().execute(insert_sql)
-        self.database_schema.get_db_connection().commit()
+        self.dataset_schema.create_table(self.table_name, columns)
+        self.dataset_schema.get_db_cursor().execute(insert_sql)
+        self.dataset_schema.get_db_connection().commit()
     
     def get_sql(self, table_name, table_rows):
         return f"""
@@ -179,7 +179,7 @@ INSERT INTO {table_name} VALUES {table_rows}
     def schema_sql(self):
         products, columns = self.product_columns()
         columns = self.fill_col(columns)
-        return self.database_schema.create_sql(self.table_name, columns)
+        return self.dataset_schema.create_sql(self.table_name, columns)
     
     def fill_col(self, columns):
         return [col.replace(" ", "_") for col in columns]
@@ -190,11 +190,11 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextLoader(TableLoader):
 
-    def __init__(self, database_schema, context_products, picked_enums):
-        super().__init__(database_schema, "CONTEXT")
+    def __init__(self, dataset_schema, context_products, picked_enums):
+        super().__init__(dataset_schema, "CONTEXT")
         self.context_products = context_products
         self.picked_enums = picked_enums
-        self.context_columns = self.fill_col(self.database_schema.get_reduced_columns())
+        self.context_columns = self.fill_col(self.dataset_schema.get_reduced_columns())
     
     def product_columns(self):
         return self.context_products, self.get_columns()
@@ -203,7 +203,7 @@ class ContextLoader(TableLoader):
         return self.context_columns
     
     def get_enum_values(self):
-        return self.database_schema.enum_values(self.picked_enums,
+        return self.dataset_schema.enum_values(self.picked_enums,
                                                 self.context_products)
 
     def get_fewshot_examples(self):
@@ -227,12 +227,12 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
 
 class InferenceLoader(TableLoader):
 
-    def __init__(self, database_schema, context_products, picked_enums):
-        super().__init__(database_schema, "INFERENCE")
+    def __init__(self, dataset_schema, context_products, picked_enums):
+        super().__init__(dataset_schema, "INFERENCE")
         self.context_products = context_products
         self.picked_enums = picked_enums
         self.augmented_products, self.augmented_columns =\
-            self.database_schema.get_augmentation_tuples(self.context_products)
+            self.dataset_schema.get_augmentation_tuples(self.context_products)
         self.augmented_columns = self.fill_col(self.augmented_columns)
 
     def product_columns(self):
@@ -242,7 +242,7 @@ class InferenceLoader(TableLoader):
         return self.augmented_columns
 
     def get_enum_values(self):
-        return self.database_schema.enum_values(self.picked_enums,
+        return self.dataset_schema.enum_values(self.picked_enums,
                                                 self.augmented_products)
 
     def get_fewshot_examples(self):
