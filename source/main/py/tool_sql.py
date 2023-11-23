@@ -42,8 +42,14 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.dataset_schema.enum_values(self.get_enums(),
                                                self.get_products())
     
+    def get_enums(self):
+        return self.picked_enums
+
     def get_table_name(self):
         return self.table_name
+
+    def get_product_columns(self):
+        return self.get_products(), self.get_columns()
 
 
 class ContextLoader(TableLoader):
@@ -78,9 +84,6 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
     def get_columns(self):
         return self.reduction_columns
     
-    def get_enums(self):
-        return self.picked_enums
-
     
 class InferenceLoader(TableLoader):
 
@@ -105,9 +108,6 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 whee
 
     def get_columns(self):
         return self.augmentation_columns
-
-    def get_enums(self):
-        return self.picked_enums
     
 
 class GiftLoader():
