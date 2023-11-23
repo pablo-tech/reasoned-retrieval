@@ -95,6 +95,12 @@ class DatasetSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
+    def get_ds_reducer(self):
+        return self.ds_reducer
+
+    def get_ds_augmenter(self):
+        return self.ds_augmenter
+
     def create_sql(self, table_name, column_names):
         return self.schema_creator.create_sql(schema_name=table_name, 
                                               primary_key=self.primary_key, 
@@ -129,9 +135,9 @@ class DatasetSchema(DatabaseInstance):
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
 
-    def get_augmentation_tuples(self, products):
-        columns, products = self.ds_augmenter.column_products(products) 
-        return products, columns
+    # def get_augmentation_tuples(self, products):
+    #     columns, products = self.ds_augmenter.column_products(products) 
+    #     return products, columns
         
     def get_picked_columns(self):
         return self.picked_columns
@@ -232,8 +238,14 @@ class InferenceLoader(TableLoader):
         self.context_products = context_products
         self.picked_enums = picked_enums
         self.augmented_products, self.augmented_columns =\
-            self.dataset_schema.get_augmentation_tuples(self.context_products)
+            self.get_augmentation_tuples(self.context_products)
+        # self.augmented_products, self.augmented_columns =\
+        #     self.dataset_schema.get_augmentation_tuples(self.context_products)
         self.augmented_columns = self.fill_col(self.augmented_columns)
+
+    def get_augmentation_tuples(self, products):
+        columns, products = self.dataset_schema.get_ds_augmenter().column_products(products) 
+        return products, columns
 
     def product_columns(self):
         return self.augmented_products, self.get_columns()

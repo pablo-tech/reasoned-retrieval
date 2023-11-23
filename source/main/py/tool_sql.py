@@ -7,14 +7,14 @@ class GiftLoader():
     def __init__(self, n, 
                  completion_llm):
         self.dataset_schema = DatasetSchema(domain_name="CLIQ",
-                                              domain_datasets=[GiftDataset2()],
-                                              picked_columns=['id', 'price', 
-                                                              'brand', 'colors',
-                                                              'category', 'store', 'gender',
-                                                              'title', 'description',],
-                                              primary_key='id',
-                                              summarize_columns=['title', 'description'],
-                                              completion_llm=completion_llm)
+                                            domain_datasets=[GiftDataset2()],
+                                            picked_columns=['id', 'price', 
+                                                            'brand', 'colors',
+                                                            'category', 'store', 'gender',
+                                                            'title', 'description',],
+                                            primary_key='id',
+                                            summarize_columns=['title', 'description'],
+                                            completion_llm=completion_llm)
         self.products = self.set_products(n)
         self.context_loader = ContextLoader(self.dataset_schema, 
                                             self.products,
