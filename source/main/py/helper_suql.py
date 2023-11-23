@@ -80,7 +80,6 @@ class DatasetAugmenter():
 
     def __init__(self, summarize_columns, primary_key,
                  completion_llm, is_verbose):
-        super().in
         self.tagger = SummaryTagger(summarize_columns, primary_key,
                                     completion_llm, is_verbose) 
 
