@@ -36,10 +36,10 @@ class GiftLoader():
         return self.products
     
     def get_context_loader(self):
-        return self.inference_loader
+        return self.context_loader
 
     def get_inference_loader(self):
-        return self.context_loader
+        return self.inference_loader
     
     def get_dataset_schema(self):
         return self.dataset_schema
