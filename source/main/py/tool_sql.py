@@ -35,8 +35,8 @@ INSERT INTO {table_name} VALUES {table_rows}
 """    
 
     def schema_sql(self):
-        products, columns = self.product_columns()
-        return self.dataset_schema.create_sql(self.table_name, columns)
+        return self.dataset_schema.create_sql(self.get_table_name(), 
+                                              self.get_columns())
     
     def get_enum_values(self):
         return self.dataset_schema.enum_values(self.get_enums(),
