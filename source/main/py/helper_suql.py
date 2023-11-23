@@ -159,7 +159,7 @@ class DatasetSchema(SchemaCreator):
     #                                           column_names=column_names)
 
     def create_table(self, table_name, column_names):
-        self.execute_query(self.create_sql(table_name, self.primary_key, column_names))
+        self.execute_query(self.create_sql(table_name, column_names))
 
 
     # def create_sql(self, table_name, column_names):
