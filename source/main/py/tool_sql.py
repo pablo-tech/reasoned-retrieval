@@ -61,21 +61,22 @@ class ContextParser(TableLoader):
         self.reduction_columns = self.dataset_schema.reduction_columns()
             
     def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
         return f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Guess';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
 Question: "Glassses for women?"
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
     def get_products(self):
@@ -94,13 +95,14 @@ class InferenceParser(TableLoader):
         self.augmentation_products = self.dataset_schema.augmentation_products()
 
     def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
         return f"""        
 Question: what types of products do you have? 
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
 Question: what 22 ltrs backpacks do you have?
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Guess';
 Question: what 2 wheel trolleys do your products have?
-Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
 
     def get_products(self):
