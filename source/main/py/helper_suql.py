@@ -20,6 +20,51 @@ class DatabaseInstance():
         return self.db_cursor
 
 
+class SchemaCreator(DatabaseInstance):
+
+    def __init__(self, db_cursor, 
+                 domain_name, domain_datasets, selected_columns,
+                 completion_llm, is_verbose):
+        super().__init__()
+        self.db_cursor = db_cursor        
+        self.domain_name = domain_name.upper()
+        self.domain_datasets = domain_datasets
+        self.selected_columns = selected_columns
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
+        self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
+                                          completion_llm=self.completion_llm,
+                                          is_verbose=self.is_verbose)
+
+    def get_domain_schema(self):
+        return self.domain_schema
+
+    def get_domain_name(self):
+        return self.domain_name
+    
+    def execute_query(self, create_sql):
+        try:
+          self.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
+          self.db_cursor.execute(create_sql)
+          if self.is_verbose:
+              print(create_sql)
+        except Exception as e:
+          print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
+
+    def create_sql(self, schema_name, primary_key, column_names):
+        column_names = self.non_primary(primary_key, column_names)
+        column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
+        column_names = " ".join(column_names)
+        return f"""
+    CREATE TABLE {schema_name} (
+    {primary_key} TEXT PRIMARY KEY {column_names}
+    ) ;
+    """
+
+    def non_primary(self, primary_key, column_names):
+        return sorted([name for name in column_names if name!=primary_key])
+    
+
 class DatasetReducer():
 
     def __init__(self, primary_key):
@@ -86,48 +131,62 @@ class DatasetAugmenter():
         return ColumnTransformer.fill_col(columns), products
     
 
-class DatasetSchema(DatabaseInstance):
+class DatasetSchema(SchemaCreator):
 
     def __init__(self, 
                  domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
-        super().__init__()
+        super().__init__(self.get_db_cursor(),
+                         domain_name, domain_datasets, picked_columns,  
+                         completion_llm, is_verbose)
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
         self.picked_columns = picked_columns        
         self.primary_key = primary_key
         self.completion_llm = completion_llm     
-        self.schema_creator = SchemaCreator(self.get_db_cursor(),
-                                            domain_name, domain_datasets, picked_columns,  
-                                            completion_llm, is_verbose)
+        # self.schema_creator = SchemaCreator(self.get_db_cursor(),
+        #                                     domain_name, domain_datasets, picked_columns,  
+        #                                     completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key)
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
     def create_sql(self, table_name, column_names):
-        return self.schema_creator.create_sql(schema_name=table_name, 
+        return self.create_sql(schema_name=table_name, 
                                               primary_key=self.primary_key, 
                                               column_names=column_names)
 
     def create_table(self, table_name, column_names):
-        self.schema_creator.execute_query(self.create_sql(table_name, column_names))
+        self.execute_query(self.create_sql(table_name, column_names))
 
-    def get_domain_name(self):
-        return self.schema_creator.get_domain_name()
-    
-    def get_domain_schema(self):
-        return self.schema_creator.get_domain_schema()
+
+    # def create_sql(self, table_name, column_names):
+    #     return self.schema_creator.create_sql(schema_name=table_name, 
+    #                                           primary_key=self.primary_key, 
+    #                                           column_names=column_names)
+
+    # def create_table(self, table_name, column_names):
+    #     self.schema_creator.execute_query(self.create_sql(table_name, column_names))
+
+    # def get_domain_name(self):
+    #     return self.schema_creator.get_domain_name()
+
+    # def get_domain_schema(self):
+    #     return self.schema_creator.get_domain_schema()
     
     def get_domain_products(self):
         return list(self.get_domain_schema().get_clean_products())
+    
+    def get_domain_columns(self):
+        return self.get_domain_schema().column_names()
     
     def augmentation_column_products(self, products):
         return self.ds_augmenter.column_products(products) 
     
     def reduction_columns(self):
-        domain_cols = self.get_domain_schema().column_names()
-        return self.ds_reducer.columns(self.picked_columns, domain_cols) 
+        return self.ds_reducer.columns(self.picked_columns, 
+                                       self.get_domain_columns()) 
     
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 
@@ -225,14 +284,9 @@ class InferenceLoader(TableLoader):
 
     def __init__(self, dataset_schema, context_products, picked_enums):
         super().__init__(dataset_schema, "INFERENCE")
-        self.context_products = context_products
         self.picked_enums = picked_enums
         self.augmented_columns, self.augmented_products =\
-            self.dataset_schema.augmentation_column_products(self.context_products)
-
-    # def get_enum_values(self):
-    #     return self.dataset_schema.enum_values(self.get_enums(),
-    #                                            self.get_products())
+            self.dataset_schema.augmentation_column_products(context_products)
 
     def get_fewshot_examples(self):
         return f"""        

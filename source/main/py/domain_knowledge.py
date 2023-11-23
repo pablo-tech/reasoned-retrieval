@@ -228,47 +228,4 @@ class DomainSchema(DomainIngestion):
         text = text.replace("(", "")
         text = text.replace(")", "")
         return text.lower()
-    
-
-class SchemaCreator():
-
-    def __init__(self, db_cursor, 
-                 domain_name, domain_datasets, selected_columns,
-                 completion_llm, is_verbose):
-        self.db_cursor = db_cursor        
-        self.domain_name = domain_name.upper()
-        self.domain_datasets = domain_datasets
-        self.selected_columns = selected_columns
-        self.completion_llm = completion_llm
-        self.is_verbose = is_verbose
-        self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
-                                          completion_llm=self.completion_llm,
-                                          is_verbose=self.is_verbose)
-
-    def get_domain_schema(self):
-        return self.domain_schema
-
-    def get_domain_name(self):
-        return self.domain_name
-    
-    def execute_query(self, create_sql):
-        try:
-          self.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
-          self.db_cursor.execute(create_sql)
-          if self.is_verbose:
-              print(create_sql)
-        except Exception as e:
-          print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
-
-    def create_sql(self, schema_name, primary_key, column_names):
-        column_names = self.non_primary(primary_key, column_names)
-        column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
-        column_names = " ".join(column_names)
-        return f"""
-    CREATE TABLE {schema_name} (
-    {primary_key} TEXT PRIMARY KEY {column_names}
-    ) ;
-    """
-
-    def non_primary(self, primary_key, column_names):
-        return sorted([name for name in column_names if name!=primary_key])    
+        
