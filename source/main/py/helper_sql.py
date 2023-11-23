@@ -3,6 +3,15 @@ from collections import defaultdict
 from langchain.chat_models import ChatOpenAI
 
 
+class ColumnTransformer():
+
+    def fil_col(column):
+        return column.replace(" ", "_")
+    
+    def fill_cols(columns):
+        return [ColumnTransformer.fil_col(col) for col in columns]
+
+
 class RunInference():
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -80,7 +89,7 @@ class SummaryTagger(RunInference):
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
             for summary_value in eval(inferred_tags):
-                tag = summary_value[0]
+                tag = ColumnTransformer.fil_col(summary_value[0])
                 value = summary_value[1]
                 product_summary[tag] = value
                 summary_values[tag].add(value)

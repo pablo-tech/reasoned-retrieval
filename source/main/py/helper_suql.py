@@ -1,13 +1,7 @@
 from domain_knowledge import DomainSchema
-from helper_sql import SummaryTagger
+from helper_sql import SummaryTagger, ColumnTransformer
 
 from collections import defaultdict
-
-
-class ColumnTransformer():
-
-    def fill_col(columns):
-        return [col.replace(" ", "_") for col in columns]
 
 
 class SchemaCreator(DomainSchema):
@@ -68,7 +62,7 @@ class DatasetReducer():
     def columns(self, domain_columns):
         columns = self.unique_columns(domain_columns)
         reduced = [col for col in columns if col in self.picked_columns]
-        return ColumnTransformer.fill_col(reduced)    
+        return ColumnTransformer.fill_cols(reduced)    
 
     def product_strs(self, products, all_columns):
         rows = ""
@@ -113,7 +107,7 @@ class DatasetAugmenter():
         columns, products = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        return ColumnTransformer.fill_col(columns), products
+        return ColumnTransformer.fill_cols(columns), products
     
 
 class DatasetSchema(SchemaCreator):
