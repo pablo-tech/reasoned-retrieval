@@ -31,10 +31,7 @@ class DatasetReducer():
 
     def get_reduced_columns(self, picked_columns, domain_columns):
         columns = self.unique_columns(domain_columns)
-        # print("get_domain_columns=>"+str(columns))
         reduced = [col for col in columns if col in picked_columns]
-        # print("get_domain_picked=>"+str(self.picked_columns))
-        # print("get_domain_reduced=>"+str(reduced))        
         return reduced
 
     def product_strs(self, products, all_columns):
@@ -65,7 +62,6 @@ class DatasetReducer():
                   vals = product[col]
                   enum_vals[col].add(vals)
                 except Exception as e:
-                  # print("vals=" + str(vals) + " " + str(e))
                   pass
         return enum_vals    
 
@@ -109,9 +105,6 @@ class DatasetSchema(DatabaseInstance):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    # def get_ds_reducer(self):
-    #     return self.ds_reducer
-
     def get_ds_augmenter(self):
         return self.ds_augmenter
 
@@ -137,18 +130,6 @@ class DatasetSchema(DatabaseInstance):
         cols = self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
         return ColumnTransformer.fill_col(cols)    
     
-    # def fill_col(self, columns):
-    #     return [col.replace(" ", "_") for col in columns]
-
-    
-    # def get_reduced_columns(self):
-    #     columns = self.ds_reducer.unique_columns(self.get_domain_schema().column_names())
-    #     # print("get_domain_columns=>"+str(columns))
-    #     reduced = [col for col in columns if col in self.picked_columns]
-    #     # print("get_domain_picked=>"+str(self.picked_columns))
-    #     # print("get_domain_reduced=>"+str(reduced))        
-    #     return reduced
-    
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 
                                                 from_products)
@@ -156,10 +137,6 @@ class DatasetSchema(DatabaseInstance):
     def get_tuple_strs(self, products, columns):
         return self.ds_reducer.product_strs(products, columns)
 
-    # def get_augmentation_tuples(self, products):
-    #     columns, products = self.ds_augmenter.column_products(products) 
-    #     return products, columns
-        
     def get_picked_columns(self):
         return self.picked_columns
     
@@ -193,7 +170,6 @@ class TableLoader():
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql):
-        # columns = self.fill_col(columns)
         self.dataset_schema.create_table(self.table_name, columns)
         self.dataset_schema.get_db_cursor().execute(insert_sql)
         self.dataset_schema.get_db_connection().commit()
@@ -205,11 +181,7 @@ INSERT INTO {table_name} VALUES {table_rows}
 
     def schema_sql(self):
         products, columns = self.product_columns()
-        # columns = self.fill_col(columns)
         return self.dataset_schema.create_sql(self.table_name, columns)
-    
-    # def fill_col(self, columns):
-    #     return [col.replace(" ", "_") for col in columns]
     
     def get_table_name(self):
         return self.table_name
@@ -222,7 +194,6 @@ class ContextLoader(TableLoader):
         self.context_products = context_products
         self.picked_enums = picked_enums
         self.context_columns = self.dataset_schema.get_reduced_columns()
-        # self.context_columns = self.fill_col(self.dataset_schema.get_reduced_columns())
     
     def product_columns(self):
         return self.context_products, self.get_columns()
@@ -261,9 +232,6 @@ class InferenceLoader(TableLoader):
         self.picked_enums = picked_enums
         self.augmented_products, self.augmented_columns =\
             self.get_augmentation_tuples(self.context_products)
-        # self.augmented_products, self.augmented_columns =\
-        #     self.dataset_schema.get_augmentation_tuples(self.context_products)
-        # self.augmented_columns = self.fill_col(self.augmented_columns)
 
     def get_augmentation_tuples(self, products):
         columns, products = self.dataset_schema.get_ds_augmenter().column_products(products) 

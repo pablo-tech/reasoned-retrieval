@@ -43,7 +43,6 @@ class SqlSemanticParser(RunInference):
     def get_prompt(self, question):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
-        # prompt += f"The only table columns to return are {columns}"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
         prompt += f"{self.product_loader.schema_sql()}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
