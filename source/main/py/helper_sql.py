@@ -107,7 +107,7 @@ class SummaryTagger(RunInference):
         return f"""
 You are an AI expert at asking at formulating brief classifications that can be answered by a text,
 as well as identifying the instantiation of that classification.
-Respond with a python list of string tuples, where the first value is the category classification,
+Respond with a python list of double-quoted string tuples, where the first value is the category classification,
 and the second is the instance.
 EXAMPLES:
 Question: Guess Analog Clear Dial Women's Watch GW0403L2
