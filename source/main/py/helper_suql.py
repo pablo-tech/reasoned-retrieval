@@ -50,12 +50,12 @@ class SchemaCreator(DatabaseInstance):
         except Exception as e:
           print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
 
-    def create_sql(self, schema_name, primary_key, column_names):
+    def create_sql(self, table_name, primary_key, column_names):
         column_names = self.non_primary(primary_key, column_names)
         column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
         column_names = " ".join(column_names)
         return f"""
-    CREATE TABLE {schema_name} (
+    CREATE TABLE {table_name} (
     {primary_key} TEXT PRIMARY KEY {column_names}
     ) ;
     """
@@ -150,13 +150,13 @@ class DatasetSchema(SchemaCreator):
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)
     
-    def create_sql(self, table_name, column_names):
-        return self.create_sql(schema_name=table_name, 
-                                              primary_key=self.primary_key, 
-                                              column_names=column_names)
+    # def create_sql(self, table_name, column_names):
+    #     return self.create_sql(schema_name=table_name, 
+    #                                           primary_key=self.primary_key, 
+    #                                           column_names=column_names)
 
     def create_table(self, table_name, column_names):
-        self.execute_query(self.create_sql(table_name, column_names))
+        self.execute_query(self.create_sql(table_name, self.primary_key, column_names))
 
 
     # def create_sql(self, table_name, column_names):
