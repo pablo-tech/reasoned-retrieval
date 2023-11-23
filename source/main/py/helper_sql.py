@@ -112,12 +112,12 @@ and the second is the instance.
 EXAMPLES:
 Question: Guess Analog Clear Dial Women's Watch GW0403L2
 Answer: 
-[('product gender', 'for women'), ('product type', 'watch'), ('watch type', 'analog'), ('watch dial type', 'clear'), ('product model', 'GW0403L2'), ('product collection', 'Guess')]
+[("product gender", "for women"), ("product type", "watch"), ("watch type", "analog"), ("watch dial type", "clear"), ("product model", "GW0403L2"), ("product collection", "Guess")]
 Question: Teakwood Leathers Navy & Red Medium Duffle Bag
 Answer: 
-[('product brand', 'Teakwood Leathers'), ('product color', 'navy & red'), ('product size', 'medium'), ('product type', 'duffle bag')]
+[("product brand", "Teakwood Leathers"), ("product color", "navy & red"), ("product size", "medium"), ("product type", "duffle bag")]
 Question: Aristocrat 32 Ltrs Green Medium Backpack
 Answer: 
-[('product brand', 'Aristocrat'), ('product capacity', '32 Ltrs'), ('product color', 'green'), ('product size', 'medium'), ('product type', 'backpack')]
+[("product brand", "Aristocrat"), ("product capacity", "32 Ltrs"), ("product color", "green"), ("product size", "medium"), ("product type", "backpack")]
 Question: {query}
 """
