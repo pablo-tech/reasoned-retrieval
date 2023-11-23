@@ -82,10 +82,7 @@ class SummaryTagger(RunInference):
         for product in products:
             product_summary = {}
             product_summary[self.primary_key] = product[self.primary_key]
-            query = "" # TODO: if too long, summarize
-            for column in self.summarize_columns:
-                if column != self.primary_key:
-                    query += product[column] + "\n"
+            query = self.get_query(product)
             prompt = self.get_prompt(query)
             inferred_tags = self.run_inference(prompt)
             for summary_value in eval(inferred_tags):
@@ -98,6 +95,13 @@ class SummaryTagger(RunInference):
             product_summaries.append(product_summary)                    
             i+=1
         return summary_values, product_summaries 
+    
+    def get_query(self, product):
+        query = "" # TODO: if too long, summarize
+        for column in self.summarize_columns:
+            if column != self.primary_key:
+                query += str(product[column]) + "\n"
+        return query
             
     def get_prompt(self, query):
         return f"""
