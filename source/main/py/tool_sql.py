@@ -87,11 +87,13 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
     
 class InferenceLoader(TableLoader):
 
-    def __init__(self, dataset_schema, context_products, picked_enums):
+    def __init__(self, dataset_schema, picked_enums): # context_products, 
         super().__init__(dataset_schema, "INFERENCE")
         self.picked_enums = picked_enums
         self.augmented_columns, self.augmented_products =\
-            self.dataset_schema.augmentation_column_products(context_products)
+            self.dataset_schema.augmentation_column_products()
+        # self.augmented_columns, self.augmented_products =\
+        #     self.dataset_schema.augmentation_column_products(context_products)
 
     def get_fewshot_examples(self):
         return f"""        
@@ -135,7 +137,7 @@ class GiftLoader():
                                             picked_enums=['brand', 'colors', 
                                                           'category', 'store', 'gender'])
         self.inference_loader = InferenceLoader(self.dataset_schema, 
-                                                self.dataset_schema.get_working_products(),
+                                                # self.dataset_schema.get_working_products(),
                                                 picked_enums=['product_brand', 'product_color',
                                                               'product_type', 'product_capacity',
                                                               'product_size', 'product_feature'])
