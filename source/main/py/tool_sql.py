@@ -52,7 +52,7 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.get_products(), self.get_columns()
 
 
-class ContextLoader(TableLoader):
+class ContextParser(TableLoader):
 
     def __init__(self, dataset_schema, picked_enums):
         super().__init__(dataset_schema, "CONTEXT")
@@ -63,19 +63,19 @@ class ContextLoader(TableLoader):
     def get_fewshot_examples(self):
         return f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Guess';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT * FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
-Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
-Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
 Question: "Glassses for women?"
-Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
     def get_products(self):
@@ -85,7 +85,7 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
         return self.reduction_columns
     
     
-class InferenceLoader(TableLoader):
+class InferenceParser(TableLoader):
 
     def __init__(self, dataset_schema, picked_enums): 
         super().__init__(dataset_schema, "INFERENCE")
@@ -96,11 +96,11 @@ class InferenceLoader(TableLoader):
     def get_fewshot_examples(self):
         return f"""        
 Question: what types of products do you have? 
-Answer: SELECT * FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_types = 'backpack';
 Question: what 22 ltrs backpacks do you have?
-Answer: SELECT * FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_size = 'Guess';
 Question: what 2 wheel trolleys do your products have?
-Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+Answer: SELECT {self.get_columns()} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
 
     def get_products(self):
@@ -124,10 +124,10 @@ class GiftLoader():
                                             primary_key='id',
                                             summarize_columns=['title', 'description'],
                                             completion_llm=completion_llm)
-        self.context_loader = ContextLoader(self.dataset_schema, 
+        self.context_parser = ContextParser(self.dataset_schema, 
                                             picked_enums=['brand', 'colors', 
                                                           'category', 'store', 'gender'])
-        self.inference_loader = InferenceLoader(self.dataset_schema, 
+        self.inference_parser = InferenceParser(self.dataset_schema, 
                                                 picked_enums=['product_brand', 'product_color',
                                                               'product_type', 'product_capacity',
                                                               'product_size', 'product_feature'])
@@ -135,11 +135,11 @@ class GiftLoader():
     def get_dataset_schema(self):
         return self.dataset_schema
 
-    def get_context_loader(self):
-        return self.context_loader
+    def get_context_parser(self):
+        return self.context_parser
 
-    def get_inference_loader(self):
-        return self.inference_loader
+    def get_inference_parser(self):
+        return self.inference_parser
 
 
 class ProductRetriever():

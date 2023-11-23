@@ -26,16 +26,16 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 product_loader,
+                 product_parser,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
-        self.product_loader = product_loader
+        self.product_parser = product_parser
 
     def invoke(self, query):
         prompt = self.get_prompt(query)
         inferred_sql = self.run_inference(prompt)
-        print(self.product_loader.get_columns())
+        print(self.product_parser.get_columns())
         print(inferred_sql)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response]
@@ -44,13 +44,13 @@ class SqlSemanticParser(RunInference):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
-        prompt += f"{self.product_loader.schema_sql()}" 
+        prompt += f"{self.product_parser.schema_sql()}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in self.product_loader.get_enum_values().items():
+        for column, values in self.product_parser.get_enum_values().items():
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
-        prompt += f"{self.product_loader.get_fewshot_examples()}" + "\n"
+        prompt += f"{self.product_parser.get_fewshot_examples()}" + "\n"
         prompt += f"Question: {question}" + "\n"
 
         if self.is_verbose:
