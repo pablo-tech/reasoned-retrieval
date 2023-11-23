@@ -64,7 +64,7 @@ class SchemaCreator(DatabaseInstance):
         column_names = " ".join(column_names)
         return f"""
     CREATE TABLE {table_name} (
-    {primary_key} TEXT PRIMARY KEY {column_names}
+    {self.primary_key} TEXT PRIMARY KEY {column_names}
     ) ;
     """
 
