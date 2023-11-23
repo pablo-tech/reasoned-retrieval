@@ -70,10 +70,17 @@ class DatasetReducer():
         return enum_vals    
 
 
+class ColumnTransformer():
+
+    def fill_col(columns):
+        return [col.replace(" ", "_") for col in columns]
+
+
 class DatasetAugmenter():
 
     def __init__(self, summarize_columns, primary_key,
                  completion_llm, is_verbose):
+        super().in
         self.tagger = SummaryTagger(summarize_columns, primary_key,
                                     completion_llm, is_verbose) 
 
@@ -81,7 +88,7 @@ class DatasetAugmenter():
         columns, product_summary = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        return columns, product_summary
+        return ColumnTransformer.fill_col(columns), product_summary
     
 
 class DatasetSchema(DatabaseInstance):
@@ -129,10 +136,10 @@ class DatasetSchema(DatabaseInstance):
     def get_reduced_columns(self):
         domain_cols = self.get_domain_schema().column_names()
         cols = self.ds_reducer.get_reduced_columns(self.picked_columns, domain_cols)
-        return self.fill_col(cols)    
+        return ColumnTransformer.fill_col(cols)    
     
-    def fill_col(self, columns):
-        return [col.replace(" ", "_") for col in columns]
+    # def fill_col(self, columns):
+    #     return [col.replace(" ", "_") for col in columns]
 
     
     # def get_reduced_columns(self):
@@ -257,7 +264,7 @@ class InferenceLoader(TableLoader):
             self.get_augmentation_tuples(self.context_products)
         # self.augmented_products, self.augmented_columns =\
         #     self.dataset_schema.get_augmentation_tuples(self.context_products)
-        self.augmented_columns = self.fill_col(self.augmented_columns)
+        # self.augmented_columns = self.fill_col(self.augmented_columns)
 
     def get_augmentation_tuples(self, products):
         columns, products = self.dataset_schema.get_ds_augmenter().column_products(products) 
