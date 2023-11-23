@@ -80,20 +80,25 @@ class SummaryTagger(RunInference):
         summary_values = defaultdict(set)
         i = 0
         for product in products:
-            product_summary = {}
-            product_summary[self.primary_key] = product[self.primary_key]
-            query = self.get_query(product)
-            prompt = self.get_prompt(query)
-            inferred_tags = self.run_inference(prompt)
-            for summary_value in eval(inferred_tags):
-                tag = ColumnTransformer.fil_col(summary_value[0])
-                value = summary_value[1]
-                product_summary[tag] = value
-                summary_values[tag].add(value)
-                if self.is_verbose:
-                    print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
-            product_summaries.append(product_summary)                    
-            i+=1
+            try:
+                product_summary = {}
+                product_summary[self.primary_key] = product[self.primary_key]
+                query = self.get_query(product)
+                prompt = self.get_prompt(query)
+                inferred_tags = self.run_inference(prompt)
+                for summary_value in eval(inferred_tags):
+                    tag = ColumnTransformer.fil_col(summary_value[0])
+                    value = summary_value[1]
+                    product_summary[tag] = value
+                    summary_values[tag].add(value)
+                    if self.is_verbose:
+                        print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
+                product_summaries.append(product_summary)    
+            except Exception as e:
+                pass                
+            if i%50:
+                print("..." + str(i))
+            i+=1                
         return summary_values, product_summaries 
     
     def get_query(self, product):
