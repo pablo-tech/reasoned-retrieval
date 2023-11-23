@@ -6,6 +6,12 @@ import sqlite3
 from collections import defaultdict
 
 
+class ColumnTransformer():
+
+    def fill_col(columns):
+        return [col.replace(" ", "_") for col in columns]
+
+
 class DatabaseInstance():
     
     def __init__(self, 
@@ -23,12 +29,14 @@ class DatabaseInstance():
 class SchemaCreator(DatabaseInstance):
 
     def __init__(self, 
-                 domain_name, domain_datasets, selected_columns,
+                 domain_name, domain_datasets, 
+                 selected_columns, primary_key,
                  completion_llm, is_verbose):
         super().__init__()
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
+        self.primary_key = primary_key
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
         self.domain_schema = DomainSchema(data_sets=self.domain_datasets,
@@ -50,8 +58,8 @@ class SchemaCreator(DatabaseInstance):
         except Exception as e:
           print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
 
-    def create_sql(self, table_name, primary_key, column_names):
-        column_names = self.non_primary(primary_key, column_names)
+    def create_sql(self, table_name, column_names):
+        column_names = self.non_primary(self.primary_key, column_names)
         column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
         column_names = " ".join(column_names)
         return f"""
@@ -110,12 +118,6 @@ class DatasetReducer():
         return enum_vals    
 
 
-class ColumnTransformer():
-
-    def fill_col(columns):
-        return [col.replace(" ", "_") for col in columns]
-
-
 class DatasetAugmenter():
 
     def __init__(self, summarize_columns, primary_key,
@@ -136,7 +138,8 @@ class DatasetSchema(SchemaCreator):
                  domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
-        super().__init__(domain_name, domain_datasets, picked_columns,  
+        super().__init__(domain_name, domain_datasets, 
+                         picked_columns, primary_key,
                          completion_llm, is_verbose)
         self.domain_name = domain_name
         self.domain_datasets = domain_datasets
