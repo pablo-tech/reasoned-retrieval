@@ -48,9 +48,8 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextLoader(TableLoader):
 
-    def __init__(self, dataset_schema, context_products, picked_enums):
+    def __init__(self, dataset_schema, picked_enums):
         super().__init__(dataset_schema, "CONTEXT")
-        self.context_products = context_products
         self.picked_enums = picked_enums
         self.context_columns = self.dataset_schema.reduction_columns()
             
@@ -71,12 +70,6 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title
 Question: "Glassses for women?"
 Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
-
-    def product_columns(self):
-        return self.get_products(), self.get_columns()
-
-    def get_products(self):
-        return self.context_products
     
     def get_columns(self):
         return self.context_columns
@@ -87,13 +80,11 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
     
 class InferenceLoader(TableLoader):
 
-    def __init__(self, dataset_schema, picked_enums): # context_products, 
+    def __init__(self, dataset_schema, picked_enums): 
         super().__init__(dataset_schema, "INFERENCE")
         self.picked_enums = picked_enums
         self.augmented_columns, self.augmented_products =\
             self.dataset_schema.augmentation_column_products()
-        # self.augmented_columns, self.augmented_products =\
-        #     self.dataset_schema.augmentation_column_products(context_products)
 
     def get_fewshot_examples(self):
         return f"""        
@@ -104,9 +95,6 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE product_size = 'Guess';
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT * FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
-
-    def product_columns(self):
-        return self.get_products(), self.get_columns()
 
     def get_products(self):
         return self.augmented_products
@@ -133,11 +121,9 @@ class GiftLoader():
                                             summarize_columns=['title', 'description'],
                                             completion_llm=completion_llm)
         self.context_loader = ContextLoader(self.dataset_schema, 
-                                            self.dataset_schema.get_working_products(),
                                             picked_enums=['brand', 'colors', 
                                                           'category', 'store', 'gender'])
         self.inference_loader = InferenceLoader(self.dataset_schema, 
-                                                # self.dataset_schema.get_working_products(),
                                                 picked_enums=['product_brand', 'product_color',
                                                               'product_type', 'product_capacity',
                                                               'product_size', 'product_feature'])
