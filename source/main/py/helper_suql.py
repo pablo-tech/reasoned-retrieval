@@ -144,8 +144,10 @@ class DatasetSchema(SchemaCreator):
     def get_working_products(self):
         return self.working_products
 
-    def augmentation_column_products(self, products):
-        return self.ds_augmenter.column_products(products) 
+    def augmentation_column_products(self):
+        return self.ds_augmenter.column_products(self.working_products) 
+    # def augmentation_column_products(self, products):
+    #     return self.ds_augmenter.column_products(products) 
     
     def reduction_columns(self):
         return self.ds_reducer.columns(self.column_names()) 

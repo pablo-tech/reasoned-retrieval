@@ -85,7 +85,6 @@ Answer: SELECT * FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND tit
         return self.picked_enums
 
     
-
 class InferenceLoader(TableLoader):
 
     def __init__(self, dataset_schema, context_products, picked_enums):
