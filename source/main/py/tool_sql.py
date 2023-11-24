@@ -1,4 +1,4 @@
-from helper_parser import ContextParser, InferenceParser
+from helper_suql import ContextParser, InferenceParser
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
     
 
