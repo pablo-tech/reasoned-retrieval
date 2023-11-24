@@ -64,7 +64,7 @@ class DatasetReducer():
         reduced = [col for col in columns if col in self.picked_columns]
         return DataTransformer.fill_cols(reduced)    
 
-    def find_enum_values(self, picked_enums, products):
+    def set_enum_values(self, picked_enums, products):
         enum_vals = defaultdict(set)
         for product in products:
             for col in picked_enums:
@@ -154,8 +154,8 @@ INSERT INTO {table_name} VALUES {table_rows}
                                self.get_columns())
     
     def get_enum_values(self):
-        return self.enum_values(self.get_enums(),
-                                self.get_products())
+        return self.set_enum_values(self.get_enums(),
+                                    self.get_products())
     
     def get_enums(self):
         return self.picked_enums
@@ -212,7 +212,7 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
         return self.ds_reducer.columns(self.column_names()) 
 
     def enum_values(self, picked_enums, from_products):
-        return self.ds_reducer.find_enum_values(picked_enums, 
+        return self.ds_reducer.set_enum_values(picked_enums, 
                                                 from_products)
 
     
