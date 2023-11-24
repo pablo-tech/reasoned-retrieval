@@ -1,5 +1,5 @@
 from domain_knowledge import DomainSchema
-from source.main.py.helper_parser import SummaryTagger, ColumnTransformer
+from helper_parser import SummaryTagger, ColumnTransformer
 
 from collections import defaultdict
 
