@@ -254,7 +254,7 @@ ON context.id = inference.id
                  **self.inference_parser.get_enum_values() }
 
     def get_columns(self):
-        return ["context.id", "inference.title"]    
+        return ["inference.id", "context.title"]    
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
