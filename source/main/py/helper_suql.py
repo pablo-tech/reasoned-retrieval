@@ -94,17 +94,17 @@ class DatasetSchema(SchemaCreator):
 
     def __init__(self, n,
                  domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,
+                 picked_columns, primary_key, 
                  completion_llm, is_verbose=False):
         super().__init__(domain_name, domain_datasets, 
                          picked_columns, primary_key,
                          completion_llm, is_verbose)
         self.working_products = self.set_products(n)
-        self.domain_name = domain_name
-        self.domain_datasets = domain_datasets
-        self.picked_columns = picked_columns        
-        self.primary_key = primary_key
-        self.completion_llm = completion_llm     
+        # self.domain_name = domain_name
+        # self.domain_datasets = domain_datasets
+        # self.picked_columns = picked_columns        
+        # self.primary_key = primary_key
+        # self.completion_llm = completion_llm     
 
     def set_products(self, n):
         products = self.get_domain_products()
@@ -116,10 +116,10 @@ class DatasetSchema(SchemaCreator):
 class DatasetLoader(DatasetSchema):
 
     def __init__(self, n, nick_name, domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,
+                 picked_columns, primary_key, 
                  completion_llm, is_verbose=False):
         super().__init__(n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,
+                 picked_columns, primary_key, 
                  completion_llm, is_verbose)
         self.nick_name = nick_name
         self.table_name = self.get_domain_name() + "_" + self.nick_name
@@ -177,8 +177,8 @@ class ContextParser(DatasetLoader):
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
-        self.reduction_products = self.reduction_products()
-        self.reduction_columns = self.reduction_columns()
+        self.context_products = self.reduction_products()
+        self.context_columns = self.reduction_columns()
             
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -200,10 +200,10 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
 """
     
     def get_products(self):
-        return self.reduction_products
+        return self.context_products
 
     def get_columns(self):
-        return self.reduction_columns
+        return self.context_columns
 
     def reduction_products(self):
         return self.working_products
@@ -222,7 +222,7 @@ class InferenceParser(DatasetLoader):
                  picked_columns, primary_key, summarize_columns, picked_enums, 
                  completion_llm, is_verbose=False): 
         super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,  
+                 picked_columns, primary_key,  
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
