@@ -246,7 +246,7 @@ ON context.id = inference.id
         #          **self.inference_parser.get_enum_values() }
 
     def get_columns(self):
-        columns = ["context.id", "context.id", "context.price"] 
+        columns = ["context.id", "context.price", "context.title"] 
         columns += ["inference."+col for col in self.inference_parser.get_enums()]
         return columns    
 
