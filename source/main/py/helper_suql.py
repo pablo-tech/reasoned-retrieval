@@ -87,7 +87,7 @@ class DatasetAugmenter():
         columns, products = self.tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
-        return ColumnTransformer.fill_cols(columns), products
+        return DataTransformer.fill_cols(columns), products
     
 
 class DatasetSchema(SchemaCreator):
@@ -227,6 +227,8 @@ class InferenceParser(DatasetLoader):
         self.picked_enums = picked_enums
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
+        self.inference_columns, self.inference_products =\
+                self.augmentation_column_products()
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -240,18 +242,10 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
 """
 
     def get_products(self):
-        return self.augmentation_products()
+        return self.inference_products
 
     def get_columns(self):
-        return self.augmentation_columns()    
+        return self.inference_columns    
     
-    def augmentation_products(self):
-        column, products = self.augmentation_column_products()
-        return products
-
-    def augmentation_columns(self):
-        column, products = self.augmentation_column_products()
-        return column
-
     def augmentation_column_products(self):
         return self.ds_augmenter.column_products(self.working_products) 
