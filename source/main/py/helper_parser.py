@@ -141,19 +141,17 @@ class SummaryTagger(RunInference):
         i = 0
         for product in products:
             try:
-                product_summary = {}
-                product_summary[self.primary_key] = product[self.primary_key]
-                query = self.get_query(product)
-                prompt = self.get_prompt(query)
-                inferred_tags = self.run_inference(prompt)
+                reduced_product = {}
+                reduced_product[self.primary_key] = product[self.primary_key]
+                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product)))
                 for summary_value in eval(inferred_tags):
                     tag = DataTransformer.fil_col(summary_value[0])
                     value = summary_value[1]
-                    product_summary[tag] = value
+                    reduced_product[tag] = value
                     summary_values[tag].add(value)
                     if self.is_verbose:
                         print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
-                product_summaries.append(product_summary)    
+                product_summaries.append(reduced_product)    
             except Exception as e:
                 pass                
             if i%25 == 0:
@@ -161,14 +159,14 @@ class SummaryTagger(RunInference):
             i+=1                
         return summary_values, product_summaries 
     
-    def get_query(self, product):
+    def get_product_str(self, product):
         query = "" # TODO: if too long, summarize
         for column in self.summarize_columns:
             if column != self.primary_key:
                 query += str(product[column]) + "\n"
         return query
             
-    def get_prompt(self, query):
+    def get_prompt(self, product_str):
         return f"""
 You are an AI expert at asking at formulating brief classifications that can be answered by a text,
 as well as identifying the instantiation of that classification.
@@ -184,6 +182,6 @@ Answer:
 Question: Aristocrat 32 Ltrs Green Medium Backpack
 Answer: 
 [("product brand", "Aristocrat"), ("product capacity", "32 Ltrs"), ("product color", "green"), ("product size", "medium"), ("product type", "backpack")]
-Question: {query}
+Question: {product_str}
 """
     
