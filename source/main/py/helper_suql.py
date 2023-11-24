@@ -173,7 +173,19 @@ class DatasetAugmenter():
     def __init__(self, summarize_columns, primary_key,
                  completion_llm, is_verbose):
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
-                                            completion_llm, is_verbose) 
+                                            completion_llm, is_verbose)
+        self.column_annotation = { "for_people": ["style_setters", "wellness_lovers", "fitness_buffs", 
+                                                  "gamers", "home_chefs", "gear_heads", "DIYers",
+                                                  "adventure_seekers", "trending_gifts"],
+                                    "shop_gifts": ["for_her", "for_him", "for_teens", "for_kids",
+                                                   "babies_and_toddlers", "for_pets"],
+                                    "by_category": ["toys", "electronics", "fashion", "home_and_kitchen",
+                                                    "sports_and_outdoors", "beauty"],
+                                    "holiday_shopping": ["delas", "most_loved_gifts", "decor",
+                                                         "gifts_for_all", "toys", "stocking_stuffers",
+                                                         "unique_gifts", "hosting_essentials", "white_elephant",
+                                                         "same_day_delivery"]
+                                                    }
 
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
