@@ -110,7 +110,10 @@ class SqlSemanticParser(RunInference):
             i = 0
             for value in row:
                 if value != '':
-                    item[result_columns[i]] = value
+                    key = result_columns[i]
+                    if key == 'price':
+                        value = float(value)
+                    item[key] = value
                 i+=1
             items.append(item)
         return items
