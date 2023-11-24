@@ -249,11 +249,15 @@ class WholisticParser():
 ON context.id = inference.id
 """        
 
+    def get_enum_values(self):
+        return { **self.context_parser.get_enum_values(), 
+                 **self.inference_parser.get_enum_values() }
+
     def get_columns(self):
-        return ["context.id", "inference.title"]
+        return ["context.id", "inference.title"]    
 
     def get_fewshot_examples(self):
-        columns = ",".join(self.get_columns())
+        columns = ", ".join(self.get_columns())
         return f"""        
 Question: what backpacks do you have? 
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_types = 'backpack';
