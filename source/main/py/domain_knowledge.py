@@ -5,8 +5,6 @@ from collections import defaultdict
 
 from flatten_json import flatten
 
-import sqlite3
-
 
 class JsonReader():
 
@@ -141,25 +139,10 @@ class GiftDataset2(DomainDataset):
             corpus[str(uuid.uuid1())] = product
         return DatasetValidation.valid_corpus(corpus)     
 
-    
-class DatabaseInstance():
-    
-    def __init__(self, 
-                 database_name="tutorial.db"):
-        self.db_connection = sqlite3.connect(database_name)
-        self.db_cursor = self.db_connection.cursor()
 
-    def get_db_connection(self):
-        return self.db_connection
-
-    def get_db_cursor(self):
-        return self.db_cursor
-
-
-class DomainIngestion(DatabaseInstance):
+class DomainIngestion():
 
     def __init__(self, data_sets, completion_llm, is_verbose):
-        super().__init__()
         self.data_sets = data_sets
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose

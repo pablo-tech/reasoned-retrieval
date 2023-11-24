@@ -54,12 +54,13 @@ class DatasetLoader(SchemaCreator):
 
     def __init__(self, n, nick_name, domain_name, domain_datasets, 
                  picked_columns, primary_key, 
-                 completion_llm, is_verbose=False):
+                 db_instance, completion_llm, is_verbose=False):
         super().__init__(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, 
                  completion_llm, is_verbose)
         self.nick_name = nick_name
         self.table_name = self.get_domain_name() + "_" + self.nick_name
+        self.db_instance = db_instance
 
     def load_items(self):
         columns, rows, insert_sql = self.prepare_load()
@@ -78,8 +79,8 @@ class DatasetLoader(SchemaCreator):
 
     def execute_load(self, columns, insert_sql):
         self.create_table(self.table_name, columns)
-        self.get_db_cursor().execute(insert_sql)
-        self.get_db_connection().commit()
+        self.db_instance.get_db_cursor().execute(insert_sql)
+        self.db_instance.get_db_connection().commit()
     
     def get_sql(self, table_name, table_rows):
         return f"""
@@ -123,10 +124,10 @@ class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, 
-                 completion_llm, is_verbose=False):
+                 db_instance, completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, 
-                 completion_llm, is_verbose)
+                 db_instance, completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
@@ -205,10 +206,10 @@ class InferenceParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns,  
-                 completion_llm, is_verbose=False): 
+                 db_instance, completion_llm, is_verbose=False): 
         super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key,  
-                 completion_llm, is_verbose)
+                 db_instance, completion_llm, is_verbose)
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
