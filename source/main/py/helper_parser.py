@@ -4,13 +4,33 @@ from langchain.chat_models import ChatOpenAI
 
 
 
-class ColumnTransformer():
+class DataTransformer():
 
     def fil_col(column):
         return column.replace(" ", "_")
     
     def fill_cols(columns):
-        return [ColumnTransformer.fil_col(col) for col in columns]
+        return [DataTransformer.fil_col(col) for col in columns]                
+
+    def product_strs(products, all_columns, primary_key):
+        rows = ""
+        unique_id = set()
+        for product in products:
+            if product[primary_key] not in unique_id:
+              unique_id.add(product[primary_key])
+              values = []
+              for column in all_columns:
+                  value = ''
+                  try:
+                    value = product[column]
+                  except:
+                    pass
+                  values.append(value)
+              if len(rows) == 0:
+                  rows += "\n" + str(tuple(values))
+              else:
+                  rows += ",\n" + str(tuple(values))
+        return rows                  
 
 
 class RunInference():
@@ -95,7 +115,7 @@ class SummaryTagger(RunInference):
                 prompt = self.get_prompt(query)
                 inferred_tags = self.run_inference(prompt)
                 for summary_value in eval(inferred_tags):
-                    tag = ColumnTransformer.fil_col(summary_value[0])
+                    tag = DataTransformer.fil_col(summary_value[0])
                     value = summary_value[1]
                     product_summary[tag] = value
                     summary_values[tag].add(value)

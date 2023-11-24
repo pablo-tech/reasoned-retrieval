@@ -1,5 +1,5 @@
 from domain_knowledge import DomainSchema
-from helper_parser import SummaryTagger, ColumnTransformer
+from helper_parser import SummaryTagger, DataTransformer
 
 from collections import defaultdict
 
@@ -62,27 +62,7 @@ class DatasetReducer():
     def columns(self, domain_columns):
         columns = self.unique_columns(domain_columns)
         reduced = [col for col in columns if col in self.picked_columns]
-        return ColumnTransformer.fill_cols(reduced)    
-
-    def product_strs(self, products, all_columns):
-        rows = ""
-        unique_id = set()
-        for product in products:
-            if product[self.primary_key] not in unique_id:
-              unique_id.add(product[self.primary_key])
-              values = []
-              for column in all_columns:
-                  value = ''
-                  try:
-                    value = product[column]
-                  except:
-                    pass
-                  values.append(value)
-              if len(rows) == 0:
-                  rows += "\n" + str(tuple(values))
-              else:
-                  rows += ",\n" + str(tuple(values))
-        return rows                  
+        return DataTransformer.fill_cols(reduced)    
 
     def find_enum_values(self, picked_enums, products):
         enum_vals = defaultdict(set)
@@ -153,7 +133,7 @@ class DatasetLoader(DatasetSchema):
         products, columns = self.get_product_columns()
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
-        rows = self.get_tuple_strs(products, columns)
+        rows = DataTransformer.product_strs(products, columns, self.primary_key)
         print("ROWS=>" + str(rows))
         insert_sql = self.get_sql(self.table_name, rows)
         # print("INSERT_SQL=>"+str(insert_sql))
@@ -197,6 +177,8 @@ class ContextParser(DatasetLoader):
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
+        self.reduction_products = self.reduction_products()
+        self.reduction_columns = self.reduction_columns()
             
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -218,10 +200,10 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
 """
     
     def get_products(self):
-        return self.reduction_products()
+        return self.reduction_products
 
     def get_columns(self):
-        return self.reduction_columns()
+        return self.reduction_columns
 
     def reduction_products(self):
         return self.working_products
@@ -232,9 +214,6 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
     def enum_values(self, picked_enums, from_products):
         return self.ds_reducer.find_enum_values(picked_enums, 
                                                 from_products)
-
-    def get_tuple_strs(self, products, columns):
-        return self.ds_reducer.product_strs(products, columns)
 
     
 class InferenceParser(DatasetLoader):
