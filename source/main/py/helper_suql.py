@@ -211,7 +211,7 @@ class InferenceParser(DatasetLoader):
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
-                                                           self.get_products()
+                                                           self.get_products(),
                                                            [self.primary_key])        
 
     def get_fewshot_examples(self):
