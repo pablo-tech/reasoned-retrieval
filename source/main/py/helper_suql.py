@@ -175,11 +175,18 @@ class DatasetAugmenter():
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
                                             completion_llm, is_verbose) 
 
-    def column_products(self, products): 
+    def column_products(self, working_products): 
+        columns, products = self.summary_column_products(working_products)
+        return self.annotation_column_products(columns, products)
+    
+    def summary_column_products(self, products): 
         columns, products = self.summary_tagger.invoke(products)
         columns = sorted(list(columns.keys()))
         columns = [self.summary_tagger.primary_key] + columns
         return DataTransformer.fill_cols(columns), products
+    
+    def annotation_column_products(self, columns, products):
+        return columns, products
 
 
 class InferenceParser(DatasetLoader):
