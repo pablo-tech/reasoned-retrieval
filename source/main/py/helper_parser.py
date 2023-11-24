@@ -94,11 +94,11 @@ class SqlSemanticParser(RunInference):
         # print(product_parser.get_columns())
         # print(query_sql)
         response = self.db_cursor.execute(query_sql)
-        return self.response(query_sql,
-                             product_parser.get_columns(),
-                            [row for row in response][:n])
+        return self.new_response(query_sql,
+                                 product_parser.get_columns(),
+                                 [row for row in response][:n])
     
-    def response(self, query_sql, result_columns, result_rows):
+    def new_response(self, query_sql, result_columns, result_rows):
         return { "user_state": self.user_state(query_sql),
                  "result_columns": [self.simple_name(column) for column in result_columns],
                  "result_rows": result_rows}
