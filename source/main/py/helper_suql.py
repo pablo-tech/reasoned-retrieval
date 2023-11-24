@@ -250,11 +250,12 @@ ON context.id = inference.id
 """.replace("\n", " ")        
 
     def get_enum_values(self):
-        return { **self.context_parser.get_enum_values(), 
-                 **self.inference_parser.get_enum_values() }
+        return self.inference_parser.get_enum_values()
+        # return { **self.context_parser.get_enum_values(), 
+        #          **self.inference_parser.get_enum_values() }
 
     def get_columns(self):
-        return ["inference.id", "context.title"]    
+        return ["context.id", "context.title"] + ["inference."+col for col in self.inference_parser.get_enums()]    
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -262,7 +263,7 @@ ON context.id = inference.id
 Question: what backpacks do you have? 
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_types = 'backpack';
 Question: what 22 liter backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 ltrs';
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_wheel_type = '2 wheel';
 """
