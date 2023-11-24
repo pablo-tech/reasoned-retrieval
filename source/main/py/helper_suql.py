@@ -125,40 +125,13 @@ class DatasetSchema(SchemaCreator):
         self.picked_columns = picked_columns        
         self.primary_key = primary_key
         self.completion_llm = completion_llm     
-        self.ds_reducer = DatasetReducer(primary_key, picked_columns)
-        self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
-                                             completion_llm, is_verbose)
-    
+
     def set_products(self, n):
         products = self.get_domain_products()
         if n is not None:
             products = products[:n]
         return products
-    
-    def reduction_products(self):
-        return self.working_products
-
-    def reduction_columns(self):
-        return self.ds_reducer.columns(self.column_names()) 
-    
-    def enum_values(self, picked_enums, from_products):
-        return self.ds_reducer.find_enum_values(picked_enums, 
-                                                from_products)
-
-    def get_tuple_strs(self, products, columns):
-        return self.ds_reducer.product_strs(products, columns)
-
-    def augmentation_products(self):
-        column, products = self.augmentation_column_products()
-        return products
-
-    def augmentation_columns(self):
-        column, products = self.augmentation_column_products()
-        return column
-
-    def augmentation_column_products(self):
-        return self.ds_augmenter.column_products(self.working_products) 
-
+        
 
 class DatasetLoader(DatasetSchema):
 
@@ -223,8 +196,7 @@ class ContextParser(DatasetLoader):
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
-        self.reduction_products = self.reduction_products()
-        self.reduction_columns = self.reduction_columns()
+        self.ds_reducer = DatasetReducer(primary_key, picked_columns)
             
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -246,11 +218,24 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
 """
     
     def get_products(self):
-        return self.reduction_products
+        return self.reduction_products()
 
     def get_columns(self):
-        return self.reduction_columns
-    
+        return self.reduction_columns()
+
+    def reduction_products(self):
+        return self.working_products
+
+    def reduction_columns(self):
+        return self.ds_reducer.columns(self.column_names()) 
+
+    def enum_values(self, picked_enums, from_products):
+        return self.ds_reducer.find_enum_values(picked_enums, 
+                                                from_products)
+
+    def get_tuple_strs(self, products, columns):
+        return self.ds_reducer.product_strs(products, columns)
+
     
 class InferenceParser(DatasetLoader):
 
@@ -261,8 +246,8 @@ class InferenceParser(DatasetLoader):
                  picked_columns, primary_key, summarize_columns,  
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
-        self.augmentation_columns = self.augmentation_columns()
-        self.augmentation_products = self.augmentation_products()
+        self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
+                                             completion_llm, is_verbose)        
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -276,7 +261,18 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
 """
 
     def get_products(self):
-        return self.augmentation_products
+        return self.augmentation_products()
 
     def get_columns(self):
-        return self.augmentation_columns    
+        return self.augmentation_columns()    
+    
+    def augmentation_products(self):
+        column, products = self.augmentation_column_products()
+        return products
+
+    def augmentation_columns(self):
+        column, products = self.augmentation_column_products()
+        return column
+
+    def augmentation_column_products(self):
+        return self.ds_augmenter.column_products(self.working_products) 
