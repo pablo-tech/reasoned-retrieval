@@ -47,37 +47,7 @@ class SchemaCreator(DomainSchema):
     """
 
     def non_primary(self, primary_key, column_names):
-        return sorted([name for name in column_names if name!=primary_key])
-    
-
-class DatasetReducer():
-
-    def __init__(self, primary_key, picked_columns):
-        self.primary_key = primary_key
-        self.picked_columns = picked_columns
-
-    def unique_columns(self, column_names):
-        return [self.primary_key] + [col for col in column_names 
-                                     if col!=self.primary_key]
-
-    def columns(self, domain_columns):
-        columns = self.unique_columns(domain_columns)
-        reduced = [col for col in columns if col in self.picked_columns]
-        return DataTransformer.fill_cols(reduced)    
-
-
-class DatasetAugmenter():
-
-    def __init__(self, summarize_columns, primary_key,
-                 completion_llm, is_verbose):
-        self.tagger = SummaryTagger(summarize_columns, primary_key,
-                                    completion_llm, is_verbose) 
-
-    def column_products(self, products): 
-        columns, products = self.tagger.invoke(products)
-        columns = sorted(list(columns.keys()))
-        columns = [self.tagger.primary_key] + columns
-        return DataTransformer.fill_cols(columns), products
+        return sorted([name for name in column_names if name!=primary_key]) 
             
 
 class DatasetLoader(SchemaCreator):
@@ -130,12 +100,28 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.get_products(), self.get_columns()
     
 
-class ContextParser(SchemaCreator):
+class DatasetReducer():
+
+    def __init__(self, primary_key, picked_columns):
+        self.primary_key = primary_key
+        self.picked_columns = picked_columns
+
+    def unique_columns(self, column_names):
+        return [self.primary_key] + [col for col in column_names 
+                                     if col!=self.primary_key]
+
+    def columns(self, domain_columns):
+        columns = self.unique_columns(domain_columns)
+        reduced = [col for col in columns if col in self.picked_columns]
+        return DataTransformer.fill_cols(reduced)   
+
+
+class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, picked_enums, 
                  completion_llm, is_verbose=False):
-        super().__init__(n, domain_name+"_"+"CONTEXT", domain_datasets, 
+        super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, 
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
@@ -186,13 +172,27 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
         return self.ds_reducer.set_enum_values(picked_enums, 
                                                 from_products)
 
-    
+
+class DatasetAugmenter():
+
+    def __init__(self, summarize_columns, primary_key,
+                 completion_llm, is_verbose):
+        self.tagger = SummaryTagger(summarize_columns, primary_key,
+                                    completion_llm, is_verbose) 
+
+    def column_products(self, products): 
+        columns, products = self.tagger.invoke(products)
+        columns = sorted(list(columns.keys()))
+        columns = [self.tagger.primary_key] + columns
+        return DataTransformer.fill_cols(columns), products
+
+
 class InferenceParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
                  completion_llm, is_verbose=False): 
-        super().__init__(n, domain_name+"_"+"INFERENCE", domain_datasets, 
+        super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key,  
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
