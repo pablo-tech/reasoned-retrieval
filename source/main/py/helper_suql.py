@@ -195,7 +195,7 @@ class InferenceParser(DatasetLoader):
         super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key,  
                  completion_llm, is_verbose)
-        self.picked_enums = picked_enums
+        # self.picked_enums = picked_enums
         self.ds_augmenter = DatasetAugmenter(summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
@@ -217,10 +217,13 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
 """
 
     def get_enums(self):
-        return self.picked_enums
+        return [col for col in self.get_columns() 
+                if col != self.primary_key]
+        # return self.picked_enums
 
     def get_enum_values(self):
-        return self.inference_enum_values
+        return { k: v for k, v in self.inference_enum_values.items()
+                if len(v) > 1}
 
     def get_products(self):
         return self.inference_products
