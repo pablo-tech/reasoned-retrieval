@@ -15,16 +15,12 @@ class GiftOracle():
         primary_key='id'
         summarize_columns=['title', 'description']
         context_enums = ['brand', 'colors', 'category', 'store', 'gender']
-        inference_enums = ['product_brand', 'product_color',
-                           'product_type', 'strap_type', 'closure_type',
-                           'product_capacity', 'product_size', 'product_width', 'product_height', 'product_length', 
-                           ]
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, context_enums, 
-                 completion_llm, is_verbose=False)
+                picked_columns, primary_key, context_enums, 
+                completion_llm, is_verbose=False)
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns, inference_enums, 
-                 completion_llm, is_verbose=False)
+                picked_columns, primary_key, summarize_columns,  
+                completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def get_context_parser(self):
