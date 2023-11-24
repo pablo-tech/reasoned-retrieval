@@ -199,7 +199,7 @@ class InferenceParser(DatasetLoader):
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
-        self.inference_enum_values = DataTransformer.set_enum_values(self.get_columns(),
+        self.inference_enum_values = DataTransformer.set_enum_values(self.get_enums(),
                                                                      self.get_products())        
 
     def get_fewshot_examples(self):
@@ -219,7 +219,7 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
  
     def get_enum_values(self):
         return { k: v for k, v in self.inference_enum_values.items()
-                if k != self.primary_key and len(v) > 1}
+                if len(v) > 1}
 
     def get_products(self):
         return self.inference_products
