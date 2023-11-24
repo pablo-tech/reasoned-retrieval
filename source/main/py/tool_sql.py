@@ -6,22 +6,22 @@ class GiftData():
 
     def __init__(self, n,                 
                  completion_llm):
-        domain_name="CLIQ",
-        domain_datasets=[GiftDataset2()],
+        domain_name="CLIQ"
+        domain_datasets=[GiftDataset2()]
         picked_columns=['id', 'price', 
                         'brand', 'colors',
                         'category', 'store', 'gender',
-                        'title', 'description',],
-        primary_key='id',
-        summarize_columns=['title', 'description'],
+                        'title', 'description',]
+        primary_key='id'
+        summarize_columns=['title', 'description']
         context_enums = ['brand', 'colors', 'category', 'store', 'gender']
         inference_enums = ['product_brand', 'product_color',
                            'product_type', 'product_capacity',
                            'product_size', 'product_feature']
-        self.context_parser = ContextParser(domain_name, domain_datasets, 
+        self.context_parser = ContextParser(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, context_enums, 
                  completion_llm, is_verbose=False)
-        self.inference_parser = InferenceParser(domain_name, domain_datasets, 
+        self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, inference_enums, 
                  completion_llm, is_verbose=False)
 

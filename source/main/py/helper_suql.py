@@ -162,10 +162,10 @@ class DatasetSchema(SchemaCreator):
 
 class TableLoader(DatasetSchema):
 
-    def __init__(self, nick_name, domain_name, domain_datasets, 
+    def __init__(self, n, nick_name, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose=False):
-        super().__init__(domain_name, domain_datasets, 
+        super().__init__(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose)
         self.nick_name = nick_name
@@ -216,10 +216,10 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class ContextParser(TableLoader):
 
-    def __init__(self, domain_name, domain_datasets, 
+    def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
                  completion_llm, is_verbose=False):
-        super().__init__("CONTEXT", domain_name, domain_datasets, 
+        super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
@@ -254,10 +254,10 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
     
 class InferenceParser(TableLoader):
 
-    def __init__(self, domain_name, domain_datasets, 
+    def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
                  completion_llm, is_verbose=False): 
-        super().__init__("INFERENCE", domain_name, domain_datasets, 
+        super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,  
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
