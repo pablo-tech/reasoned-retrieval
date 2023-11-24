@@ -200,8 +200,10 @@ class InferenceParser(DatasetLoader):
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
-        self.inference_enum_values = DataTransformer.set_enum_values(self.get_enums(),
-                                                                     self.get_products())
+        self.inference_enum_values = DataTransformer.set_enum_values(self.get_columns(),
+                                                                     self.get_products())        
+        # self.inference_enum_values = DataTransformer.set_enum_values(self.get_enums(),
+        #                                                              self.get_products())
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())

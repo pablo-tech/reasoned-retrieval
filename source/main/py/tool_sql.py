@@ -16,7 +16,7 @@ class GiftOracle():
         summarize_columns=['title', 'description']
         context_enums = ['brand', 'colors', 'category', 'store', 'gender']
         inference_enums = ['product_brand', 'product_color',
-                           'product_type', 'product_feature', 'strap_type', 'closure_type',
+                           'product_type', 'strap_type', 'closure_type',
                            'product_capacity', 'product_size', 'product_width', 'product_height', 'product_length', 
                            ]
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
