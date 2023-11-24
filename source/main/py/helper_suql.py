@@ -158,3 +158,125 @@ class DatasetSchema(SchemaCreator):
 
     def augmentation_column_products(self):
         return self.ds_augmenter.column_products(self.working_products) 
+
+
+class TableLoader(DatasetSchema):
+
+    def __init__(self, nick_name, domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns,
+                 completion_llm, is_verbose=False):
+        super().__init__(domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns,
+                 completion_llm, is_verbose)
+        self.nick_name = nick_name
+        self.table_name = self.get_domain_name() + "_" + self.nick_name
+
+    def load_items(self):
+        columns, rows, insert_sql = self.prepare_load()
+        self.execute_load(columns, insert_sql)
+        return columns, rows
+
+    def prepare_load(self):
+        products, columns = self.get_product_columns()
+        # print("PRODUCTS=>" + str(products))
+        print("COLUMNS=>" + str(columns))
+        rows = self.get_tuple_strs(products, columns)
+        print("ROWS=>" + str(rows))
+        insert_sql = self.get_sql(self.table_name, rows)
+        # print("INSERT_SQL=>"+str(insert_sql))
+        return columns, rows, insert_sql
+
+    def execute_load(self, columns, insert_sql):
+        self.create_table(self.table_name, columns)
+        self.get_db_cursor().execute(insert_sql)
+        self.get_db_connection().commit()
+    
+    def get_sql(self, table_name, table_rows):
+        return f"""
+INSERT INTO {table_name} VALUES {table_rows}
+"""    
+
+    def schema_sql(self):
+        return self.create_sql(self.get_table_name(), 
+                               self.get_columns())
+    
+    def get_enum_values(self):
+        return self.enum_values(self.get_enums(),
+                                self.get_products())
+    
+    def get_enums(self):
+        return self.picked_enums
+
+    def get_table_name(self):
+        return self.table_name
+
+    def get_product_columns(self):
+        return self.get_products(), self.get_columns()
+    
+
+class ContextParser(TableLoader):
+
+    def __init__(self, domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns, picked_enums, 
+                 completion_llm, is_verbose=False):
+        super().__init__("CONTEXT", domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns,
+                 completion_llm, is_verbose)
+        self.picked_enums = picked_enums
+        self.reduction_products = self.reduction_products()
+        self.reduction_columns = self.reduction_columns()
+            
+    def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
+        return f"""        
+Question: what ARISTOCRAT products do you have? 
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
+Question: what GESTS products do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Guess';
+Question: what are the cheapest Scharf products?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
+Question: "what are the cheapest Carpisa watches?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Question: "What is GW0403L2?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Question: "Bags for men?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Question: "Glassses for women?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+"""
+    
+    def get_products(self):
+        return self.reduction_products
+
+    def get_columns(self):
+        return self.reduction_columns
+    
+    
+class InferenceParser(TableLoader):
+
+    def __init__(self, domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns, picked_enums, 
+                 completion_llm, is_verbose=False): 
+        super().__init__("INFERENCE", domain_name, domain_datasets, 
+                 picked_columns, primary_key, summarize_columns,  
+                 completion_llm, is_verbose)
+        self.picked_enums = picked_enums
+        self.augmentation_columns = self.augmentation_columns()
+        self.augmentation_products = self.augmentation_products()
+
+    def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
+        return f"""        
+Question: what types of products do you have? 
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Question: what 22 ltrs backpacks do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Question: what 2 wheel trolleys do your products have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+"""
+
+    def get_products(self):
+        return self.augmentation_products
+
+    def get_columns(self):
+        return self.augmentation_columns    
