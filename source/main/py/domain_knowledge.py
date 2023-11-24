@@ -178,7 +178,7 @@ class DomainIngestion(DatabaseInstance):
     def ingest_dataset(self, dataset):
         for subdomain_name in dataset.get_subdomains():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
-            print("DATASET_SIZE="+len(subdomain_corpus))
+            print("DATASET_SIZE="+str(len(subdomain_corpus)))
             for key, item in subdomain_corpus.items():
                 try:
                     item = eval(item)
