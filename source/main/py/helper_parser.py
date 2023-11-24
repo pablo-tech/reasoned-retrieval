@@ -42,7 +42,8 @@ class DataTransformer():
                         enum_vals[col].add(vals)
                     except Exception as e:
                         pass
-        return enum_vals    
+        return { k: v for k, v in enum_vals.items()
+                 if len(v) > 1 }    
 
 
 class RunInference():
