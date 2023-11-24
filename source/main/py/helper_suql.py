@@ -247,7 +247,7 @@ class WholisticParser():
 {self.context_parser.get_table_name()} AS context JOIN
 {self.inference_parser.get_table_name()} AS inference 
 ON context.id = inference.id
-"""        
+""".replace("\n", " ")        
 
     def get_enum_values(self):
         return { **self.context_parser.get_enum_values(), 
