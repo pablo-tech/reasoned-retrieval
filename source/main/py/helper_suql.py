@@ -177,13 +177,13 @@ class DatasetAugmenter():
 
     def __init__(self, summarize_columns, primary_key,
                  completion_llm, is_verbose):
-        self.tagger = SummaryTagger(summarize_columns, primary_key,
-                                    completion_llm, is_verbose) 
+        self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
+                                            completion_llm, is_verbose) 
 
     def column_products(self, products): 
-        columns, products = self.tagger.invoke(products)
+        columns, products = self.summary_tagger.invoke(products)
         columns = sorted(list(columns.keys()))
-        columns = [self.tagger.primary_key] + columns
+        columns = [self.summary_tagger.primary_key] + columns
         return DataTransformer.fill_cols(columns), products
 
 
@@ -206,10 +206,10 @@ class InferenceParser(DatasetLoader):
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
-Question: what types of products do you have? 
+Question: what types of backpacks do you have? 
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
-Question: what 22 ltrs backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Question: what 22 litter backpacks do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = '22 ltrs';
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
@@ -228,3 +228,38 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
     
     def augmentation_column_products(self):
         return self.ds_augmenter.column_products(self.working_products) 
+
+
+class WholisticParser():
+
+    def __init__(self, context_parser, inference_parser):
+        self.context_parser = context_parser
+        self.inference_parser = inference_parser
+
+    def schema_sql(self):
+        return f"""
+{self.context_parser.schema_sql()}
+
+{self.inference_parser.schema_sql()}
+"""
+    def get_table_name(self):
+        return f"""
+{self.context_parser.get_table_name()} AS context JOIN
+{self.inference_parser.get_table_name()} AS inference 
+ON context.id = inference.id
+"""        
+
+    def get_columns(self):
+        return ["context.id", "inference.title"]
+
+    def get_fewshot_examples(self):
+        columns = ",".join(self.get_columns())
+        return f"""        
+Question: what backpacks do you have? 
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_types = 'backpack';
+Question: what 22 liter backpacks do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 ltrs';
+Question: what 2 wheel trolleys do your products have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_wheel_type = '2 wheel';
+"""
+

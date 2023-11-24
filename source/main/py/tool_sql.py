@@ -1,8 +1,8 @@
-from helper_suql import ContextParser, InferenceParser
+from helper_suql import ContextParser, InferenceParser, WholisticParser
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
     
 
-class GiftData():
+class GiftOracle():
 
     def __init__(self, n,                 
                  completion_llm):
@@ -16,21 +16,26 @@ class GiftData():
         summarize_columns=['title', 'description']
         context_enums = ['brand', 'colors', 'category', 'store', 'gender']
         inference_enums = ['product_brand', 'product_color',
-                           'product_type', 'product_capacity',
-                           'product_size', 'product_feature']
+                           'product_type', 'product_feature', 'strap_type', 'closure_type',
+                           'product_capacity', 'product_size', 'product_width', 'product_height', 'product_length', 
+                           ]
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, context_enums, 
                  completion_llm, is_verbose=False)
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, inference_enums, 
                  completion_llm, is_verbose=False)
+        self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def get_context_parser(self):
         return self.context_parser
 
     def get_inference_parser(self):
         return self.inference_parser
-    
+
+    def get_wholistic_parser(self):
+        return self.wholistic_parser
+
     def get_db_cursor(self):
         return self.context_parser.get_db_cursor()
 

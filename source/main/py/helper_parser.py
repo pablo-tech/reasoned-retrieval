@@ -66,26 +66,28 @@ class RunInference():
 
 class SqlSemanticParser(RunInference):
 
-    def __init__(self, # db_cursor,
-                 domain_loader,
+    def __init__(self, 
+                 domain_oracle,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
-        # self.db_cursor = db_cursor
-        self.domain_loader = domain_loader
-        self.db_cursor = self.domain_loader.get_db_cursor()
+        self.domain_oracle = domain_oracle
+        self.db_cursor = self.domain_oracle.get_db_cursor()
 
     def invoke_context(self, query):
-        return self.invoke(query, self.domain_loader.get_context_parser())
+        return self.invoke(query, self.domain_oracle.get_context_parser())
 
     def invoke_inference(self, query):
-        return self.invoke(query, self.domain_loader.get_inference_parser())
+        return self.invoke(query, self.domain_oracle.get_inference_parser())
 
-    def invoke(self, query, product_parser):
-        prompt = self.get_prompt(query, product_parser)
-        inferred_sql = self.run_inference(prompt)
+    def invoke_wholistic(self, query):
+        return self.invoke(query, self.domain_oracle.get_wholistic_parser())
+
+    def invoke(self, query_english, product_parser):
+        prompt = self.get_prompt(query_english, product_parser)
+        query_sql = self.run_inference(prompt)
         print(product_parser.get_columns())
-        print(inferred_sql)
-        response = self.db_cursor.execute(inferred_sql)
+        print(query_sql)
+        response = self.db_cursor.execute(query_sql)
         return [row for row in response]
             
     def get_prompt(self, question, product_parser):
