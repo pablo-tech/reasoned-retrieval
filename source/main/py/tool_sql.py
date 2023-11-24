@@ -95,14 +95,14 @@ class InferenceParser(TableLoader):
         self.augmentation_products = self.dataset_schema.augmentation_products()
 
     def get_fewshot_examples(self):
-        columns = ", ".join(self.get_columns())
+        # columns = ", ".join(self.get_columns())
         return f"""        
 Question: what types of products do you have? 
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Answer: SELECT id, title FROM {self.get_table_name()} WHERE product_types = 'backpack';
 Question: what 22 ltrs backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Answer: SELECT id, title FROM {self.get_table_name()} WHERE product_size = 'Guess';
 Question: what 2 wheel trolleys do your products have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+Answer: SELECT id, title FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
 
     def get_products(self):

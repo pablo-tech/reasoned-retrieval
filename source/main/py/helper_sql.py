@@ -96,7 +96,7 @@ class SummaryTagger(RunInference):
                 product_summaries.append(product_summary)    
             except Exception as e:
                 pass                
-            if i%50 == 0:
+            if i%25 == 0:
                 print("..." + str(i))
             i+=1                
         return summary_values, product_summaries 
