@@ -135,7 +135,7 @@ class ContextParser(SchemaCreator):
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, picked_enums, 
                  completion_llm, is_verbose=False):
-        super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
+        super().__init__(n, domain_name+"_"+"CONTEXT", domain_datasets, 
                  picked_columns, primary_key, 
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
@@ -192,7 +192,7 @@ class InferenceParser(DatasetLoader):
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
                  completion_llm, is_verbose=False): 
-        super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
+        super().__init__(n, domain_name+"_"+"INFERENCE", domain_datasets, 
                  picked_columns, primary_key,  
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
