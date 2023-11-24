@@ -100,8 +100,20 @@ class SqlSemanticParser(RunInference):
     
     def new_response(self, query_sql, result_columns, result_rows):
         return { "user_state": self.user_state(query_sql),
-                 "result_columns": [self.simple_name(column) for column in result_columns],
-                 "result_rows": result_rows}
+                 "result_items": self.response_items(result_columns, result_rows) }
+    
+    def response_items(self, result_columns, result_rows):
+        result_columns = [self.simple_name(column) for column in result_columns]
+        items = []
+        for row in result_rows:
+            item = {}
+            i = 0
+            for value in row:
+                if value != '':
+                    item[i] = value
+                i+=1
+            items.append(item)
+        return items
     
     def user_state(self, query_sql):
         try:
@@ -112,7 +124,10 @@ class SqlSemanticParser(RunInference):
             return query_sql
     
     def simple_name(self, column_name):
-        return column_name.replace("context.", "").replace("inference.", "")
+        column_name = column_name.replace("context.", "")
+        column_name = column_name.replace("inference.", "")
+        column_name = column_name.replace(";", "")
+        return column_name
             
     def get_prompt(self, question, product_parser):
         prompt = "You are an AI expert semantic parser."
