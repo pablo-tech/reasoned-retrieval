@@ -35,12 +35,13 @@ class RunInference():
 
 class SqlSemanticParser(RunInference):
 
-    def __init__(self, db_cursor,
+    def __init__(self, # db_cursor,
                  domain_loader,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
-        self.db_cursor = db_cursor
+        # self.db_cursor = db_cursor
         self.domain_loader = domain_loader
+        self.db_cursor = self.domain_loader.get_db_cursor()
 
     def invoke_context(self, query):
         return self.invoke(query, self.domain_loader.get_context_parser())

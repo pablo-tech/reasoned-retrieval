@@ -30,6 +30,9 @@ class GiftData():
 
     def get_inference_parser(self):
         return self.inference_parser
+    
+    def get_db_cursor(self):
+        return self.context_parser.get_db_cursor()
 
 
 class ProductRetriever():

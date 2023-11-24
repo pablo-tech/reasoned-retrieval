@@ -160,7 +160,7 @@ class DatasetSchema(SchemaCreator):
         return self.ds_augmenter.column_products(self.working_products) 
 
 
-class TableLoader(DatasetSchema):
+class DatasetLoader(DatasetSchema):
 
     def __init__(self, n, nick_name, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns,
@@ -214,7 +214,7 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.get_products(), self.get_columns()
     
 
-class ContextParser(TableLoader):
+class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
@@ -252,7 +252,7 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
         return self.reduction_columns
     
     
-class InferenceParser(TableLoader):
+class InferenceParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, summarize_columns, picked_enums, 
