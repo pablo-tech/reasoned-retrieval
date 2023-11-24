@@ -176,9 +176,10 @@ class DomainIngestion(DatabaseInstance):
         return self.data_sets
 
     def ingest_dataset(self, dataset):
+        n = 0
         for subdomain_name in dataset.get_subdomains():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
-            print("DATASET_SIZE="+str(len(subdomain_corpus)))
+            n += len(subdomain_corpus)
             for key, item in subdomain_corpus.items():
                 try:
                     item = eval(item)
@@ -193,6 +194,7 @@ class DomainIngestion(DatabaseInstance):
                         self.domain_clean[subdomain_name][key] = clean
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
+        print("DATASET_SIZE="+str(n))                    
     
     def shorten_json(self, long):
         short = {}
