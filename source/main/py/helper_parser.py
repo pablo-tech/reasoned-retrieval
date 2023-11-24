@@ -137,7 +137,7 @@ Question: {query}
 
 class TableLoader():
 
-    def __init__(self, dataset_schema:DatasetSchema, nick_name):
+    def __init__(self, dataset_schema, nick_name):
         self.dataset_schema = dataset_schema
         self.nick_name = nick_name
         self.table_name = self.dataset_schema.get_domain_name() + "_" + self.nick_name
@@ -184,7 +184,7 @@ INSERT INTO {table_name} VALUES {table_rows}
     def get_product_columns(self):
         return self.get_products(), self.get_columns()
     
-    
+
 class ContextParser(TableLoader):
 
     def __init__(self, dataset_schema, picked_enums):
