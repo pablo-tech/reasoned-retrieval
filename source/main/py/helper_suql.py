@@ -9,7 +9,7 @@ class SchemaCreator(DomainSchema):
     def __init__(self, n,
                  domain_name, domain_datasets, 
                  selected_columns, primary_key,
-                 completion_llm, is_verbose):
+                 db_instance, completion_llm, is_verbose):
         super().__init__(n=n, 
                          data_sets=domain_datasets,
                          completion_llm=completion_llm,
@@ -18,6 +18,7 @@ class SchemaCreator(DomainSchema):
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
         self.primary_key = primary_key
+        self.db_instance = db_instance
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
@@ -29,8 +30,8 @@ class SchemaCreator(DomainSchema):
 
     def execute_query(self, create_sql):
         try:
-          self.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
-          self.db_cursor.execute(create_sql)
+          self.db_instance.db_cursor.execute(f"DROP TABLE IF EXISTS {self.domain_name};")
+          self.db_instance.db_cursor.execute(create_sql)
           if self.is_verbose:
               print(create_sql)
         except Exception as e:
@@ -57,7 +58,7 @@ class DatasetLoader(SchemaCreator):
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(n, domain_name, domain_datasets, 
                  picked_columns, primary_key, 
-                 completion_llm, is_verbose)
+                 db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
         self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance

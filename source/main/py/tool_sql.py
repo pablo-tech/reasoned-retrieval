@@ -1,6 +1,8 @@
 from helper_suql import ContextParser, InferenceParser, WholisticParser
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
 
+from model_base import OpenaiBase
+
 import sqlite3
 
 
