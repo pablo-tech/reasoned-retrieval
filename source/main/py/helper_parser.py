@@ -107,7 +107,7 @@ class SqlSemanticParser(RunInference):
         try:
             return query_sql.split("WHERE")[1].strip()
         except:
-            return query_sql
+            return query_sql.replace("context.", "").replace("inference.", "")
             
     def get_prompt(self, question, product_parser):
         prompt = "You are an AI expert semantic parser."
