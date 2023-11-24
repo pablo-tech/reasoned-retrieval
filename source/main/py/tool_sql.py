@@ -33,13 +33,13 @@ class GiftOracle():
         primary_key='id'
         price_column = 'price'
         summarize_columns=['title', 'description']
-        db_instance = DatabaseInstance()
+        self.db_instance = DatabaseInstance()
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns,
-                db_instance, completion_llm, is_verbose=False)
+                self.db_instance, completion_llm, is_verbose=False)
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns,  
-                db_instance, completion_llm, is_verbose=False)
+                self.db_instance, completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def get_context_parser(self):
@@ -52,7 +52,7 @@ class GiftOracle():
         return self.wholistic_parser
 
     def get_db_cursor(self):
-        return self.context_parser.get_db_cursor()
+        return self.db_instance.get_db_cursor()
 
 
 class ProductRetriever():
