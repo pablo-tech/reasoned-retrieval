@@ -100,11 +100,14 @@ INSERT INTO {table_name} VALUES {table_rows}
     #     return self.picked_enums
 
     def get_enums(self):
-        return sorted(list(self.get_enum_values().keys()))
+        return sorted(list(self.select_enum_values().keys()))
  
-    def get_enum_values(self):
-        return { k: v for k, v in self.enum_values.items()
+    def select_enum_values(self):
+        return { k: v for k, v in self.get_enum_values().items()
                 if len(v) > 1}
+    
+    def get_enum_values(self):
+        return self.enum_values
 
 
 class DatasetReducer():
@@ -135,7 +138,7 @@ class ContextParser(DatasetLoader):
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
-        self.enum_values = DataTransformer.set_enum_values(self.get_enums(),
+        self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
                                                           [self.primary_key])
 
