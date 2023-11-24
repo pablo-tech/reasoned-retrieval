@@ -6,11 +6,12 @@ from collections import defaultdict
 
 class SchemaCreator(DomainSchema):
 
-    def __init__(self, 
+    def __init__(self, n,
                  domain_name, domain_datasets, 
                  selected_columns, primary_key,
                  completion_llm, is_verbose):
-        super().__init__(data_sets=domain_datasets,
+        super().__init__(n=n, 
+                         data_sets=domain_datasets,
                          completion_llm=completion_llm,
                          is_verbose=is_verbose)
         self.domain_name = domain_name.upper()
@@ -64,17 +65,6 @@ class DatasetReducer():
         reduced = [col for col in columns if col in self.picked_columns]
         return DataTransformer.fill_cols(reduced)    
 
-    def set_enum_values(self, picked_enums, products):
-        enum_vals = defaultdict(set)
-        for product in products:
-            for col in picked_enums:
-                try:
-                  vals = product[col]
-                  enum_vals[col].add(vals)
-                except Exception as e:
-                  pass
-        return enum_vals    
-
 
 class DatasetAugmenter():
 
@@ -88,32 +78,9 @@ class DatasetAugmenter():
         columns = sorted(list(columns.keys()))
         columns = [self.tagger.primary_key] + columns
         return DataTransformer.fill_cols(columns), products
-    
+            
 
-class DatasetSchema(SchemaCreator):
-
-    def __init__(self, n,
-                 domain_name, domain_datasets, 
-                 picked_columns, primary_key, 
-                 completion_llm, is_verbose=False):
-        super().__init__(domain_name, domain_datasets, 
-                         picked_columns, primary_key,
-                         completion_llm, is_verbose)
-        self.working_products = self.set_products(n)
-        # self.domain_name = domain_name
-        # self.domain_datasets = domain_datasets
-        # self.picked_columns = picked_columns        
-        # self.primary_key = primary_key
-        # self.completion_llm = completion_llm     
-
-    def set_products(self, n):
-        products = self.get_domain_products()
-        if n is not None:
-            products = products[:n]
-        return products
-        
-
-class DatasetLoader(DatasetSchema):
+class DatasetLoader(SchemaCreator):
 
     def __init__(self, n, nick_name, domain_name, domain_datasets, 
                  picked_columns, primary_key, 
@@ -152,11 +119,7 @@ INSERT INTO {table_name} VALUES {table_rows}
     def schema_sql(self):
         return self.create_sql(self.get_table_name(), 
                                self.get_columns())
-    
-    def get_enum_values(self):
-        return self.set_enum_values(self.get_enums(),
-                                    self.get_products())
-    
+        
     def get_enums(self):
         return self.picked_enums
 
@@ -167,7 +130,7 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.get_products(), self.get_columns()
     
 
-class ContextParser(DatasetLoader):
+class ContextParser(SchemaCreator):
 
     def __init__(self, n, domain_name, domain_datasets, 
                  picked_columns, primary_key, picked_enums, 
@@ -179,6 +142,8 @@ class ContextParser(DatasetLoader):
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
+        self.context_enum_values = DataTransformer.set_enum_values(self.get_enums(),
+                                                                   self.get_products())
             
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -199,6 +164,12 @@ Question: "Glassses for women?"
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
+    def get_enums(self):
+        return self.picked_enums
+
+    def get_enum_values(self):
+        return self.context_enum_values
+
     def get_products(self):
         return self.context_products
 
@@ -229,6 +200,8 @@ class InferenceParser(DatasetLoader):
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
+        self.inference_enum_values = DataTransformer.set_enum_values(self.get_enums(),
+                                                                     self.get_products())
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -240,6 +213,12 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Gues
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
+
+    def get_enums(self):
+        return self.picked_enums
+
+    def get_enum_values(self):
+        return self.inference_enum_values
 
     def get_products(self):
         return self.inference_products
