@@ -76,16 +76,19 @@ class SqlSemanticParser(RunInference):
         self.domain_oracle = domain_oracle
         self.db_cursor = self.domain_oracle.get_db_cursor()
 
-    def invoke_context(self, query):
-        return self.invoke(query, self.domain_oracle.get_context_parser())
+    def invoke_context(self, query, n):
+        return self.invoke(query, n,
+                           self.domain_oracle.get_context_parser())
 
-    def invoke_inference(self, query):
-        return self.invoke(query, self.domain_oracle.get_inference_parser())
+    def invoke_inference(self, query, n):
+        return self.invoke(query, n, 
+                           self.domain_oracle.get_inference_parser())
 
-    def invoke_wholistic(self, query):
-        return self.invoke(query, self.domain_oracle.get_wholistic_parser())
+    def invoke_wholistic(self, query, n):
+        return self.invoke(query, n, 
+                           self.domain_oracle.get_wholistic_parser())
 
-    def invoke(self, query_english, product_parser):
+    def invoke(self, query_english, n, product_parser):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
         # print(product_parser.get_columns())
@@ -93,7 +96,7 @@ class SqlSemanticParser(RunInference):
         response = self.db_cursor.execute(query_sql)
         return self.response(query_sql,
                              product_parser.get_columns(),
-                            [row for row in response])
+                            [row for row in response][:n])
     
     def response(self, query_sql, result_columns, result_rows):
         return { "user_state": query_sql, # .split("WHERE")[1]
