@@ -88,10 +88,18 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, product_parser):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
-        print(product_parser.get_columns())
-        print(query_sql)
+        # print(product_parser.get_columns())
+        # print(query_sql)
         response = self.db_cursor.execute(query_sql)
-        return [row for row in response]
+        return self.response(
+            query_sql,
+            product_parser.get_columns(),
+            [row for row in response])
+    
+    def response(self, query_sql, result_columns, result_rows):
+        return { "user_state": query_sql.split("WHERE")[1],
+                 "result_columns": result_columns,
+                 "result_rows": result_rows}
             
     def get_prompt(self, question, product_parser):
         prompt = "You are an AI expert semantic parser."
