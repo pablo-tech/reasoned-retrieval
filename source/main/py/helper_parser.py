@@ -99,7 +99,7 @@ class SqlSemanticParser(RunInference):
                             [row for row in response][:n])
     
     def response(self, query_sql, result_columns, result_rows):
-        return { "user_state": query_sql, # .split("WHERE")[1]
+        return { "user_state": query_sql.split("WHERE")[1],
                  "result_columns": result_columns,
                  "result_rows": result_rows}
             
