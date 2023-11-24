@@ -129,28 +129,17 @@ class DatasetReducer():
 class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, # picked_enums, 
+                 picked_columns, primary_key, price_column,  
                  completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, 
                  completion_llm, is_verbose)
-        # self.picked_enums = picked_enums
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
-                                                          [self.primary_key])
-
-    # def get_enums(self):
-    #     return self.picked_enums
-
-    # def get_enum_values(self):
-    #     return self.context_enum_values
-
-    # def enum_values(self, picked_enums, from_products):
-    #     return self.ds_reducer.set_enum_values(picked_enums, 
-    #                                             from_products)
+                                                          [self.primary_key, price_column])
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -201,7 +190,7 @@ class DatasetAugmenter():
 class InferenceParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,  
+                 picked_columns, primary_key, price_column, summarize_columns,  
                  completion_llm, is_verbose=False): 
         super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key,  
@@ -212,7 +201,7 @@ class InferenceParser(DatasetLoader):
                 self.augmentation_column_products()
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
-                                                           [self.primary_key])        
+                                                           [self.primary_key, price_column])        
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
