@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from langchain.chat_models import ChatOpenAI
 
+from helper_suql import TableLoader
+
 
 class ColumnTransformer():
 
@@ -35,31 +37,37 @@ class RunInference():
 class SqlSemanticParser(RunInference):
 
     def __init__(self, db_cursor,
-                 product_parser,
+                 domain_loader,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
         self.db_cursor = db_cursor
-        self.product_parser = product_parser
+        self.domain_loader = domain_loader
 
-    def invoke(self, query):
-        prompt = self.get_prompt(query)
+    def invoke_context(self, query):
+        return self.invoke(query, self.domain_loader.get_context_parser())
+
+    def invoke_inference(self, query):
+        return self.invoke(query, self.domain_loader.get_inference_parser())
+
+    def invoke(self, query, product_parser):
+        prompt = self.get_prompt(query, product_parser)
         inferred_sql = self.run_inference(prompt)
-        print(self.product_parser.get_columns())
+        print(product_parser.get_columns())
         print(inferred_sql)
         response = self.db_cursor.execute(inferred_sql)
         return [row for row in response]
             
-    def get_prompt(self, question):
+    def get_prompt(self, question, product_parser):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
-        prompt += f"{self.product_parser.schema_sql()}" 
+        prompt += f"{product_parser.schema_sql()}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in self.product_parser.get_enum_values().items():
+        for column, values in product_parser.get_enum_values().items():
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
-        prompt += f"{self.product_parser.get_fewshot_examples()}" + "\n"
+        prompt += f"{product_parser.get_fewshot_examples()}" + "\n"
         prompt += f"Question: {question}" + "\n"
 
         if self.is_verbose:
@@ -126,3 +134,63 @@ Answer:
 [("product brand", "Aristocrat"), ("product capacity", "32 Ltrs"), ("product color", "green"), ("product size", "medium"), ("product type", "backpack")]
 Question: {query}
 """
+    
+
+class ContextParser(TableLoader):
+
+    def __init__(self, dataset_schema, picked_enums):
+        super().__init__(dataset_schema, "CONTEXT")
+        self.picked_enums = picked_enums
+        self.reduction_products = self.dataset_schema.reduction_products()
+        self.reduction_columns = self.dataset_schema.reduction_columns()
+            
+    def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
+        return f"""        
+Question: what ARISTOCRAT products do you have? 
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
+Question: what GESTS products do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Guess';
+Question: what are the cheapest Scharf products?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
+Question: "what are the cheapest Carpisa watches?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Question: "What is GW0403L2?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Question: "Bags for men?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Question: "Glassses for women?"
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+"""
+    
+    def get_products(self):
+        return self.reduction_products
+
+    def get_columns(self):
+        return self.reduction_columns
+    
+    
+class InferenceParser(TableLoader):
+
+    def __init__(self, dataset_schema, picked_enums): 
+        super().__init__(dataset_schema, "INFERENCE")
+        self.picked_enums = picked_enums
+        self.augmentation_columns = self.dataset_schema.augmentation_columns()
+        self.augmentation_products = self.dataset_schema.augmentation_products()
+
+    def get_fewshot_examples(self):
+        columns = ", ".join(self.get_columns())
+        return f"""        
+Question: what types of products do you have? 
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Question: what 22 ltrs backpacks do you have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = 'Guess';
+Question: what 2 wheel trolleys do your products have?
+Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+"""
+
+    def get_products(self):
+        return self.augmentation_products
+
+    def get_columns(self):
+        return self.augmentation_columns    

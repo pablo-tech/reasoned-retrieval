@@ -1,5 +1,5 @@
 from domain_knowledge import DomainSchema
-from helper_sql import SummaryTagger, ColumnTransformer
+from source.main.py.helper_parser import SummaryTagger, ColumnTransformer
 
 from collections import defaultdict
 
@@ -158,3 +158,53 @@ class DatasetSchema(SchemaCreator):
 
     def augmentation_column_products(self):
         return self.ds_augmenter.column_products(self.working_products) 
+
+
+class TableLoader():
+
+    def __init__(self, dataset_schema:DatasetSchema, nick_name):
+        self.dataset_schema = dataset_schema
+        self.nick_name = nick_name
+        self.table_name = self.dataset_schema.get_domain_name() + "_" + self.nick_name
+
+    def load_items(self):
+        columns, rows, insert_sql = self.prepare_load()
+        self.execute_load(columns, insert_sql)
+        return columns, rows
+
+    def prepare_load(self):
+        products, columns = self.get_product_columns()
+        # print("PRODUCTS=>" + str(products))
+        print("COLUMNS=>" + str(columns))
+        rows = self.dataset_schema.get_tuple_strs(products, columns)
+        print("ROWS=>" + str(rows))
+        insert_sql = self.get_sql(self.table_name, rows)
+        # print("INSERT_SQL=>"+str(insert_sql))
+        return columns, rows, insert_sql
+
+    def execute_load(self, columns, insert_sql):
+        self.dataset_schema.create_table(self.table_name, columns)
+        self.dataset_schema.get_db_cursor().execute(insert_sql)
+        self.dataset_schema.get_db_connection().commit()
+    
+    def get_sql(self, table_name, table_rows):
+        return f"""
+INSERT INTO {table_name} VALUES {table_rows}
+"""    
+
+    def schema_sql(self):
+        return self.dataset_schema.create_sql(self.get_table_name(), 
+                                              self.get_columns())
+    
+    def get_enum_values(self):
+        return self.dataset_schema.enum_values(self.get_enums(),
+                                               self.get_products())
+    
+    def get_enums(self):
+        return self.picked_enums
+
+    def get_table_name(self):
+        return self.table_name
+
+    def get_product_columns(self):
+        return self.get_products(), self.get_columns()
