@@ -180,6 +180,7 @@ class DomainIngestion(DatabaseInstance):
         for subdomain_name in dataset.get_subdomains():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
             n += len(subdomain_corpus)
+            print(subdomain_name+"="+str(len(subdomain_corpus)))
             for key, item in subdomain_corpus.items():
                 try:
                     item = eval(item)
