@@ -170,10 +170,10 @@ INSERT INTO {table_name} VALUES {table_rows}
 class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns, picked_enums, 
+                 picked_columns, primary_key, picked_enums, 
                  completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
-                 picked_columns, primary_key, summarize_columns,
+                 picked_columns, primary_key, 
                  completion_llm, is_verbose)
         self.picked_enums = picked_enums
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
