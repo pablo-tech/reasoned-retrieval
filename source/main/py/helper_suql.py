@@ -214,7 +214,7 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
 """
 
     def get_enums(self):
-        return sorted(list(self.get_enum_values.keys()))
+        return sorted(list(self.get_enum_values().keys()))
         # return [col for col in self.get_columns() 
         #         if col != self.primary_key]
  
