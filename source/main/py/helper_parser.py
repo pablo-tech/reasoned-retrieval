@@ -38,8 +38,9 @@ class DataTransformer():
             for col in picked_enums:
                 if col not in exclude_columns:
                     try:
-                        vals = product[col]
-                        enum_vals[col].add(vals)
+                        value = product[col]
+                        if len(value.split(" ")) <= 3:
+                            enum_vals[col].add(value)
                     except Exception as e:
                         pass
         return { k: v for k, v in enum_vals.items()
