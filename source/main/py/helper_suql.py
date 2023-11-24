@@ -214,12 +214,13 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
 """
 
     def get_enums(self):
-        return [col for col in self.get_columns() 
-                if col != self.primary_key]
+        return sorted(list(self.get_enum_values.keys()))
+        # return [col for col in self.get_columns() 
+        #         if col != self.primary_key]
  
     def get_enum_values(self):
         return { k: v for k, v in self.inference_enum_values.items()
-                if len(v) > 1}
+                if k != self.primary_key and len(v) > 1}
 
     def get_products(self):
         return self.inference_products
@@ -256,7 +257,9 @@ ON context.id = inference.id
         #          **self.inference_parser.get_enum_values() }
 
     def get_columns(self):
-        return ["context.id", "context.id", "context.price"] + ["inference."+col for col in self.inference_parser.get_enums()]    
+        columns = ["context.id", "context.id", "context.price"] 
+        columns += ["inference."+col for col in self.inference_parser.get_enums()]
+        return columns    
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
