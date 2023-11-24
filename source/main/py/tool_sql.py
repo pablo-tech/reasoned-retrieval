@@ -14,9 +14,9 @@ class GiftOracle():
                         'title', 'description',]
         primary_key='id'
         summarize_columns=['title', 'description']
-        context_enums = ['brand', 'colors', 'category', 'store', 'gender']
+        # context_enums = ['brand', 'colors', 'category', 'store', 'gender']
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
-                picked_columns, primary_key, context_enums, 
+                picked_columns, primary_key, # context_enums, 
                 completion_llm, is_verbose=False)
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
                 picked_columns, primary_key, summarize_columns,  

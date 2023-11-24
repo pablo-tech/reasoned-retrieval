@@ -90,15 +90,22 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.create_sql(self.get_table_name(), 
                                self.get_columns())
         
-    def get_enums(self):
-        return self.picked_enums
-
     def get_table_name(self):
         return self.table_name
 
     def get_product_columns(self):
         return self.get_products(), self.get_columns()
-    
+
+    # def get_enums(self):
+    #     return self.picked_enums
+
+    def get_enums(self):
+        return sorted(list(self.get_enum_values().keys()))
+ 
+    def get_enum_values(self):
+        return { k: v for k, v in self.enum_values.items()
+                if len(v) > 1}
+
 
 class DatasetReducer():
 
@@ -119,18 +126,29 @@ class DatasetReducer():
 class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, picked_enums, 
+                 picked_columns, primary_key, # picked_enums, 
                  completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, 
                  completion_llm, is_verbose)
-        self.picked_enums = picked_enums
+        # self.picked_enums = picked_enums
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
-        self.context_enum_values = DataTransformer.set_enum_values(self.get_enums(),
-                                                                   self.get_products())
-            
+        self.enum_values = DataTransformer.set_enum_values(self.get_enums(),
+                                                           self.get_products(),
+                                                          [self.primary_key])
+
+    # def get_enums(self):
+    #     return self.picked_enums
+
+    # def get_enum_values(self):
+    #     return self.context_enum_values
+
+    # def enum_values(self, picked_enums, from_products):
+    #     return self.ds_reducer.set_enum_values(picked_enums, 
+    #                                             from_products)
+
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
@@ -150,12 +168,6 @@ Question: "Glassses for women?"
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
-    def get_enums(self):
-        return self.picked_enums
-
-    def get_enum_values(self):
-        return self.context_enum_values
-
     def get_products(self):
         return self.context_products
 
@@ -167,10 +179,6 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
 
     def reduction_columns(self):
         return self.ds_reducer.columns(self.column_names()) 
-
-    def enum_values(self, picked_enums, from_products):
-        return self.ds_reducer.set_enum_values(picked_enums, 
-                                                from_products)
 
 
 class DatasetAugmenter():
@@ -199,8 +207,9 @@ class InferenceParser(DatasetLoader):
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
-        self.inference_enum_values = DataTransformer.set_enum_values(self.get_columns(),
-                                                                     self.get_products())        
+        self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
+                                                           self.get_products()
+                                                           [self.primary_key])        
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -212,15 +221,6 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = '22 l
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
-
-    def get_enums(self):
-        return sorted(list(self.get_enum_values().keys()))
-        # return [col for col in self.get_columns() 
-        #         if col != self.primary_key]
- 
-    def get_enum_values(self):
-        return { k: v for k, v in self.inference_enum_values.items()
-                if k != self.primary_key and len(v) > 1}
 
     def get_products(self):
         return self.inference_products

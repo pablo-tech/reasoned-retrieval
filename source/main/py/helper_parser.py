@@ -32,15 +32,16 @@ class DataTransformer():
                   rows += ",\n" + str(tuple(values))
         return rows                  
 
-    def set_enum_values(picked_enums, products):
+    def set_enum_values(picked_enums, products, exclude_columns):
         enum_vals = defaultdict(set)
         for product in products:
             for col in picked_enums:
-                try:
-                  vals = product[col]
-                  enum_vals[col].add(vals)
-                except Exception as e:
-                  pass
+                if col not in exclude_columns:
+                    try:
+                        vals = product[col]
+                        enum_vals[col].add(vals)
+                    except Exception as e:
+                        pass
         return enum_vals    
 
 
