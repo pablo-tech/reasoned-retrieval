@@ -11,12 +11,12 @@ class GiftOracle():
         picked_columns=['id', 'price', 
                         'brand', 'colors',
                         'category', 'store', 'gender',
-                        'title', 'description',]
+                        'title', 'description']
         primary_key='id'
         price_column = 'price'
         summarize_columns=['title', 'description']
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
-                picked_columns, primary_key, price_column, 
+                picked_columns, primary_key, price_column, summarize_columns,
                 completion_llm, is_verbose=False)
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns,  

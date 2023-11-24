@@ -129,7 +129,7 @@ class DatasetReducer():
 class ContextParser(DatasetLoader):
 
     def __init__(self, n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column,  
+                 picked_columns, primary_key, price_column, summarize_columns, 
                  completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, 
@@ -137,9 +137,11 @@ class ContextParser(DatasetLoader):
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
         self.context_columns = self.reduction_columns()
+        enum_exclude = [col for col in self.get_columns() 
+                        if col in summarize_columns or col not in picked_columns or col == primary_key or col == price_column]
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
-                                                          [self.primary_key, price_column])
+                                                           enum_exclude)
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -199,9 +201,11 @@ class InferenceParser(DatasetLoader):
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
+        enum_exclude = [col for col in self.get_columns() 
+                        if col in summarize_columns or col not in picked_columns or col == primary_key or col == price_column]
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
-                                                           [self.primary_key, price_column])        
+                                                           enum_exclude)        
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
