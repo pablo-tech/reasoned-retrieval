@@ -181,7 +181,10 @@ class DatasetAugmenter():
 
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
-        return self.annotation_column_products(columns, products)
+        columns, products = self.annotation_column_products(columns, products)
+        print("ANNOTATED_COLUMNS=>" + str(columns))
+        print("ANNOTATED_PRODUCTS=>" + str(products[0]))
+        return columns, products
     
     def summary_column_products(self, products): 
         columns, products = self.summary_tagger.invoke(products)
@@ -190,8 +193,6 @@ class DatasetAugmenter():
         return DataTransformer.fill_cols(columns), products
     
     def annotation_column_products(self, columns, products):
-        print("COLUMNS=>" + str(columns))
-        print("PRODUCTS=>" + str(products[0]))
         groupings = self.column_annotation.values()
         for grouping in groupings:
             for concept, values in grouping.items():
@@ -203,8 +204,6 @@ class DatasetAugmenter():
                             product[concept] = True
                         else:
                             product[concept] = False 
-                # print(str(k) + "\t" + str(v))
-        print(columns)
         return columns, products
 
 
