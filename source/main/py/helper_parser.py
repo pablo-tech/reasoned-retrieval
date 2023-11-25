@@ -42,9 +42,10 @@ class DataTransformer():
                 if col not in exclude_columns:
                     try:
                         value = product[col]
-                        if len(value.split(" ")) <= 3:
+                        if isinstance(value, bool) or len(str(value).split(" ")) <= 3:
                             enum_vals[col].add(value)
                     except Exception as e:
+                        print("ENUM_ERROR="+str(e))
                         pass
         print("enum_vals=>"+str(enum_vals))
         return { k: v for k, v in enum_vals.items()
