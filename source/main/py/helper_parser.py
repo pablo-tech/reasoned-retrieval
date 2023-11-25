@@ -51,9 +51,8 @@ class DataTransformer():
                         elif len(str(value).split(" ")) <= 3:
                             enum_vals[col].add(value)
                     except Exception as e:
-                        print("ENUM_ERROR="+str(e))
+                        # print("ENUM_ERROR="+str(e))
                         pass
-        print("enum_vals=>"+str(enum_vals))
         return { k: v for k, v in enum_vals.items()
                  if len(v) > 1 }    
 
@@ -111,14 +110,18 @@ class SqlSemanticParser(RunInference):
                                  [row for row in response][:n])
     
     def new_response(self, query_sql, result_columns, result_rows):
-        return { "user_state": self.user_state(query_sql),
-                 "result_items": self.response_items(result_columns, result_rows) }
+        user_state, is_success = self.user_state(query_sql)
+        if is_success:
+            result_items = self.response_items(result_columns, result_rows)
+        else:
+            result_items = result_rows
+        return { "user_state": user_state,
+                 "result_items": result_items }
     
     def response_items(self, result_columns, result_rows):
         result_columns = [self.simple_name(column) for column in result_columns]
         items = []
         for row in result_rows:
-            print("result_row=>"+str(row))
             item = {}
             i = 0
             for value in row:
@@ -141,9 +144,9 @@ class SqlSemanticParser(RunInference):
         try:
             state = query_sql.split("WHERE")[1].strip()
             state = self.simple_name(state)
-            return state
+            return state, True
         except:
-            return query_sql
+            return query_sql, False
     
     def simple_name(self, column_name):
         column_name = column_name.replace("context.", "")
