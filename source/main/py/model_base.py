@@ -39,14 +39,14 @@ class OpenaiBase():
         os.environ["OPENAI_API_BASE"] = self.api_base
         os.environ["OPENAI_API_KEY"] = self.api_key
 
-    def inference_llm_30(self, temperature=0, max_tokens = 256):
+    def inference_llm_30(self, temperature=0, max_tokens = 1000):
         return OpenAI(openai_api_key=self.api_key,
                       model_name='text-davinci-003',
                       engine="bot-davinci",
                       temperature=temperature,
                       max_tokens=max_tokens)
 
-    def chat_llm_40(self, temperature=0, max_tokens = 256):
+    def chat_llm_40(self, temperature=0, max_tokens = 1000):
         return ChatOpenAI(openai_api_key=self.api_key,
                           engine="tdl-gpt-4",
                           temperature=temperature,
