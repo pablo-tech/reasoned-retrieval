@@ -55,16 +55,6 @@ class SchemaCreator(DomainSchema):
     ) ;
     """
 
-    # def create_sql(self, table_name, column_names):
-    #     column_names = self.non_primary(self.primary_key, column_names)
-    #     column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
-    #     column_names = " ".join(column_names)
-    #     return f"""
-    # CREATE TABLE {table_name} (
-    # {self.primary_key} TEXT PRIMARY KEY {column_names}
-    # ) ;
-    # """
-
     def column_declaration(self, column_name):
         if column_name == self.primary_key:
             return f"""{self.primary_key} TEXT PRIMARY KEY"""
@@ -134,15 +124,10 @@ class DatasetReducer():
         self.primary_key = primary_key
         self.picked_columns = picked_columns
 
-    # def unique_columns(self, column_names):
-    #     return [self.primary_key] + [col for col in column_names 
-    #                                  if col!=self.primary_key]
-
-    def columns(self, domain_columns):
-        columns = sorted(domain_columns)
-        # columns = self.unique_columns(domain_columns)
-        reduced = [col for col in columns if col in self.picked_columns]
-        return DataTransformer.fill_cols(reduced)   
+    def columns(self, columns):
+        columns = sorted(columns)
+        columns = [col for col in columns if col in self.picked_columns]
+        return DataTransformer.fill_cols(sorted(columns))   
 
 
 class ContextParser(DatasetLoader):
@@ -206,34 +191,22 @@ class DatasetAugmenter():
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
         columns, products = self.annotation_column_products(columns, products)
-        print("ANNOTATED_COLUMNS=>" + str(columns))
-        print("ANNOTATED_PRODUCTS=>" + str(products[0]))
+        # print("ANNOTATED_COLUMNS=>" + str(columns))
+        # print("ANNOTATED_PRODUCTS=>" + str(products[0]))
         # return columns, products
         # columns = set(columns).remove(self.summary_tagger.primary_key)
-        columns = self.deprioritized_columns(columns)
-        columns = [self.summary_tagger.primary_key, 
-                   self.summary_tagger.sub_domain] + sorted(columns) 
-        return DataTransformer.fill_cols(columns), products
-    
-    def deprioritized_columns(self, columns):
-        columns = set(columns.copy()) 
-        try:
-            columns.remove(self.summary_tagger.primary_key)   
-        except:
-            pass
-        try:
-            columns.remove(self.summary_tagger.sub_domain)   
-        except:
-            pass
-        return columns
-    
+        # columns = self.deprioritized_columns(columns)
+        # columns = [self.summary_tagger.primary_key, 
+        #            self.summary_tagger.sub_domain] + sorted(columns) 
+        return DataTransformer.fill_cols(sorted(columns)), products
+        
     def summary_column_products(self, products): 
         columns, products = self.summary_tagger.invoke(products)
-        columns = sorted(list(columns.keys()))
+        # columns = sorted(list(columns.keys()))
         # columns = [self.summary_tagger.primary_key, 
         #            self.summary_tagger.sub_domain] + columns
         # return DataTransformer.fill_cols(columns), products
-        return columns, products
+        return columns.keys(), products
     
     def annotation_column_products(self, columns, products):
         groupings = self.column_annotation.values()
