@@ -189,7 +189,8 @@ class DatasetAugmenter():
         return DataTransformer.fill_cols(columns), products
     
     def annotation_column_products(self, columns, products):
-        print(columns)
+        print("COLUMNS=>" + str(columns))
+        print("PRODUCTS=>" + str(products[0]))
         groupings = self.column_annotation.values()
         for grouping in groupings:
             for concept, values in grouping.items():
