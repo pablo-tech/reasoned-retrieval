@@ -167,8 +167,9 @@ class DomainIngestion():
             for key, item in subdomain_corpus.items():
                 try:
                     item = eval(item)
+                    item['sub_domain'] = subdomain_name
                     clean = self.shorten_json(flatten(item))
-                    try:
+                    try: # TODO
                         del clean['specification']
                     except:
                         pass
