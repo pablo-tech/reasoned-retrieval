@@ -18,21 +18,21 @@ class DataTransformer():
         for product in products:
             print("----")
             if product[primary_key] not in unique_id:
-              unique_id.add(product[primary_key])
-              values = []
-              for column in all_columns:
-                  value = ''
-                  try:
-                    value = product[column]
+                unique_id.add(product[primary_key])
+                values = []
+                for column in all_columns:
+                    value = ''
+                    try:
+                        value = product[column]
+                    except Exception as e:
+                        # print("STRS_ERROR=" + str(e))
+                        pass
+                    values.append(value)
                     print(f"product_strs=> column={column} value={value}")
-                  except Exception as e:
-                    # print("STRS_ERROR=" + str(e))
-                    pass
-                  values.append(value)
-              if len(rows) == 0:
-                  rows += "\n" + str(tuple(values))
-              else:
-                  rows += ",\n" + str(tuple(values))
+                if len(rows) == 0:
+                    rows += "\n" + str(tuple(values))
+                else:
+                    rows += ",\n" + str(tuple(values))
         return rows                  
 
     def set_enum_values(picked_enums, products, exclude_columns):
