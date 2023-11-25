@@ -52,7 +52,7 @@ class DataTransformer():
                         pass
         print("enum_vals=>"+str(enum_vals))
         return { k: v for k, v in enum_vals.items()
-                 if isinstance(list(v)[0], bool) or len(v) > 1 }    
+                 if len(v) > 1 }    
 
 
 class RunInference():
