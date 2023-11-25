@@ -195,6 +195,7 @@ class DatasetAugmenter():
         groupings = self.column_annotation.values()
         for grouping in groupings:
             for concept, values in grouping.items():
+                concept = "is_" + concept
                 columns.append(concept)
                 for value in values:
                     for product in products:
