@@ -42,8 +42,13 @@ class SchemaCreator(DomainSchema):
 
     def create_sql(self, table_name, column_names):
         column_txt = ""
+        i = 1
         for column in sorted(column_names):
-            column_txt += self.column_declaration(column) + "," + "\n"
+            column_txt += self.column_declaration(column)
+            if i!=len(column_names):
+                column_txt += ","
+            column_txt += "\n"
+            i += 1
         return f"""
     CREATE TABLE {table_name} (
     {column_txt}
@@ -129,12 +134,13 @@ class DatasetReducer():
         self.primary_key = primary_key
         self.picked_columns = picked_columns
 
-    def unique_columns(self, column_names):
-        return [self.primary_key] + [col for col in column_names 
-                                     if col!=self.primary_key]
+    # def unique_columns(self, column_names):
+    #     return [self.primary_key] + [col for col in column_names 
+    #                                  if col!=self.primary_key]
 
     def columns(self, domain_columns):
-        columns = self.unique_columns(domain_columns)
+        columns = sorted(domain_columns)
+        # columns = self.unique_columns(domain_columns)
         reduced = [col for col in columns if col in self.picked_columns]
         return DataTransformer.fill_cols(reduced)   
 
