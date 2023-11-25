@@ -169,10 +169,11 @@ class DomainIngestion():
                     item = eval(item)
                     item['sub_domain'] = subdomain_name
                     clean = self.shorten_json(flatten(item))
-                    try: # TODO
-                        del clean['specification']
-                    except:
-                        pass
+                    clean['sub_domain'] = subdomain_name
+                    # try: # TODO
+                    #     del clean['specification']
+                    # except:
+                    #     pass
                     if DatasetValidation.is_valid_json(clean):
                         self.raw_data[key] = item
                         self.clean_data[key] = clean
