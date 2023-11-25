@@ -41,12 +41,12 @@ class SchemaCreator(DomainSchema):
         return self.db_instance.db_cursor.execute(query)
 
     def create_sql(self, table_name, column_names):
-        column_types = ""
+        column_txt = ""
         for column in sorted(column_names):
-            column_type += self.column_declaration(column) + "\n"
+            column_txt += self.column_declaration(column) + "," + "\n"
         return f"""
     CREATE TABLE {table_name} (
-    {column_types}
+    {column_txt}
     ) ;
     """
 
