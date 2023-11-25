@@ -273,11 +273,11 @@ ON context.id = inference.id
         columns = ", ".join(self.get_columns())
         return f"""        
 Question: what backpacks do you have? 
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_types = 'backpack';
+Answer: SELECT * FROM {self.get_table_name()} WHERE inference.product_types = 'backpack';
 Question: what 22 liter backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
+Answer: SELECT * FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
 Question: what 2 wheel trolleys do your products have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_wheel_type = '2 wheel';
+Answer: SELECT * FROM {self.get_table_name()} WHERE inference.product_wheel_type = '2 wheel';
 """
 
     def get_columns(self):
