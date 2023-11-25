@@ -16,7 +16,6 @@ class DataTransformer():
         rows = ""
         unique_id = set()
         for product in products:
-            print("----")
             if product[primary_key] not in unique_id:
                 unique_id.add(product[primary_key])
                 values = []

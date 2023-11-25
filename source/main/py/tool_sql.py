@@ -62,11 +62,13 @@ class GiftOracle():
                 "fashion": [], 
                 "home_and_kitchen": ["bedsheets", "candle_holders", "dinner_sets", "tea_sets", "home_fragrances"],
                 "sports_and_outdoors": [], 
+                "jewelry": ["silver_artifacts"],
                 "beauty": []
                 },
             "holiday_shopping": {
                 "most_loved_gifts": ["chocolates", "sweets"], 
                 "decor": ["candle_holders", "silver_artifacts"],
+                "valentines": ["chocolates"],
                 "gifts_for_all": ["drinking_glass"], 
                 "toys": [], 
                 "stocking_stuffers": ["chocolates", "sweets"],
