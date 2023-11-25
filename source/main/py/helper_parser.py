@@ -157,6 +157,7 @@ class SummaryTagger(RunInference):
         super().__init__(completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.primary_key = primary_key
+        self.sub_domain = 'sub_domain'
             
     def invoke(self, products):
         product_summaries= []
@@ -166,6 +167,7 @@ class SummaryTagger(RunInference):
             try:
                 reduced_product = {}
                 reduced_product[self.primary_key] = product[self.primary_key]
+                reduced_product[self.sub_domain] = product[self.sub_domain]
                 inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product)))
                 for summary_value in eval(inferred_tags):
                     tag = DataTransformer.fil_col(summary_value[0])

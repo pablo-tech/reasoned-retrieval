@@ -177,6 +177,7 @@ class DatasetAugmenter():
         self.column_annotation = column_annotation
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
                                             completion_llm, is_verbose)
+        # self.sub_domain = "sub_domain"
 
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
