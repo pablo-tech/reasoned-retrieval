@@ -72,10 +72,10 @@ class SchemaCreator(DomainSchema):
 class DatasetLoader(SchemaCreator):
 
     def __init__(self, n, nick_name, domain_name, domain_datasets, 
-                 picked_columns, primary_key, 
+                 picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(n, domain_name, domain_datasets, 
-                 picked_columns, primary_key, 
+                 picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
         self.table_name = self.get_domain_name() + "_" + self.nick_name
@@ -141,7 +141,7 @@ class ContextParser(DatasetLoader):
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
-                 picked_columns, primary_key, 
+                 picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
         self.context_products = self.reduction_products()
@@ -227,7 +227,7 @@ class InferenceParser(DatasetLoader):
                  picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
-                 picked_columns, primary_key,  
+                 picked_columns, primary_key, price_column, 
                  db_instance, completion_llm, is_verbose)
         self.ds_augmenter = DatasetAugmenter(column_annotation, summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
