@@ -33,7 +33,7 @@ class DataTransformer():
         return rows                  
 
     def set_enum_values(picked_enums, products, exclude_columns):
-        print("picked_enums=>"+str(picked_enums))
+        print("exclude_columns=>"+str(exclude_columns))
         enum_vals = defaultdict(set)
         for product in products:
             for col in picked_enums:
@@ -44,6 +44,7 @@ class DataTransformer():
                             enum_vals[col].add(value)
                     except Exception as e:
                         pass
+        print("enum_vals=>"+str(enum_vals))
         return { k: v for k, v in enum_vals.items()
                  if len(v) > 1 }    
 
