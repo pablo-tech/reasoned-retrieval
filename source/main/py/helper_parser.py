@@ -42,14 +42,14 @@ class DataTransformer():
                 if col not in exclude_columns:
                     try:
                         value = product[col]
-                        if isinstance(value, bool) or len(str(value).split(" ")) <= 3:
+                        if len(str(value).split(" ")) <= 3:
                             enum_vals[col].add(value)
                     except Exception as e:
                         print("ENUM_ERROR="+str(e))
                         pass
         print("enum_vals=>"+str(enum_vals))
         return { k: v for k, v in enum_vals.items()
-                 if len(v) > 1 }    
+                 if isinstance(list(value)[0], bool) or len(v) > 1 }    
 
 
 class RunInference():
