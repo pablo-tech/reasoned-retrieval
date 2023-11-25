@@ -189,10 +189,19 @@ class DatasetAugmenter():
         return DataTransformer.fill_cols(columns), products
     
     def annotation_column_products(self, columns, products):
+        print(columns)
         groupings = self.column_annotation.values()
         for grouping in groupings:
-            for k, v in grouping.items():
-                print(str(k) + "\t" + str(v))
+            for concept, values in grouping.items():
+                columns.append(concept)
+                for value in values:
+                    for product in products:
+                        if value in product['sub_domain']:
+                            product[concept] = True
+                        else:
+                            product[concept] = False 
+                # print(str(k) + "\t" + str(v))
+        print(columns)
         return columns, products
 
 
@@ -213,7 +222,6 @@ class InferenceParser(DatasetLoader):
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
                                                            enum_exclude)        
-
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
