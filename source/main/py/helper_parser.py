@@ -42,11 +42,11 @@ class DataTransformer():
                 if col not in exclude_columns:
                     try:
                         value = product[col]
+                        if isinstance(value, bool):
+                            enum_vals[col].add('0')
+                            enum_vals[col].add('1')
                         if len(str(value).split(" ")) <= 3:
                             enum_vals[col].add(value)
-                        if isinstance(value, bool):
-                            enum_vals[col].add(True)
-                            enum_vals[col].add(False)
                     except Exception as e:
                         print("ENUM_ERROR="+str(e))
                         pass
@@ -99,8 +99,6 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, product_parser):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
-        # print(product_parser.get_columns())
-        print("query_sql" + query_sql)
         response = self.db_cursor.execute(query_sql)
         return self.new_response(query_sql,
                                  product_parser.get_columns(),
