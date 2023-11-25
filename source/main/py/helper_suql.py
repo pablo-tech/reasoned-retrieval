@@ -63,7 +63,7 @@ class SchemaCreator(DomainSchema):
     def column_declaration(self, column_name):
         if column_name == self.primary_key:
             return f"""{self.primary_key} TEXT PRIMARY KEY"""
-        return f"""{column_name} TEXT NOT NULL"
+        return f"""{column_name} TEXT NOT NULL"""
 
     def non_primary(self, primary_key, column_names):
         return sorted([name for name in column_names if name!=primary_key]) 
