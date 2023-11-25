@@ -167,7 +167,7 @@ class DomainIngestion():
             for key, item in subdomain_corpus.items():
                 try:
                     item = eval(item)
-                    item['sub_domain'] = subdomain_name
+                    # item['sub_domain'] = subdomain_name
                     clean = self.shorten_json(flatten(item))
                     clean['sub_domain'] = subdomain_name
                     # try: # TODO
