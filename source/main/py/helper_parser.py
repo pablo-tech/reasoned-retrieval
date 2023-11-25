@@ -86,6 +86,9 @@ class SqlSemanticParser(RunInference):
         self.domain_oracle = domain_oracle
         self.db_cursor = self.domain_oracle.get_db_cursor()
 
+    def db_execute(self, query):
+        return self.db_cursor.execute(query)
+    
     def invoke_context(self, query, n):
         return self.invoke(query, n,
                            self.domain_oracle.get_context_parser())
