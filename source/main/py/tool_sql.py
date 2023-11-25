@@ -58,7 +58,6 @@ class GiftOracle():
                 "for_pets": []
             },
             "by_category": {
-                "toys": [], 
                 "electronics": ["headphones_earphones", "instant_camera", "mobiles", "speaker_mediaplayer", "tab_ereader"], 
                 "fashion": [], 
                 "home_and_kitchen": ["bedsheets", "candle_holders", "dinner_sets", "tea_sets", "home_fragrances"],
