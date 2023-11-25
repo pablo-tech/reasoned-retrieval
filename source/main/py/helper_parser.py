@@ -23,7 +23,9 @@ class DataTransformer():
                   value = ''
                   try:
                     value = product[column]
-                  except:
+                    print(f"product_strs=> column={column} value={value}")
+                  except Exception as e:
+                    # print("STRS_ERROR=" + str(e))
                     pass
                   values.append(value)
               if len(rows) == 0:
