@@ -206,7 +206,7 @@ class DatasetAugmenter():
         # columns = [self.summary_tagger.primary_key, 
         #            self.summary_tagger.sub_domain] + columns
         # return DataTransformer.fill_cols(columns), products
-        return columns.keys(), products
+        return list(columns.keys()), products
     
     def annotation_column_products(self, columns, products):
         groupings = self.column_annotation.values()
