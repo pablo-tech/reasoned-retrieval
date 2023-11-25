@@ -37,8 +37,48 @@ class GiftOracle():
         self.context_parser = ContextParser(n, domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns,
                 self.db_instance, completion_llm, is_verbose=False)
+        column_annotation = { 
+            "for_people": {
+                "style_setters": ["dinner_sets", "candle_holders", "candles"], 
+                "wellness_lovers": ["dryfruits", "tea_sets"], 
+                "fitness_buffs": ["speaker_mediaplayer"], 
+                "gamers": ["gaming", "headphones_earphones"], 
+                "home_chefs": ["dinner_sets"], 
+                "gear_heads": [], 
+                "DIYers": [],
+                "adventure_seekers": [], 
+                "trending_gifts": []
+                },
+            "shop_gifts": {
+                "for_her": ["wallets-women", "watch-women", "fragrances-women", "handbags-women", "backpacks-women"], 
+                "for_him": ["wallets-men", "watch-men", "fragrances-men", "backpacks-men"], 
+                "for_teens": [], 
+                "for_kids": ["watch-kids", "watch-kids"],
+                "babies_and_toddlers": [], 
+                "for_pets": []
+            },
+            "by_category": {
+                "toys": [], 
+                "electronics": ["headphones_earphones", "instant_camera", "mobiles", "speaker_mediaplayer", "tab_ereader"], 
+                "fashion": [], 
+                "home_and_kitchen": ["bedsheets", "candle_holders", "dinner_sets", "tea_sets", "home_fragrances"],
+                "sports_and_outdoors": [], 
+                "beauty": []
+                },
+            "holiday_shopping": {
+                "most_loved_gifts": ["chocolates", "sweets"], 
+                "decor": ["candle_holders", "silver_artifacts"],
+                "gifts_for_all": ["drinking_glass"], 
+                "toys": [], 
+                "stocking_stuffers": ["chocolates", "sweets"],
+                "unique_gifts": ["silver_bullion"], 
+                "hosting_essentials": [], 
+                "white_elephant": [],
+                "same_day_delivery": []
+            }
+        }        
         self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
-                picked_columns, primary_key, price_column, summarize_columns,  
+                picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                 self.db_instance, completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
