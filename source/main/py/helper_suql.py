@@ -130,8 +130,8 @@ class DatasetReducer():
         self.picked_columns = picked_columns
 
     def columns(self, columns):
-        columns = sorted(columns)
         columns = [col for col in columns if col in self.picked_columns]
+        columns = list(set(columns))
         return DataTransformer.fill_cols(sorted(columns))   
 
 
