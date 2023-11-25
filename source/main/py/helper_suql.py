@@ -177,7 +177,7 @@ class DatasetAugmenter():
         self.column_annotation = column_annotation
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
                                             completion_llm, is_verbose)
-        # self.sub_domain = "sub_domain"
+        self.sub_domain = "sub_domain"
 
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
@@ -186,7 +186,7 @@ class DatasetAugmenter():
     def summary_column_products(self, products): 
         columns, products = self.summary_tagger.invoke(products)
         columns = sorted(list(columns.keys()))
-        columns = [self.summary_tagger.primary_key] + columns
+        columns = [self.summary_tagger.primary_key, self.summary_tagger.sub_domain] + columns
         return DataTransformer.fill_cols(columns), products
     
     def annotation_column_products(self, columns, products):
