@@ -60,9 +60,9 @@ class SchemaCreator(DomainSchema):
         if column_name == self.primary_key:
             return f"""{self.primary_key} TEXT PRIMARY KEY"""
         if column_name == self.price_column:
-            return f"""{self.price_column} FLOAT PRIMARY KEY"""
+            return f"""{self.price_column} FLOAT NOT NULL"""
         if "is_" in column_name:
-            return f"""{column_name} BOOLEAN PRIMARY KEY"""
+            return f"""{column_name} BOOLEAN NOT NULL"""
         return f"""{column_name} TEXT NOT NULL"""
 
     def non_primary(self, primary_key, column_names):
