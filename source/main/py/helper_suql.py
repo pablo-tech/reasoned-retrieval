@@ -196,8 +196,14 @@ class DatasetAugmenter():
     
     def deprioritized_columns(self, columns):
         columns = set(columns.copy()) 
-        columns.remove(self.summary_tagger.primary_key)   
-        columns.remove(self.summary_tagger.sub_domain)   
+        try:
+            columns.remove(self.summary_tagger.primary_key)   
+        except:
+            pass
+        try:
+            columns.remove(self.summary_tagger.sub_domain)   
+        except:
+            pass
         return columns
     
     def summary_column_products(self, products): 
