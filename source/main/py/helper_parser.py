@@ -33,6 +33,8 @@ class DataTransformer():
         return rows                  
 
     def set_enum_values(picked_enums, products, exclude_columns):
+        print("picked_enums=>"+str(picked_enums))
+        print("enum_proeuct=>"+str(products[0]))
         print("exclude_columns=>"+str(exclude_columns))
         enum_vals = defaultdict(set)
         for product in products:
