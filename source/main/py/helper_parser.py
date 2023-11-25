@@ -146,7 +146,8 @@ class SqlSemanticParser(RunInference):
             state = self.simple_name(state)
             return state, True
         except:
-            return query_sql, False
+            state = query_sql.split("FROM")[0].strip()
+            return state, False
     
     def simple_name(self, column_name):
         column_name = column_name.replace("context.", "")
