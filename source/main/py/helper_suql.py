@@ -187,13 +187,26 @@ class DatasetAugmenter():
         columns, products = self.annotation_column_products(columns, products)
         print("ANNOTATED_COLUMNS=>" + str(columns))
         print("ANNOTATED_PRODUCTS=>" + str(products[0]))
-        return columns, products
+        # return columns, products
+        # columns = set(columns).remove(self.summary_tagger.primary_key)
+        columns = self.deprioritized_columns(columns)
+        columns = [self.summary_tagger.primary_key, 
+                   self.summary_tagger.sub_domain] + sorted(columns) 
+        return DataTransformer.fill_cols(columns), products
+    
+    def deprioritized_columns(self, columns):
+        columns = set(columns.copy()) 
+        columns.remove(self.summary_tagger.primary_key)   
+        columns.remove(self.summary_tagger.sub_domain)   
+        return columns
     
     def summary_column_products(self, products): 
         columns, products = self.summary_tagger.invoke(products)
         columns = sorted(list(columns.keys()))
-        columns = [self.summary_tagger.primary_key, self.summary_tagger.sub_domain] + columns
-        return DataTransformer.fill_cols(columns), products
+        # columns = [self.summary_tagger.primary_key, 
+        #            self.summary_tagger.sub_domain] + columns
+        # return DataTransformer.fill_cols(columns), products
+        return columns, products
     
     def annotation_column_products(self, columns, products):
         groupings = self.column_annotation.values()
