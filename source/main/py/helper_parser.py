@@ -105,6 +105,7 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, product_parser):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
+        print("invoke_query_sql=>" + str(query_sql))
         response = self.db_cursor.execute(query_sql)
         return self.new_response(query_sql,
                                  product_parser.get_columns(),
