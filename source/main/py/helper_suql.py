@@ -41,14 +41,29 @@ class SchemaCreator(DomainSchema):
         return self.db_instance.db_cursor.execute(query)
 
     def create_sql(self, table_name, column_names):
-        column_names = self.non_primary(self.primary_key, column_names)
-        column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
-        column_names = " ".join(column_names)
+        column_types = ""
+        for column in sorted(column_names):
+            column_type += self.column_declaration(column) + "\n"
         return f"""
     CREATE TABLE {table_name} (
-    {self.primary_key} TEXT PRIMARY KEY {column_names}
+    {column_types}
     ) ;
     """
+
+    # def create_sql(self, table_name, column_names):
+    #     column_names = self.non_primary(self.primary_key, column_names)
+    #     column_names = [",\n" + name + " " + "TEXT NOT NULL" for name in column_names]
+    #     column_names = " ".join(column_names)
+    #     return f"""
+    # CREATE TABLE {table_name} (
+    # {self.primary_key} TEXT PRIMARY KEY {column_names}
+    # ) ;
+    # """
+
+    def column_declaration(self, column_name):
+        if column_name == self.primary_key:
+            return f"""{self.primary_key} TEXT PRIMARY KEY"""
+        return f"""{column_name} TEXT NOT NULL"
 
     def non_primary(self, primary_key, column_names):
         return sorted([name for name in column_names if name!=primary_key]) 
