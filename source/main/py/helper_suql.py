@@ -8,7 +8,7 @@ class SchemaCreator(DomainSchema):
 
     def __init__(self, n,
                  domain_name, domain_datasets, 
-                 selected_columns, primary_key,
+                 selected_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose):
         super().__init__(n=n, 
                          data_sets=domain_datasets,
@@ -18,6 +18,7 @@ class SchemaCreator(DomainSchema):
         self.domain_datasets = domain_datasets
         self.selected_columns = selected_columns
         self.primary_key = primary_key
+        self.price_column = price_column
         self.db_instance = db_instance
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -58,6 +59,10 @@ class SchemaCreator(DomainSchema):
     def column_declaration(self, column_name):
         if column_name == self.primary_key:
             return f"""{self.primary_key} TEXT PRIMARY KEY"""
+        if column_name == self.price_column:
+            return f"""{self.primary_key} FLOAT PRIMARY KEY"""
+        if "is_" in column_name:
+            return f"""{self.primary_key} BOOLEAN PRIMARY KEY"""
         return f"""{column_name} TEXT NOT NULL"""
 
     def non_primary(self, primary_key, column_names):
