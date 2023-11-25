@@ -271,7 +271,7 @@ ON context.id = inference.id
 
     def get_fewshot_examples(self):
         columns = self.get_columns()
-        print("quuery_columns=>"+str(columns))
+        print("query_columns=>"+str(columns))
         columns = ", ".join(columns)
         return f"""        
 Question: what backpacks do you have? 

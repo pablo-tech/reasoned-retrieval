@@ -107,6 +107,7 @@ class SqlSemanticParser(RunInference):
                                  [row for row in response][:n])
     
     def new_response(self, query_sql, result_columns, result_rows):
+        print("result_columns=>"+str(result_columns))
         return { "user_state": self.user_state(query_sql),
                  "result_items": self.response_items(result_columns, result_rows) }
     
