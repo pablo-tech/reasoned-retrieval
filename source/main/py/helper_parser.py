@@ -105,14 +105,12 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, product_parser):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
-        print("invoke_query_sql=>" + str(query_sql))
         response = self.db_cursor.execute(query_sql)
         return self.new_response(query_sql,
                                  product_parser.get_columns(),
                                  [row for row in response][:n])
     
     def new_response(self, query_sql, result_columns, result_rows):
-        print("result_columns=>"+str(result_columns))
         return { "user_state": self.user_state(query_sql),
                  "result_items": self.response_items(result_columns, result_rows) }
     
@@ -128,7 +126,13 @@ class SqlSemanticParser(RunInference):
                     key = result_columns[i]
                     if key == 'price':
                         value = float(value)
-                    item[key] = value
+                    if "is_" in key:
+                        if value == '1':
+                            value = True
+                        else:
+                            value = ''
+                    if value != '':
+                        item[key] = value
                 i+=1
             items.append(item)
         return items

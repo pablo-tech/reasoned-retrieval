@@ -192,7 +192,9 @@ class DatasetAugmenter():
     def column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
         columns, products = self.annotation_column_products(columns, products)
-        columns.append(self.primary_key)
+        columns = set(columns)
+        columns.add(self.primary_key)
+        columns = list(columns)
         return DataTransformer.fill_cols(sorted(columns)), products
         
     def summary_column_products(self, products): 
@@ -278,7 +280,6 @@ ON context.id = inference.id
 
     def get_fewshot_examples(self):
         columns = self.get_columns()
-        print("query_columns=>"+str(columns))
         columns = ", ".join(columns)
         return f"""        
 Question: what backpacks do you have? 
