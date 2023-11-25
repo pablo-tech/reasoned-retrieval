@@ -270,7 +270,9 @@ ON context.id = inference.id
         #          **self.inference_parser.get_enum_values() }
 
     def get_fewshot_examples(self):
-        columns = ", ".join(self.get_columns())
+        columns = self.get_columns()
+        print("quuery_columns=>"+str(columns))
+        columns = ", ".join(columns)
         return f"""        
 Question: what backpacks do you have? 
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_type = 'backpack';
