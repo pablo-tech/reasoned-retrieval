@@ -44,6 +44,9 @@ class DataTransformer():
                         value = product[col]
                         if len(str(value).split(" ")) <= 3:
                             enum_vals[col].add(value)
+                        if isinstance(value, bool):
+                            enum_vals[col].add(True)
+                            enum_vals[col].add(False)
                     except Exception as e:
                         print("ENUM_ERROR="+str(e))
                         pass
