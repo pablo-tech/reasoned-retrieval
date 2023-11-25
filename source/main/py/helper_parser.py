@@ -114,7 +114,7 @@ class SqlSemanticParser(RunInference):
         if is_success:
             result_items = self.response_items(result_columns, result_rows)
         else:
-            result_items = result_rows
+            result_items = list(result_rows[0])
         return { "user_state": user_state,
                  "result_items": result_items }
     
