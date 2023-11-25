@@ -115,6 +115,7 @@ class SqlSemanticParser(RunInference):
         result_columns = [self.simple_name(column) for column in result_columns]
         items = []
         for row in result_rows:
+            print("result_row=>"+str(row))
             item = {}
             i = 0
             for value in row:
