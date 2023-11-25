@@ -100,7 +100,7 @@ class SqlSemanticParser(RunInference):
         prompt = self.get_prompt(query_english, product_parser)
         query_sql = self.run_inference(prompt)
         # print(product_parser.get_columns())
-        # print(query_sql)
+        print("query_sql" + query_sql)
         response = self.db_cursor.execute(query_sql)
         return self.new_response(query_sql,
                                  product_parser.get_columns(),
