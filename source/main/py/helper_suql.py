@@ -201,9 +201,9 @@ class DatasetAugmenter():
                 for value in values:
                     for product in products:
                         if value in product['sub_domain']:
-                            product[concept] = str(True)
+                            product[concept] = True
                         else:
-                            product[concept] = str(False) 
+                            product[concept] = False
         return columns, products
 
 
