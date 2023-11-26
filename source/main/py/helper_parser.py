@@ -177,28 +177,28 @@ class SummaryTagger(RunInference):
         self.primary_key = primary_key
         self.sub_domain = 'sub_domain'
             
-    def invoke(self, products):
-        product_summaries= []
+    def invoke(self, products_in):
+        products_out= []
         i = 0
-        for product in products:
+        for product_in in products_in:
             try:
-                reduced_product = {}
-                reduced_product[self.primary_key] = product[self.primary_key]
-                reduced_product[self.sub_domain] = product[self.sub_domain]
-                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product)))
+                product_out = {}
+                product_out[self.primary_key] = product_in[self.primary_key]
+                product_out[self.sub_domain] = product_in[self.sub_domain]
+                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product_in)))
                 for summary_value in eval(inferred_tags):
                     tag = DataTransformer.fil_col(summary_value[0])
                     value = summary_value[1]
-                    reduced_product[tag] = value
+                    product_out[tag] = value
                     if self.is_verbose:
-                        print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
-                product_summaries.append(reduced_product)    
+                        print(str(i) + "/" + str(len(products_in)) + "\t" + "summary_value="+str(summary_value))
+                products_out.append(product_out)    
             except Exception as e:
                 pass                
             if i%25 == 0:
                 print("summary_inference... " + str(i))
             i+=1
-        return product_summaries 
+        return products_out 
     
     def get_product_str(self, product):
         query = "" # TODO: if too long, summarize

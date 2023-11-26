@@ -55,7 +55,9 @@ class GiftOracle():
                 "for_teens": [], 
                 "for_kids": ["watch-kids", "watch-kids"],
                 "babies_and_toddlers": [], 
-                "for_pets": []
+                "for_pets": [],
+                "for_retirement": ["watch-men", "watch-women"],
+                "for_mom": ["watch-women", "fragrances-women", "handbags-women"],
             },
             "by_category": {
                 "electronics": ["headphones_earphones", "instant_camera", "mobiles", "speaker_mediaplayer", "tab_ereader"], 
