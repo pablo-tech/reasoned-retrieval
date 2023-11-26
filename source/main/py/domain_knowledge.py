@@ -160,6 +160,7 @@ class GiftSuql():
             json.dump(products, fp)        
 
     def get_corpus(self, domain):
+        print("reading... " + str(domain))
         file_path = self.file_path(domain)
         with open(file_path, 'r') as fp:
             products = json.load(fp)        
