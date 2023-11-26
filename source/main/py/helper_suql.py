@@ -79,6 +79,7 @@ class DatasetLoader(SchemaCreator):
 
     def load_items(self, n=100):
         columns, products = self.get_columns(), self.get_products()
+        print("COLUMNS=>" + str(columns))
         self.create_table(self.table_name, columns)        
         max = len(products)
         fails = 0
@@ -91,7 +92,8 @@ class DatasetLoader(SchemaCreator):
             # print("INSERT_SQL=>"+str(insert_sql))
             try:
                 self.execute_load(insert_sql)
-            except:
+            except Exception as e:
+                print("LOAD_EXCEPTION="+str(e))
                 fails+=1
                 pass
             i+=n
@@ -101,10 +103,10 @@ class DatasetLoader(SchemaCreator):
 
     def prepare_load(self, columns, products):
         # print("PRODUCTS=>" + str(products))
-        print("COLUMNS=>" + str(columns))
         rows = DataTransformer.product_strs(products, columns, self.primary_key)
         for chunk in rows.split("\n")[:3]:
-            print("ROW=>" + str(chunk))
+            if chunk != "":
+                print("ROW=>" + str(chunk))
         insert_sql = self.get_sql(self.table_name, rows)
         return insert_sql
 
