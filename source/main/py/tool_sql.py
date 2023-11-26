@@ -22,7 +22,7 @@ class DatabaseInstance():
 
 class GiftOracle():
 
-    def __init__(self, n,                 
+    def __init__(self, is_run_inference,                 
                  completion_llm):
         domain_name="CLIQ"
         domain_datasets=[GiftDataset2()]
@@ -34,7 +34,7 @@ class GiftOracle():
         price_column = 'price'
         summarize_columns=['title', 'description']
         self.db_instance = DatabaseInstance()
-        self.context_parser = ContextParser(n, domain_name, domain_datasets, 
+        self.context_parser = ContextParser(domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns,
                 self.db_instance, completion_llm, is_verbose=False)
         column_annotation = { 
@@ -80,7 +80,8 @@ class GiftOracle():
                 "same_day_delivery": []
             }
         }        
-        self.inference_parser = InferenceParser(n, domain_name, domain_datasets, 
+        self.inference_parser = InferenceParser(is_run_inference,
+                                                domain_name, domain_datasets, 
                 picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                 self.db_instance, completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
