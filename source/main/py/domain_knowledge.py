@@ -156,14 +156,23 @@ class GiftSuql():
             os.remove(file_path)
         except:
             pass
-        with open(file_path, 'w') as fp:
-            json.dump(products, fp)        
+        try:
+            with open(file_path, 'w') as fp:
+                json.dump(products, fp)        
+        except:
+            print("SAVE_FILE_ERROR="+str(domain))
+            pass
 
     def get_corpus(self, domain):
         print("reading... " + str(domain))
         file_path = self.file_path(domain)
-        with open(file_path, 'r') as fp:
-            products = json.load(fp)        
+        products = []
+        try:
+            with open(file_path, 'r') as fp:
+                products = json.load(fp)        
+        except:
+            print("READ_FILE_ERROR="+str(domain))
+            pass
         return products
 
 
