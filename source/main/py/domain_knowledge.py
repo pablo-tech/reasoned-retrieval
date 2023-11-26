@@ -144,8 +144,7 @@ class GiftDataset2(DomainDataset):
 class GiftSuql():
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
-        super().__init__(dir_path)
-        self.file_path = self.dir_path + "inference_products" + ".pkl"
+        self.file_path = dir_path + "inference_products" + ".pkl"
 
     def save_corpus(self, products):
         with open(self.file_path, 'wb') as f:
