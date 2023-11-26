@@ -77,7 +77,7 @@ class DatasetLoader(SchemaCreator):
         self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance
 
-    def load_items(self, n=1):
+    def load_items(self, n=100):
         columns, products = self.get_columns(), self.get_products()
         self.create_table(self.table_name, columns)        
         max = len(products)

@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from langchain.chat_models import ChatOpenAI
 
+import uuid
 
 
 class DataTransformer():
@@ -179,22 +180,25 @@ class SummaryTagger(RunInference):
             
     def invoke(self, products_in):
         products_out= []
+        unique = set()
         i = 0
         for product_in in products_in:
-            try:
-                product_out = {}
-                product_out[self.primary_key] = product_in[self.primary_key]
-                product_out[self.sub_domain] = product_in[self.sub_domain]
-                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product_in)))
-                for summary_value in eval(inferred_tags):
-                    tag = DataTransformer.fil_col(summary_value[0])
-                    value = summary_value[1]
-                    product_out[tag] = value
-                    if self.is_verbose:
-                        print(str(i) + "/" + str(len(products_in)) + "\t" + "summary_value="+str(summary_value))
-                products_out.append(product_out)    
-            except Exception as e:
-                pass                
+            product_out = {}
+            if product_in[self.primary_key] not in unique:
+                unique.add(product_in[self.primary_key])
+                try:
+                    product_out[self.primary_key] = product_in[self.primary_key]
+                    product_out[self.sub_domain] = product_in[self.sub_domain]
+                    inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product_in)))
+                    for summary_value in eval(inferred_tags):
+                        tag = DataTransformer.fil_col(summary_value[0])
+                        value = summary_value[1]
+                        product_out[tag] = value
+                        if self.is_verbose:
+                            print(str(i) + "/" + str(len(products_in)) + "\t" + "summary_value="+str(summary_value))
+                    products_out.append(product_out)    
+                except Exception as e:
+                    pass                
             if i%25 == 0:
                 print("summary_inference... " + str(i))
             i+=1
