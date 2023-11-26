@@ -232,20 +232,25 @@ class DatasetAugmenter():
         return DataTransformer.fill_cols(sorted(columns)), products
         
     def summary_column_products(self, context_products, n=30): 
-        if not self.is_run_inference:
-            context_products = context_products[:n]
         inference_products = []
-        for sub_domain, context_products in self.product_by_domain(context_products).items():
-            products = self.summary_tagger.invoke(context_products)
-            inference_products.extend(products)
-            self.product_cache.save_corpus(sub_domain, products)
+        domain_products = self.product_by_domain(context_products).items()
+        if not self.is_run_inference:
+            for sub_domain in domain_products.keys():
+                products = self.product_cache.get_corpus(sub_domain)
+                inference_products.extend(products)
+            # context_products = context_products[:n]
+        else:
+            for sub_domain, context_products in domain_products:
+                products = self.summary_tagger.invoke(context_products)
+                inference_products.extend(products)
+                self.product_cache.save_corpus(sub_domain, products)
         columns = self.extract_columns(inference_products)
         return columns, inference_products
     
     def product_by_domain(self, products):
         domain_products = defaultdict(list)
         for product in products:
-            domain_products[product['sub_domain']].append(product)
+            domain_products[product[self.sub_domain]].append(product)
         return domain_products
     
     def extract_columns(self, products):
@@ -262,7 +267,7 @@ class DatasetAugmenter():
                 columns.append(concept)
                 for value in values:
                     for product in products:
-                        if value in product['sub_domain']:
+                        if value in product[self.sub_domain]:
                             product[concept] = True
                         else:
                             product[concept] = False
