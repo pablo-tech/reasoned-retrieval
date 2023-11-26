@@ -79,7 +79,7 @@ class DatasetLoader(SchemaCreator):
 
     def load_items(self):
         columns, products = self.get_columns(), self.get_products()
-        products = products[:30]
+        # products = products[:30]
         insert_sql = self.prepare_load(columns, products)
         # print("INSERT_SQL=>"+str(insert_sql))
         self.execute_load(columns, insert_sql)
