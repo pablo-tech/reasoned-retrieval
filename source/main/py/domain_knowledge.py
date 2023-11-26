@@ -147,7 +147,7 @@ class GiftSuql():
         self.dir_path = dir_path
 
     def file_path(self, domain):
-        return self.dir_path + domain + ".json"
+        return self.dir_path + domain 
 
     def save_corpus(self, domain, products):
         print("saving... " + str(domain))
