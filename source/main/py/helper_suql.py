@@ -237,7 +237,7 @@ class DatasetAugmenter():
         inference_products = []
         for sub_domain, context_products in self.product_by_domain(context_products).items():
             products = self.summary_tagger.invoke(context_products)
-            inference_products.append(products)
+            inference_products.extend(products)
             self.product_cache.save_corpus(sub_domain, products)
         columns = self.extract_columns(inference_products)
         return columns, inference_products
