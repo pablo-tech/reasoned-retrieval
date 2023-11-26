@@ -114,7 +114,7 @@ class DatasetLoader(SchemaCreator):
     def prepare_load(self, columns, products):
         # print("PRODUCTS=>" + str(products))
         rows = DataTransformer.product_strs(products, columns, self.primary_key)
-        for chunk in rows.split("\n")[:3]:
+        for chunk in rows.split("\n")[:1]:
             if chunk != "":
                 print("ROW=>" + str(chunk))
         insert_sql = self.get_sql(self.table_name, rows)
