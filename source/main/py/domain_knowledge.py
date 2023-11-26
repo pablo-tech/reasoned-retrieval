@@ -1,6 +1,6 @@
 import os, json
 import uuid
-import pickle 
+import json 
 
 from collections import defaultdict
 
@@ -144,15 +144,15 @@ class GiftDataset2(DomainDataset):
 class GiftSuql():
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
-        self.file_path = dir_path + "inference_products" + ".pkl"
+        self.file_path = dir_path + "inference_products" + ".json"
 
     def save_corpus(self, products):
-        with open(self.file_path, 'wb') as f:
-            pickle.dump(products, f)
+        with open(self.file_path, 'w') as fp:
+            json.dump(products, fp)        
 
     def get_corpus(self):
-        with open(self.file_path, 'rb') as f:
-            products = pickle.load(f)    
+        with open(self.file_path, 'r') as fp:
+            products = json.load(fp)        
         return products
 
 
