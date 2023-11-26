@@ -152,7 +152,10 @@ class GiftSuql():
     def save_corpus(self, domain, products):
         print("saving... " + str(domain))
         file_path = self.file_path(domain)
-        os.remove(file_path)
+        try:
+            os.remove(file_path)
+        except:
+            pass
         with open(file_path, 'w') as fp:
             json.dump(products, fp)        
 
