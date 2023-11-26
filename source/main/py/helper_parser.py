@@ -198,8 +198,9 @@ class SummaryTagger(RunInference):
             except Exception as e:
                 pass                
             if i%25 == 0:
-                print("..." + str(i))
-            i+=1                
+                print("summary_inference... " + str(i))
+            i+=1
+        print("summary_values=>"+str(summary_values))                
         return summary_values, product_summaries 
     
     def get_product_str(self, product):
