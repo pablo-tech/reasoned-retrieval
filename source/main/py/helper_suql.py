@@ -79,6 +79,7 @@ class DatasetLoader(SchemaCreator):
 
     def load_items(self, n=100):
         columns, products = self.get_columns(), self.get_products()
+        self.create_table(self.table_name, columns)        
         max = len(products)
         i, j = 0, n
         while i < max:
@@ -102,7 +103,6 @@ class DatasetLoader(SchemaCreator):
         return insert_sql
 
     def execute_load(self, columns, insert_sql):
-        self.create_table(self.table_name, columns)
         self.db_instance.get_db_cursor().execute(insert_sql)
         self.db_instance.get_db_connection().commit()
     
