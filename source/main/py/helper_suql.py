@@ -77,12 +77,19 @@ class DatasetLoader(SchemaCreator):
         self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance
 
-    def load_items(self):
+    def load_items(self, n=100):
         columns, products = self.get_columns(), self.get_products()
-        # products = products[:30]
-        insert_sql = self.prepare_load(columns, products)
-        # print("INSERT_SQL=>"+str(insert_sql))
-        self.execute_load(columns, insert_sql)
+        max = len(products)
+        i, j = 0, n
+        while i < max:
+            if j > max:
+                j = max
+            batch = products[i:j]
+            insert_sql = self.prepare_load(columns, batch)
+            # print("INSERT_SQL=>"+str(insert_sql))
+            self.execute_load(columns, insert_sql)
+            i+=n
+            j+=n
         return columns, products
 
     def prepare_load(self, columns, products):
