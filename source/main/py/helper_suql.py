@@ -235,7 +235,7 @@ class DatasetAugmenter():
         if not self.is_run_inference:
             context_products = context_products[:n]
         inference_products = []
-        for sub_domain, context_products in self.product_by_domain(context_products):
+        for sub_domain, context_products in self.product_by_domain(context_products).items():
             products = self.summary_tagger.invoke(context_products)
             inference_products.append(products)
             self.product_cache.save_corpus(sub_domain, products)
