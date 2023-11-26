@@ -89,8 +89,8 @@ class DatasetLoader(SchemaCreator):
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = DataTransformer.product_strs(products, columns, self.primary_key)
-        for row in rows[:3]:
-            print("ROW=>" + str(row))
+        for chunk in rows.split("\n"):
+            print("ROW=>" + str(chunk))
         insert_sql = self.get_sql(self.table_name, rows)
         return insert_sql
 
