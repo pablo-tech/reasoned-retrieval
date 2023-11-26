@@ -94,6 +94,7 @@ class DatasetLoader(SchemaCreator):
 
     def execute_load(self, columns, insert_sql):
         self.create_table(self.table_name, columns)
+        print("execute_load==>"+str(insert_sql))
         self.db_instance.get_db_cursor().execute(insert_sql)
         self.db_instance.get_db_connection().commit()
     
