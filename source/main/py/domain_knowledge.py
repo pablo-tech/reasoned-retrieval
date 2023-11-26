@@ -81,7 +81,7 @@ class CromaDataset(DomainDataset):
     def __init__(self, dir_path):
         super().__init__(dir_path)
 
-    def get_corpus(self, domain_name):
+    def read_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
         corpus = { v['id']: self.clean_body(v) for k,v in corpus.items() }
         return DatasetValidation.valid_corpus(corpus)
@@ -121,7 +121,7 @@ class GiftDataset(DomainDataset):
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift_qa/"):
         super().__init__(dir_path)
     
-    def get_corpus(self, domain_name):
+    def read_corpus(self, domain_name):
         corpus = {}
         for product in self.subdomain_corpus(domain_name)['results']:
             corpus[str(uuid.uuid1())] = product
@@ -133,12 +133,24 @@ class GiftDataset2(DomainDataset):
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
         super().__init__(dir_path)
     
-    def get_corpus(self, domain_name):
+    def read_corpus(self, domain_name):
         corpus = {}
         for product in self.subdomain_corpus(domain_name): # ['results']
             corpus[str(uuid.uuid1())] = product
-        return DatasetValidation.valid_corpus(corpus)     
+        return DatasetValidation.valid_corpus(corpus)
 
+
+class GiftSuql():
+
+    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
+        super().__init__(dir_path)
+
+    def save_corpus(self):
+        pass
+
+    def read_corpus(self):
+        pass
+    
 
 class DomainIngestion():
 
@@ -161,7 +173,7 @@ class DomainIngestion():
     def ingest_dataset(self, dataset):
         n = 0
         for subdomain_name in dataset.get_subdomains():
-            subdomain_corpus = dataset.get_corpus(subdomain_name)
+            subdomain_corpus = dataset.read_corpus(subdomain_name)
             n += len(subdomain_corpus)
             print(subdomain_name+"="+str(len(subdomain_corpus)))
             for key, item in subdomain_corpus.items():

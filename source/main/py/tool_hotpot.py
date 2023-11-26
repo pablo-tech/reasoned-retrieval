@@ -12,7 +12,7 @@ class HotpotRetriever(SelectHelper):
         super().__init__("HOTPOT", completion_llm, is_verbose)
         self.hotpot_data = HotpotDataset(completion_llm, is_verbose)
         self.doc_store = {}
-        for example in self.hotpot_data.get_corpus():
+        for example in self.hotpot_data.read_corpus():
             contexts = example['context']
             contexts = ["".join(context[1]) for context in contexts]
             self.doc_store[example['question'].strip()] = contexts        

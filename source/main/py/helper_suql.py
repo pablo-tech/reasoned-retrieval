@@ -77,7 +77,7 @@ class DatasetLoader(SchemaCreator):
         self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance
 
-    def load_items(self, n=100):
+    def load_items(self, n=25):
         columns, products = self.get_columns(), self.get_products()
         products = self.unique_products(products)
         print("COLUMNS=>" + str(columns))
@@ -227,12 +227,12 @@ class DatasetAugmenter():
         columns = list(columns)
         return DataTransformer.fill_cols(sorted(columns)), products
         
-    def summary_column_products(self, products, n=30): 
+    def summary_column_products(self, context_products, n=30): 
         if not self.is_run_inference:
-            products = products[:n]
-        products = self.summary_tagger.invoke(products)
-        columns = self.extract_columns(products)
-        return columns, products
+            context_products = context_products[:n]
+        inference_products = self.summary_tagger.invoke(context_products)
+        columns = self.extract_columns(inference_products)
+        return columns, inference_products
     
     def extract_columns(self, products):
         columns = set()
