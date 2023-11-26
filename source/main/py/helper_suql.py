@@ -87,16 +87,15 @@ class DatasetLoader(SchemaCreator):
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = DataTransformer.product_strs(products, columns, self.primary_key)
-        print("ROWS=>" + str(rows))
+        print("ROW=>" + str(rows[0]))
         insert_sql = self.get_sql(self.table_name, rows)
         # print("INSERT_SQL=>"+str(insert_sql))
         return columns, rows, insert_sql
 
     def execute_load(self, columns, insert_sql):
         self.create_table(self.table_name, columns)
-        print("execute_load==>"+str(insert_sql))
-        # self.db_instance.get_db_cursor().execute(insert_sql)
-        # self.db_instance.get_db_connection().commit()
+        self.db_instance.get_db_cursor().execute(insert_sql)
+        self.db_instance.get_db_connection().commit()
     
     def get_sql(self, table_name, table_rows):
         return f"""
