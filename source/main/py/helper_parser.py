@@ -179,7 +179,6 @@ class SummaryTagger(RunInference):
             
     def invoke(self, products):
         product_summaries= []
-        summary_values = defaultdict(set)
         i = 0
         for product in products:
             try:
@@ -191,7 +190,6 @@ class SummaryTagger(RunInference):
                     tag = DataTransformer.fil_col(summary_value[0])
                     value = summary_value[1]
                     reduced_product[tag] = value
-                    summary_values[tag].add(value)
                     if self.is_verbose:
                         print(str(i) + "/" + str(len(products)) + "\t" + "summary_value="+str(summary_value))
                 product_summaries.append(reduced_product)    
@@ -200,8 +198,7 @@ class SummaryTagger(RunInference):
             if i%25 == 0:
                 print("summary_inference... " + str(i))
             i+=1
-        print("summary_values=>"+str(summary_values))                
-        return summary_values, product_summaries 
+        return product_summaries 
     
     def get_product_str(self, product):
         query = "" # TODO: if too long, summarize

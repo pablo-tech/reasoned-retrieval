@@ -203,8 +203,15 @@ class DatasetAugmenter():
         return DataTransformer.fill_cols(sorted(columns)), products
         
     def summary_column_products(self, products): 
-        columns, products = self.summary_tagger.invoke(products)
-        return list(columns.keys()), products
+        products = self.summary_tagger.invoke(products)
+        columns = self.extract_columns(products)
+        return columns, products
+    
+    def extract_columns(self, products):
+        columns = set()
+        for product in products:
+            columns.update(list(product.keys()))
+        return list(columns)
     
     def annotation_column_products(self, columns, products):
         groupings = self.column_annotation.values()
