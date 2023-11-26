@@ -233,14 +233,14 @@ class DatasetAugmenter():
         
     def summary_column_products(self, context_products, n=30): 
         inference_products = []
-        domain_products = self.product_by_domain(context_products).items()
+        domain_products = self.product_by_domain(context_products)
         if not self.is_run_inference:
             for sub_domain in domain_products.keys():
                 products = self.product_cache.get_corpus(sub_domain)
                 inference_products.extend(products)
             # context_products = context_products[:n]
         else:
-            for sub_domain, context_products in domain_products:
+            for sub_domain, context_products in domain_products.items():
                 products = self.summary_tagger.invoke(context_products)
                 inference_products.extend(products)
                 self.product_cache.save_corpus(sub_domain, products)
