@@ -78,19 +78,20 @@ class DatasetLoader(SchemaCreator):
         self.db_instance = db_instance
 
     def load_items(self):
-        columns, rows, insert_sql = self.prepare_load()
+        columns, products = self.get_columns(), self.get_products()
+        products = products[:30]
+        insert_sql = self.prepare_load(columns, products)
         self.execute_load(columns, insert_sql)
-        return columns, rows
+        return columns, products
 
-    def prepare_load(self):
-        products, columns = self.get_product_columns()
+    def prepare_load(self, columns, products):
         # print("PRODUCTS=>" + str(products))
         print("COLUMNS=>" + str(columns))
         rows = DataTransformer.product_strs(products, columns, self.primary_key)
         print("ROW=>" + str(rows[0]))
         insert_sql = self.get_sql(self.table_name, rows)
         # print("INSERT_SQL=>"+str(insert_sql))
-        return columns, rows, insert_sql
+        return insert_sql
 
     def execute_load(self, columns, insert_sql):
         self.create_table(self.table_name, columns)
@@ -109,8 +110,8 @@ INSERT INTO {table_name} VALUES {table_rows}
     def get_table_name(self):
         return self.table_name
 
-    def get_product_columns(self):
-        return self.get_products(), self.get_columns()
+    # def get_column_products(self):
+    #     return self.get_columns(), self.get_products()
 
     def get_enums(self):
         return sorted(list(self.get_enum_values().keys()))
