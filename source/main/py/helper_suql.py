@@ -77,10 +77,11 @@ class DatasetLoader(SchemaCreator):
         self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance
 
-    def load_items(self, n=100):
+    def load_items(self, n=1):
         columns, products = self.get_columns(), self.get_products()
         self.create_table(self.table_name, columns)        
         max = len(products)
+        fails = 0
         i, j = 0, n
         while i < max:
             if j > max:
@@ -88,9 +89,14 @@ class DatasetLoader(SchemaCreator):
             batch = products[i:j]
             insert_sql = self.prepare_load(columns, batch)
             # print("INSERT_SQL=>"+str(insert_sql))
-            self.execute_load(columns, insert_sql)
+            try:
+                self.execute_load(insert_sql)
+            except:
+                fails+=1
+                pass
             i+=n
             j+=n
+        print("FAILURE_COUNT="+str(fails))
         return columns, products
 
     def prepare_load(self, columns, products):
@@ -102,7 +108,7 @@ class DatasetLoader(SchemaCreator):
         insert_sql = self.get_sql(self.table_name, rows)
         return insert_sql
 
-    def execute_load(self, columns, insert_sql):
+    def execute_load(self, insert_sql):
         self.db_instance.get_db_cursor().execute(insert_sql)
         self.db_instance.get_db_connection().commit()
     
