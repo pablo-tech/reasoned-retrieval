@@ -1,17 +1,13 @@
 from domain_knowledge import DomainSchema
 from helper_parser import SummaryTagger, DataTransformer
 
-from collections import defaultdict
-
 
 class SchemaCreator(DomainSchema):
 
-    def __init__(self, n,
-                 domain_name, domain_datasets, 
+    def __init__(self, domain_name, domain_datasets, 
                  selected_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose):
-        super().__init__(n=n, 
-                         data_sets=domain_datasets,
+        super().__init__(data_sets=domain_datasets,
                          completion_llm=completion_llm,
                          is_verbose=is_verbose)
         self.domain_name = domain_name.upper()
@@ -71,10 +67,10 @@ class SchemaCreator(DomainSchema):
 
 class DatasetLoader(SchemaCreator):
 
-    def __init__(self, n, nick_name, domain_name, domain_datasets, 
+    def __init__(self, nick_name, domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose=False):
-        super().__init__(n, domain_name, domain_datasets, 
+        super().__init__(domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
@@ -137,10 +133,10 @@ class DatasetReducer():
 
 class ContextParser(DatasetLoader):
 
-    def __init__(self, n, domain_name, domain_datasets, 
+    def __init__(self, domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
-        super().__init__(n, "CONTEXT", domain_name, domain_datasets, 
+        super().__init__("CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.ds_reducer = DatasetReducer(primary_key, picked_columns)
@@ -186,8 +182,10 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%'
 
 class DatasetAugmenter():
 
-    def __init__(self, column_annotation, summarize_columns, primary_key,
+    def __init__(self, is_run_inference,
+                 column_annotation, summarize_columns, primary_key,
                  completion_llm, is_verbose):
+        self.is_run_inference = is_run_inference
         self.column_annotation = column_annotation
         self.primary_key = primary_key
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
@@ -202,7 +200,9 @@ class DatasetAugmenter():
         columns = list(columns)
         return DataTransformer.fill_cols(sorted(columns)), products
         
-    def summary_column_products(self, products): 
+    def summary_column_products(self, products, n=30): 
+        if not self.is_run_inference:
+            products = products[:n]
         products = self.summary_tagger.invoke(products)
         columns = self.extract_columns(products)
         return columns, products
@@ -230,13 +230,15 @@ class DatasetAugmenter():
 
 class InferenceParser(DatasetLoader):
 
-    def __init__(self, n, domain_name, domain_datasets, 
+    def __init__(self, is_run_inference,
+                 domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
-        super().__init__(n, "INFERENCE", domain_name, domain_datasets, 
+        super().__init__("INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, 
                  db_instance, completion_llm, is_verbose)
-        self.ds_augmenter = DatasetAugmenter(column_annotation, summarize_columns, primary_key,
+        self.ds_augmenter = DatasetAugmenter(is_run_inference,
+                                             column_annotation, summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()

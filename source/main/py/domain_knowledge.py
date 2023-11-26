@@ -211,16 +211,10 @@ class DomainIngestion():
 
 class DomainSchema(DomainIngestion):
 
-    def __init__(self, n, data_sets, completion_llm, is_verbose):
+    def __init__(self, data_sets, completion_llm, is_verbose):
         super().__init__(data_sets, completion_llm, is_verbose)
         self.slot_values = defaultdict(set)
-        self.working_products = self.set_products(n)        
-
-    def set_products(self, n):
-        products = self.get_domain_products()
-        if n is not None:
-            products = products[:n]
-        return products
+        self.working_products = self.get_domain_products()        
 
     def column_names(self):
         all_columns = set()
