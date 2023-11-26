@@ -2,6 +2,8 @@ from domain_knowledge import DomainSchema
 from helper_parser import SummaryTagger, DataTransformer
 from domain_knowledge import GiftSuql
 
+from collections import defaultdict
+
 
 class SchemaCreator(DomainSchema):
 
@@ -232,10 +234,19 @@ class DatasetAugmenter():
     def summary_column_products(self, context_products, n=30): 
         if not self.is_run_inference:
             context_products = context_products[:n]
-        inference_products = self.summary_tagger.invoke(context_products)
-        self.product_cache.save_corpus(inference_products)
+        inference_products = []
+        for sub_domain, context_products in self.product_by_domain(context_products):
+            products = self.summary_tagger.invoke(context_products)
+            inference_products.append(products)
+            self.product_cache.save_corpus(sub_domain, products)
         columns = self.extract_columns(inference_products)
         return columns, inference_products
+    
+    def product_by_domain(self, products):
+        domain_products = defaultdict(list)
+        for product in products:
+            domain_products[product['sub_domain']].append(product)
+        return domain_products
     
     def extract_columns(self, products):
         columns = set()
