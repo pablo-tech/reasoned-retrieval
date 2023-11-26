@@ -79,6 +79,7 @@ class DatasetLoader(SchemaCreator):
 
     def load_items(self, n=100):
         columns, products = self.get_columns(), self.get_products()
+        products = self.unique_products(products)
         print("COLUMNS=>" + str(columns))
         self.create_table(self.table_name, columns)        
         max = len(products)
@@ -100,6 +101,15 @@ class DatasetLoader(SchemaCreator):
             j+=n
         print("FAILURE_COUNT="+str(fails))
         return columns, products
+    
+    def unique_products(self, products_in):
+        products_out = []
+        unique = set()
+        for product in products_in:
+            if product[self.primary_key] not in unique:
+               unique.add(product[self.primary_key])
+               products_out.append(product) 
+        return products_out
 
     def prepare_load(self, columns, products):
         # print("PRODUCTS=>" + str(products))
