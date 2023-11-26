@@ -2,8 +2,6 @@ from collections import defaultdict
 
 from langchain.chat_models import ChatOpenAI
 
-import uuid
-
 
 class DataTransformer():
 

@@ -1,5 +1,6 @@
 import os, json
 import uuid
+import pickle 
 
 from collections import defaultdict
 
@@ -144,13 +145,17 @@ class GiftSuql():
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
         super().__init__(dir_path)
+        self.file_path = self.dir_path + "inference_products" + ".pkl"
 
-    def save_corpus(self):
-        pass
+    def save_corpus(self, products):
+        with open(self.file_path, 'wb') as f:
+            pickle.dump(products, f)
 
     def get_corpus(self):
-        pass
-    
+        with open(self.file_path, 'rb') as f:
+            products = pickle.load(f)    
+        return products
+
 
 class DomainIngestion():
 
