@@ -50,11 +50,12 @@ class DataTransformer():
         return { k: v for k, v in enum_vals.items()
                  if len(v) > 1 }    
 
-    def legal_product(product_in):
+    def legal_product(product_in, n=3):
         product_out = {}
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
-            product_out[k] = v # .lower()
+            if len(k.split("_")) < n:
+                product_out[k] = v # .lower()
         try:
             del product_out["case"]
         except:
