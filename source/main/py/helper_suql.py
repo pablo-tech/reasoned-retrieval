@@ -274,15 +274,15 @@ class InferenceLoader(DatasetLoader):
                                             completion_llm, is_verbose)
         self.product_cache = GiftSuql()
 
-    def set_column_products(self, working_products): 
-        columns, products = self.summary_column_products(working_products)
+    def set_column_products(self, working_products, n): 
+        columns, products = self.summary_column_products(working_products, n)
         columns, products = self.annotation_column_products(columns, products)
         columns = set(columns)
         columns.add(self.primary_key)
         columns = list(columns)
         return DataTransformer.fill_cols(sorted(columns)), products
         
-    def summary_column_products(self, context_products, n=30): 
+    def summary_column_products(self, context_products, n): 
         inference_products = []
         domain_products = self.product_by_domain(context_products)
         if not self.is_run_inference:
@@ -296,6 +296,8 @@ class InferenceLoader(DatasetLoader):
                 inference_products.extend(products)
                 self.product_cache.save_corpus(subdomain_name, products)
         inference_products = [DataTransformer.legal_product(p) for p in inference_products]                
+        if n is not None:
+            inference_products = inference_products[:n]
         columns = self.extract_columns(inference_products)
         return columns, inference_products
     
@@ -346,16 +348,14 @@ class InferenceDomain(InferenceLoader):
 
     def augmentation_column_products(self):
         subdomain_products = self.get_domain_products()
-        if self.n is not None:
-            subdomain_products = subdomain_products[:self.n]
-        columns, products_in = self.set_column_products(subdomain_products) 
-        products_out = []
-        for product in products_in:
-            try:
-                if product[self.subdomain_column] == self.subdomain_name:
-                    products_out.append(product)
-            except Exception as e:
-                print("SUBDOMAIN_ERROR="+str(e)+"\t"+str(product))
+        columns, products_out = self.set_column_products(subdomain_products, self.n) 
+        # products_out = []
+        # for product in products_in:
+        #     try:
+        #         if product[self.subdomain_column] == self.subdomain_name:
+        #             products_out.append(product)
+        #     except Exception as e:
+        #         print(self.subdomain_name + ": SUBDOMAIN_ERROR=>"+str(e)+"\t"+str(product))
         print("SUBDOMAIN_SIZE="+str(len(products_out))+"x"+str(len(columns)))
         return columns, products_out
         # print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
