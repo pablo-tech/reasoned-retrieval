@@ -127,6 +127,7 @@ class SqlSemanticParser(RunInference):
         results = []
         for invocation in product_parser.get_invocations():
             columns, schema_sql, enum_values, get_fewshot_examples = invocation
+            enum_values = self.reduced_enums(enum_values)
             prompt = self.get_prompt(query_english, schema_sql, 
                                      enum_values, get_fewshot_examples)
             query_sql = self.run_inference(prompt)
@@ -136,6 +137,10 @@ class SqlSemanticParser(RunInference):
                                          [row for row in response])
             results.append(response)
         return results[:n]
+    
+    def reduced_enums(self, enum_values, n=10):
+        return { k:v for k, v in enum_values.items() 
+                if len(v) > n }
     
     def new_response(self, query_sql, result_columns, result_rows):
         user_state, is_success = self.user_state(query_sql)
