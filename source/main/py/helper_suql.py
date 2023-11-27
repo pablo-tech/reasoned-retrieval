@@ -390,6 +390,9 @@ class InferenceParser():
                 print("LOAD_SUBDOMAIN_ERROR=" + str(subdomain_name))
                 pass
 
+    def get_enum_values(self, subdomain_name):
+        return self.domain_inference[subdomain_name].get_enum_values()    
+
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
