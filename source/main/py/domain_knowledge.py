@@ -244,10 +244,12 @@ class DomainIngestion():
     def get_raw_products(self):
         return self.raw_data
     
-    def get_domain_products(self, subdomain_name):
-        if subdomain_name == "":
-            return list(self.clean_data.values())
-        return [p]
+    def get_domain_products(self):
+        products = list(self.clean_data.values())
+        if self.subdomain_name == "":
+            return products
+        return [p for p in products 
+                if p[self.subdomain_column]==self.subdomain_name]
 
     def get_product(self, key):
         return self.clean_data[key]
