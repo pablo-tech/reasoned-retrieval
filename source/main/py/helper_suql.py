@@ -165,7 +165,7 @@ class DatasetReducer(DatasetLoader):
                          picked_columns, primary_key, price_column,  
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
-        self.products = self.get_domain_products()
+        self.products = self.get_domain_products(subdomain_name="")
         self.columns = self.set_columns()
         self.enum_values = self.set_enum_values()
 

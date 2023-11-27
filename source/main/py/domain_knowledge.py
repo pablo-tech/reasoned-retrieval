@@ -82,8 +82,8 @@ class DatasetValidation():
 
 class CromaDataset(DomainDataset):
 
-    def __init__(self, dir_path):
-        super().__init__(dir_path, subdomain_names=[])
+    def __init__(self, subdomain_names, dir_path):
+        super().__init__(subdomain_names, dir_path=dir_path)
 
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
@@ -111,19 +111,19 @@ class CromaDataset(DomainDataset):
 class TvDataset(CromaDataset):
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/tv_qa/"):
-        super().__init__(dir_path)
+        super().__init__(subdomain_names=[], dir_path=dir_path)
     
 
 class AcDataset(CromaDataset):
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/ac_qa/"):
-        super().__init__(dir_path)
+        super().__init__(subdomain_names=[], dir_path=dir_path)
 
 
 class GiftDataset(DomainDataset):
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift_qa/"):
-        super().__init__(dir_path, subdomain_names=[])
+        super().__init__(subdomain_names=[], dir_path=dir_path)
     
     def get_corpus(self, domain_name):
         corpus = {}
@@ -136,7 +136,7 @@ class GiftDataset2(DomainDataset):
 
     def __init__(self, subdomain_names,
                  dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
-        super().__init__(dir_path, subdomain_names)
+        super().__init__(subdomain_names, dir_path)
     
     def get_corpus(self, domain_name):
         corpus = {}
@@ -147,7 +147,9 @@ class GiftDataset2(DomainDataset):
 
 class GiftSuql():
 
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
+    def __init__(self, subdomain_names,
+                 dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
+        self.subdomain_names = subdomain_names
         self.dir_path = dir_path
 
     def file_path(self, domain):
@@ -246,9 +248,6 @@ class DomainIngestion():
 
     def get_product(self, key):
         return self.clean_data[key]
-
-    def get_subdomain_products(self):
-        return self.domain_clean
 
     def get_subdomain_products(self):
         return self.domain_clean
