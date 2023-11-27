@@ -80,11 +80,11 @@ class GiftOracle():
                 "same_day_delivery": []
             }
         }        
-        self.inference_parser = InferenceParser(is_run_inference,
-                                                domain_name, domain_datasets, 
-                picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
-                self.db_instance, completion_llm, is_verbose=False)
-        self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
+        # self.inference_parser = InferenceParser(is_run_inference,
+        #                                         domain_name, domain_datasets, 
+        #         picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
+        #         self.db_instance, completion_llm, is_verbose=False)
+        # self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def get_context_parser(self):
         return self.context_parser
