@@ -276,7 +276,7 @@ class DatasetAugmenter(DatasetLoader):
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
-                         picked_columns, primary_key, price_column, summarize_columns,
+                         picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
         self.is_run_inference = is_run_inference
         self.column_annotation = column_annotation
