@@ -332,18 +332,22 @@ class InferenceDomain(InferenceLoader):
                  subdomain_name, subdomain_column, 
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
-                 completion_llm, is_verbose):
+                 completion_llm, is_verbose,
+                 n=100):
         super().__init__(is_run_inference, domain_name, subdomain_dataset_func,
                          subdomain_name, subdomain_column,
                          picked_columns, primary_key, price_column,  
                          summarize_columns, column_annotation, 
                          db_instance, completion_llm, is_verbose)
+        self.n = n        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
         self.enum_values = self.set_enum_values()
 
     def augmentation_column_products(self):
         subdomain_products = self.get_domain_products()
+        if self.n is not None:
+            subdomain_products = subdomain_products[:self.n]
         columns, products_in = self.set_column_products(subdomain_products) 
         products_out = []
         for product in products_in:
