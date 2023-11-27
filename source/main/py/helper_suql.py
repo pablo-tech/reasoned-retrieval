@@ -269,7 +269,7 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
     #     return self.ds_reducer.columns(self.column_names()) 
 
 
-class DatasetAugmenter(DatasetLoader):
+class InferenceLoader(DatasetLoader):
 
     def __init__(self, is_run_inference, domain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
@@ -337,12 +337,12 @@ class DatasetAugmenter(DatasetLoader):
         return columns, products
 
 
-class InferenceParser(DatasetAugmenter):
-
-    def __init__(self, is_run_inference,
-                 domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
-                 db_instance, completion_llm, is_verbose=False): 
+class DatasetAugmenter(InferenceLoader):
+    
+    def __init__(self, is_run_inference, domain_name, domain_datasets,
+                 picked_columns, primary_key, price_column, summarize_columns,
+                 column_annotation, db_instance, 
+                 completion_llm, is_verbose):
         super().__init__(is_run_inference, domain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
@@ -361,6 +361,41 @@ class InferenceParser(DatasetAugmenter):
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
                                                            self.get_products(),
                                                            enum_exclude)        
+
+    def get_products(self):
+        return self.inference_products
+
+    def get_columns(self):
+        return self.inference_columns    
+    
+    def augmentation_column_products(self):
+        return self.column_products(self.get_domain_products()) 
+
+
+class InferenceParser(DatasetAugmenter):
+
+    def __init__(self, is_run_inference,
+                 domain_name, domain_datasets, 
+                 picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
+                 db_instance, completion_llm, is_verbose=False): 
+        super().__init__(is_run_inference, domain_name, domain_datasets,
+                 picked_columns, primary_key, price_column, summarize_columns,
+                 column_annotation, db_instance, 
+                 completion_llm, is_verbose)
+        # # super().__init__("INFERENCE", domain_name, domain_datasets, 
+        # #          picked_columns, primary_key, price_column, 
+        # #          db_instance, completion_llm, is_verbose)
+        # print("SUBDOMAIN_NAMES=" + str(self.get_subdomain_names()))        
+        # # self.ds_augmenter = DatasetAugmenter(is_run_inference,
+        # #                                      column_annotation, summarize_columns, primary_key,
+        # #                                      completion_llm, is_verbose)        
+        # self.inference_columns, self.inference_products =\
+        #         self.augmentation_column_products()
+        # enum_exclude = [col for col in self.get_columns() 
+        #                 if col in summarize_columns or col == primary_key or col == price_column]
+        # self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
+        #                                                    self.get_products(),
+        #                                                    enum_exclude)        
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
@@ -372,14 +407,14 @@ Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
 """
 
-    def get_products(self):
-        return self.inference_products
+    # def get_products(self):
+    #     return self.inference_products
 
-    def get_columns(self):
-        return self.inference_columns    
+    # def get_columns(self):
+    #     return self.inference_columns    
     
-    def augmentation_column_products(self):
-        return self.column_products(self.get_domain_products()) 
+    # def augmentation_column_products(self):
+    #     return self.column_products(self.get_domain_products()) 
 
 
 class WholisticParser():
