@@ -362,7 +362,13 @@ class InferenceParser():
 
     def get_columns(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_columns()
-    
+
+    def get_products(self, subdomain_name):
+        return self.domain_inference[subdomain_name].get_products()
+
+    def schema_sql(self, subdomain_name):
+        return self.domain_inference[subdomain_name].schema_sql()
+
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
