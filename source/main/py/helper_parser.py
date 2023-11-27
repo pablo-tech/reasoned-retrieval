@@ -126,16 +126,16 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, product_parser):
         results = []
         for invocation in product_parser.get_invocations():
-            schema_sql, enum_values, get_fewshot_examples = invocation
+            columns, schema_sql, enum_values, get_fewshot_examples = invocation
             prompt = self.get_prompt(query_english, schema_sql, 
                                      enum_values, get_fewshot_examples)
             query_sql = self.run_inference(prompt)
             response = self.db_cursor.execute(query_sql)
             response = self.new_response(query_sql,
-                                         product_parser.get_columns(),
-                                        [row for row in response][:n])
+                                         columns,
+                                         [row for row in response])
             results.append(response)
-        return results
+        return results[:n]
     
     def new_response(self, query_sql, result_columns, result_rows):
         user_state, is_success = self.user_state(query_sql)
