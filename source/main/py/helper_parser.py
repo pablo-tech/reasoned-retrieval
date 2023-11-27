@@ -128,6 +128,9 @@ class SqlSemanticParser(RunInference):
         for invocation in product_parser.get_invocations():
             columns, schema_sql, enum_values, get_fewshot_examples = invocation
             enum_values = self.reduced_enums(enum_values)
+            print("INVOKE_COLS=>"+str(columns))
+            print("INVOKE_ENUM=>"+str(enum_values))
+            print("INVOKE_SCHEMA=>"+str(schema_sql))
             prompt = self.get_prompt(query_english, schema_sql, 
                                      enum_values, get_fewshot_examples)
             query_sql = self.run_inference(prompt)
