@@ -163,11 +163,11 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class DatasetReducer(DatasetLoader):
 
-    def __init__(self, nick_name, domain_name, domain_datasets, 
+    def __init__(self, nick_name, domain_name, subdomain_dataset_func, 
                  subdomain_column, 
                  picked_columns, primary_key, price_column, summarize_columns,
                  db_instance, completion_llm, is_verbose=False):
-        super().__init__(nick_name, domain_name, domain_datasets, 
+        super().__init__(nick_name, domain_name, subdomain_dataset_func([]), 
                          "", subdomain_column, 
                          picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
@@ -201,11 +201,11 @@ class DatasetReducer(DatasetLoader):
 
 class ContextParser(DatasetReducer):
 
-    def __init__(self, domain_name, domain_datasets, 
+    def __init__(self, domain_name, subdomain_dataset_func, 
                  subdomain_column,
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
-        super().__init__("CONTEXT", domain_name, domain_datasets, 
+        super().__init__("CONTEXT", domain_name, subdomain_dataset_func, 
                          subdomain_column,
                          picked_columns, primary_key, price_column, summarize_columns,
                          db_instance, completion_llm, is_verbose)
@@ -232,12 +232,12 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 
 class InferenceLoader(DatasetLoader):
 
-    def __init__(self, is_run_inference, domain_name, domain_datasets,
+    def __init__(self, is_run_inference, domain_name, subdomain_dataset_func,
                  subdomain_name, subdomain_column, 
                  picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose):
-        super().__init__("INFERENCE", domain_name, domain_datasets, 
+        super().__init__("INFERENCE", domain_name, subdomain_dataset_func(subdomain_name), 
                          subdomain_name, subdomain_column, 
                          picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
@@ -303,12 +303,12 @@ class InferenceLoader(DatasetLoader):
 
 class InferenceDomain(InferenceLoader):
     
-    def __init__(self, is_run_inference, domain_name, domain_datasets,
+    def __init__(self, is_run_inference, domain_name, subdomain_dataset_func,
                  subdomain_name, subdomain_column, 
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
-        super().__init__(is_run_inference, domain_name, domain_datasets,
+        super().__init__(is_run_inference, domain_name, subdomain_dataset_func,
                          subdomain_name, subdomain_column,
                          picked_columns, primary_key, price_column,  
                          summarize_columns, column_annotation, 
@@ -346,14 +346,14 @@ class InferenceDomain(InferenceLoader):
 
 class InferenceParser():
 
-    def __init__(self, is_run_inference, domain_name, domain_datasets, 
+    def __init__(self, is_run_inference, domain_name, subdomain_dataset_func, 
                  subdomain_names, subdomain_column,
                  picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         self.domain_inference = {}
         for subdomain_name in subdomain_names:
-            domain_inference = InferenceDomain(is_run_inference, domain_name, domain_datasets, 
+            domain_inference = InferenceDomain(is_run_inference, domain_name, subdomain_dataset_func, 
                                                subdomain_name, subdomain_column,
                                                picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 

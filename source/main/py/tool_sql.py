@@ -24,7 +24,7 @@ class GiftOracle():
 
     def __init__(self, is_run_inference, subdomain_names, completion_llm):
         domain_name="CLIQ"
-        domain_datasets=[GiftDataset2(subdomain_names)]
+        # domain_datasets=[GiftDataset2(subdomain_names)]
         picked_columns=['id', 'price', 
                         'brand', 'colors',
                         'category', 'store', 'gender',
@@ -34,20 +34,23 @@ class GiftOracle():
         summarize_columns=['title', 'description']
         subdomain_column = 'sub_domain'
         self.db_instance = DatabaseInstance()
-        self.context_parser = ContextParser(domain_name, domain_datasets, 
+        self.context_parser = ContextParser(domain_name, self.subdomain_dataset_func, 
                                             subdomain_column,
                                             picked_columns, primary_key, price_column, summarize_columns,
                                             self.db_instance, completion_llm, is_verbose=False)
         column_annotation = self.get_annotation()  
         if len(subdomain_names) == 0:
             subdomain_names = self.context_parser.get_subdomain_names()    
-        self.inference_parser = InferenceParser(is_run_inference, domain_name, domain_datasets, 
+        self.inference_parser = InferenceParser(is_run_inference, domain_name, self.subdomain_dataset_func, 
                                                 subdomain_names, subdomain_column,
                                                 picked_columns, primary_key, price_column,  
                                                 summarize_columns, column_annotation, 
                                                 self.db_instance, completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
+    def subdomain_dataset_func(self, subdomain_names):
+        return [GiftDataset2(subdomain_names)]
+    
     def get_context_parser(self):
         return self.context_parser
 
