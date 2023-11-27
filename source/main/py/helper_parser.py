@@ -133,7 +133,7 @@ class SqlSemanticParser(RunInference):
         for invocation in product_parser.get_invocations():
             try:
                 subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
-                enum_values = self.reduced_enums(enum_values)
+                # enum_values = self.reduced_enums(enum_values)
                 # print("INVOKE_COLS=>"+str(columns))
                 # print("INVOKE_ENUM=>"+str(enum_values))
                 # print("INVOKE_SCHEMA=>"+str(schema_sql))
@@ -141,6 +141,7 @@ class SqlSemanticParser(RunInference):
                                         enum_values, get_fewshot_examples)
                 print(subdomain_name + " PROMPT_LENGTH=" + str(len(prompt)))            
                 query_sql = self.run_inference(prompt)
+                print(query_sql + " QUERY_SQL=" + str(query_sql))            
                 response = self.db_cursor.execute(query_sql)
                 response = self.new_response(query_sql,
                                             columns,
@@ -150,9 +151,9 @@ class SqlSemanticParser(RunInference):
                 print("INVOKE_ERROR=" +str(e))
         return results
     
-    def reduced_enums(self, enum_values, n=15):
-        return { k:v for k, v in enum_values.items() 
-                if len(v) > n }
+    # def reduced_enums(self, enum_values, n=15):
+    #     return { k:v for k, v in enum_values.items() 
+    #             if len(v) > n }
     
     def new_response(self, query_sql, result_columns, result_rows):
         user_state, is_success = self.user_state(query_sql)
