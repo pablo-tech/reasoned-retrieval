@@ -312,9 +312,16 @@ class InferenceDomain(InferenceLoader):
         return self.inference_columns    
     
     def augmentation_column_products(self):
-        products = self.set_column_products(self.get_domain_products()) 
-        print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
-        return [p for p in products if p[self.subdomain_column] == self.subdomain_name]
+        products_in = self.set_column_products(self.get_domain_products()) 
+        products_out = []
+        for product in products_in:
+            try:
+                if product[self.subdomain_column] == self.subdomain_name:
+                    products_out.append(product)
+            except Exception as e:
+                print("SUBDOMAIN_ERROR="+str(e)+"\t"+str(product))
+        return products_out
+        # print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
     
     def set_enum_values(self):
         enum_exclude = [col for col in self.get_columns() 
