@@ -324,7 +324,7 @@ class InferenceDomain(InferenceLoader):
         return self.inference_columns    
     
     def augmentation_column_products(self):
-        subdomain_products = self.get_domain_products(self.subdomain_name)
+        subdomain_products = self.get_domain_products()
         columns, products_in = self.set_column_products(subdomain_products) 
         products_out = []
         for product in products_in:
