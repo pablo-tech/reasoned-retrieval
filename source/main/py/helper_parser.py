@@ -96,11 +96,19 @@ class RunInference():
             inferred = inferred.content
         if self.is_verbose:            
             print(inferred)
+        inferred = self.post_infernece(inferred)
+        # print("INFERRED=" + str(inferred))            
+        return inferred
+    
+    def post_infernece(self, inferred):
         try:
             inferred = inferred.split("Answer:")[1].strip()
         except: 
             inferred = inferred.strip() 
-        # print("INFERRED=" + str(inferred))            
+        try:
+            inferred = inferred.split("SQL Query:")[1].strip()
+        except: 
+            inferred = inferred.strip() 
         return inferred
 
 
