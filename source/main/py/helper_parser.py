@@ -54,7 +54,7 @@ class DataTransformer():
         product_out = {}
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
-            product_out[k] = v.lower()
+            product_out[k] = v # .lower()
         try:
             del product_out["case"]
         except:
