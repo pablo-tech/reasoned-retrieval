@@ -88,6 +88,9 @@ class DatasetLoader(SchemaCreator):
     def table_name(self, subdomain_name):
         name = self.get_domain_name() + "_" + self.nick_name 
         if subdomain_name != "":
+            subdomain_name = subdomain_name.upper()
+            subdomain_name = subdomain_name.replace("-","_")
+            subdomain_name = subdomain_name.replace(".","_")
             name += "_" + subdomain_name
         return name
 
