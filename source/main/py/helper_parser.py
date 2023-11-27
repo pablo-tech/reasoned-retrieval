@@ -153,10 +153,11 @@ class SqlSemanticParser(RunInference):
                 print(subdomain_name + ": QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses][:n]
-                consolidated = self.new_response(query_sql,
-                                                 columns,
-                                                 responses)
-                results.append(consolidated)
+                if len(responses) > 0:
+                    consolidated = self.new_response(query_sql,
+                                                    columns,
+                                                    responses)
+                    results.append(consolidated)
             except Exception as e:
                 print("INVOKE_ERROR=" +str(e))
             print("-----")
