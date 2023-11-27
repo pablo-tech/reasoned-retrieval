@@ -81,8 +81,11 @@ class DatasetLoader(SchemaCreator):
         self.db_instance = db_instance
         self.sub_domain = 'sub_domain'
 
-    def table_name(self, domain):
-        return self.get_domain_name() + "_" + self.nick_name + "_" + domain
+    def table_name(self, domain=""):
+        name = self.get_domain_name() + "_" + self.nick_name 
+        if domain != "":
+            name += "_" + domain
+        return name
 
     def load_items(self, domain=""):
         columns, products = self.get_columns(), self.get_products()
@@ -143,7 +146,7 @@ INSERT INTO {table_name} VALUES {table_rows}
 """    
 
     def schema_sql(self):
-        return self.create_sql(self.get_table_name(), 
+        return self.create_sql(self.table_name(), 
                                self.get_columns())
         
     # def get_table_name(self):
