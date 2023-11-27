@@ -407,7 +407,7 @@ class InferenceParser():
                  self.get_fewshot_examples) for sd in self.domain_inference.keys()]
 
     def get_schema_sql(self, subdomain_name):
-        return self.domain_inference[subdomain_name].schema_sql()
+        return self.domain_inference[subdomain_name].get_schema_sql()
 
     def get_enum_values(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_enum_values()            
