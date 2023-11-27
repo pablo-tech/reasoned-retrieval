@@ -333,12 +333,12 @@ class InferenceDomain(InferenceLoader):
 
 class InferenceParser():
 
-    def __init__(self, is_run_inference, domain_name, sub_domains, domain_datasets, 
+    def __init__(self, is_run_inference, domain_name, subdomain_names, domain_datasets, 
                  picked_columns, primary_key, price_column, subdomain_column, 
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         self.domain_inference = {}
-        for subdomain_name in sub_domains:
+        for subdomain_name in subdomain_names:
             domain_inference = InferenceDomain(is_run_inference, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, subdomain_column, 
                  summarize_columns, column_annotation, 

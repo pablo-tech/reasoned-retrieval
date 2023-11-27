@@ -33,9 +33,12 @@ class JsonReader():
 
 class DomainDataset():
 
-    def __init__(self, dir_path, is_verbose=False):
+    def __init__(self, subdomain_names, dir_path, is_verbose=False):
         self.is_verbose = is_verbose
-        file_names = JsonReader.list_files(dir_path)
+        if len(subdomain_names) == 0:
+            file_names = JsonReader.list_files(dir_path)
+        else:
+            file_names = subdomain_names
         self.corpus = self.read_corpus(dir_path, file_names)
 
     def read_corpus(self, dir_path, file_names):
@@ -80,7 +83,7 @@ class DatasetValidation():
 class CromaDataset(DomainDataset):
 
     def __init__(self, dir_path):
-        super().__init__(dir_path)
+        super().__init__(dir_path, subdomain_names=[])
 
     def get_corpus(self, domain_name):
         corpus = self.subdomain_corpus(domain_name)
@@ -120,7 +123,7 @@ class AcDataset(CromaDataset):
 class GiftDataset(DomainDataset):
 
     def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift_qa/"):
-        super().__init__(dir_path)
+        super().__init__(dir_path, subdomain_names=[])
     
     def get_corpus(self, domain_name):
         corpus = {}
@@ -131,8 +134,9 @@ class GiftDataset(DomainDataset):
 
 class GiftDataset2(DomainDataset):
 
-    def __init__(self, dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
-        super().__init__(dir_path)
+    def __init__(self, subdomain_names,
+                 dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
+        super().__init__(dir_path, subdomain_names)
     
     def get_corpus(self, domain_name):
         corpus = {}
@@ -235,8 +239,10 @@ class DomainIngestion():
     def get_raw_products(self):
         return self.raw_data
     
-    def get_domain_products(self):
-        return list(self.clean_data.values())
+    def get_domain_products(self, subdomain_name):
+        if subdomain_name == "":
+            return list(self.clean_data.values())
+        return [p]
 
     def get_product(self, key):
         return self.clean_data[key]
