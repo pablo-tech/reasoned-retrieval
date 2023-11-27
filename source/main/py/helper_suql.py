@@ -77,7 +77,6 @@ class DatasetLoader(SchemaCreator):
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
-        # self.table_name = self.get_domain_name() + "_" + self.nick_name
         self.db_instance = db_instance
         self.sub_domain = 'sub_domain'
 
@@ -90,8 +89,7 @@ class DatasetLoader(SchemaCreator):
     def load_items(self, domain=""):
         columns, products = self.get_columns(), self.get_products()
         print("COLUMNS=>" + str(columns))
-        products = self.unique_products(products)
-        products = [p for p in products if p[self.sub_domain]==domain]
+        products = self.domain_unique_products(products, domain)
         table_name = self.table_name(domain)
         self.create_table(table_name, columns)  
         self.batch_load(columns, products, table_name)      
@@ -118,7 +116,9 @@ class DatasetLoader(SchemaCreator):
             j+=n
         print("FAILURE_COUNT="+str(fails))
     
-    def unique_products(self, products_in):
+    def domain_unique_products(self, products_in, domain):
+        if domain != "":
+            products_in = [p for p in products_in if p[self.sub_domain]==domain]
         products_out = []
         unique = set()
         for product in products_in:
@@ -149,12 +149,6 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.create_sql(self.table_name(domain), 
                                self.get_columns())
         
-    # def get_table_name(self):
-    #     return self.table_name
-
-    # def get_column_products(self):
-    #     return self.get_columns(), self.get_products()
-
     def get_enums(self):
         return sorted(list(self.get_enum_values().keys()))
  
