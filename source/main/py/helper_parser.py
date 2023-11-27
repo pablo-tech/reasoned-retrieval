@@ -67,8 +67,8 @@ class DataTransformer():
         key = key.replace("%", "percent") 
         key = key.replace(".", "") 
         if key[0].isdigit():
-            key = "n_" + key.lower()    
-        return key       
+            key = "n_" + key   
+        return key.lower()        
 
 
 class RunInference():
