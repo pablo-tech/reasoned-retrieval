@@ -66,7 +66,8 @@ class DataTransformer():
         key = key.replace(")", "_") 
         key = key.replace("%", "percent") 
         key = key.replace(".", "") 
-        return "_"+key.lower()           
+        # return "_"+key.lower()    
+        return key       
 
 
 class RunInference():
