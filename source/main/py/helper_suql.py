@@ -269,11 +269,15 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
     #     return self.ds_reducer.columns(self.column_names()) 
 
 
-class DatasetAugmenter():
+class DatasetAugmenter(DatasetLoader):
 
-    def __init__(self, is_run_inference,
-                 column_annotation, summarize_columns, primary_key,
+    def __init__(self, is_run_inference, domain_name, domain_datasets,
+                 picked_columns, primary_key, price_column, summarize_columns,
+                 column_annotation, db_instance, 
                  completion_llm, is_verbose):
+        super().__init__("INFERENCE", domain_name, domain_datasets, 
+                         picked_columns, primary_key, price_column, summarize_columns,
+                         db_instance, completion_llm, is_verbose)
         self.is_run_inference = is_run_inference
         self.column_annotation = column_annotation
         self.primary_key = primary_key
@@ -333,15 +337,19 @@ class DatasetAugmenter():
         return columns, products
 
 
-class InferenceParser(DatasetLoader):
+class InferenceParser(DatasetAugmenter):
 
     def __init__(self, is_run_inference,
                  domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
-        super().__init__("INFERENCE", domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column, 
-                 db_instance, completion_llm, is_verbose)
+        super().__init__(domain_name, domain_datasets,
+                 picked_columns, primary_key, price_column, summarize_columns,
+                 column_annotation, db_instance, 
+                 completion_llm, is_verbose)
+        # super().__init__("INFERENCE", domain_name, domain_datasets, 
+        #          picked_columns, primary_key, price_column, 
+        #          db_instance, completion_llm, is_verbose)
         print("SUBDOMAIN_NAMES=" + str(self.get_subdomain_names()))        
         self.ds_augmenter = DatasetAugmenter(is_run_inference,
                                              column_annotation, summarize_columns, primary_key,
