@@ -158,14 +158,21 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class DatasetReducer():
 
-    def __init__(self, primary_key, picked_columns):
+    def __init__(self, primary_key, picked_columns, working_products):
         self.primary_key = primary_key
         self.picked_columns = picked_columns
+        self.working_products = working_products
 
     def columns(self, columns):
         columns = [col for col in columns if col in self.picked_columns]
         columns = list(set(columns))
         return DataTransformer.fill_cols(sorted(columns))   
+
+    def products(self):
+        return self.working_products
+
+    # def reduction_columns(self):
+    #     return self.columns(self.column_names()) 
 
 
 class ContextParser(DatasetLoader):
@@ -176,9 +183,11 @@ class ContextParser(DatasetLoader):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
-        self.ds_reducer = DatasetReducer(primary_key, picked_columns)
-        self.context_products = self.reduction_products()
-        self.context_columns = self.reduction_columns()
+        self.ds_reducer = DatasetReducer(primary_key, picked_columns, self.working_products)
+        self.context_products = self.ds_reducer.products()
+        self.context_columns = self.ds_reducer.columns()
+        # self.context_products = self.reduction_products()
+        # self.context_columns = self.reduction_columns()
         enum_exclude = [col for col in self.get_columns() 
                         if col in summarize_columns or col not in picked_columns or col == primary_key or col == price_column]
         self.enum_values = DataTransformer.set_enum_values(self.get_columns(),
@@ -210,11 +219,11 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
     def get_columns(self):
         return self.context_columns
 
-    def reduction_products(self):
-        return self.working_products
+    # def reduction_products(self):
+    #     return self.working_products
 
-    def reduction_columns(self):
-        return self.ds_reducer.columns(self.column_names()) 
+    # def reduction_columns(self):
+    #     return self.ds_reducer.columns(self.column_names()) 
 
 
 class DatasetAugmenter():
