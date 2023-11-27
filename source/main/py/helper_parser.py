@@ -58,6 +58,9 @@ class DataTransformer():
         return product_out
 
     def legal_key(key):
+        key = key.replace("+", "_")
+        key = key.replace(",", "_")
+        key = key.replace("|", "_")
         key = key.replace("/", "_")
         key = key.replace("&", "_")
         key = key.replace("__", "_")
