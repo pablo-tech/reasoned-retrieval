@@ -71,14 +71,14 @@ class SchemaCreator(DomainSchema):
 class DatasetLoader(SchemaCreator):
 
     def __init__(self, nick_name, domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column,
+                 picked_columns, primary_key, price_column, subdomain_column,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
         self.db_instance = db_instance
-        self.sub_domain = 'sub_domain'
+        self.subdomain_column = subdomain_column
 
     def table_name(self, domain):
         name = self.get_domain_name() + "_" + self.nick_name 
@@ -118,7 +118,7 @@ class DatasetLoader(SchemaCreator):
     
     def domain_unique_products(self, products_in, domain):
         if domain != "":
-            products_in = [p for p in products_in if p[self.sub_domain]==domain]
+            products_in = [p for p in products_in if p[self.subdomain_column]==domain]
         products_out = []
         unique = set()
         for product in products_in:
@@ -224,19 +224,18 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 class InferenceLoader(DatasetLoader):
 
     def __init__(self, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, summarize_columns,
+                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns, 
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
-                         picked_columns, primary_key, price_column, 
+                         picked_columns, primary_key, price_column, subdomain_column, 
                          db_instance, completion_llm, is_verbose)
-        self.sub_domain = sub_domain
+        self.subdomain_name = subdomain_name
         self.column_annotation = column_annotation
         self.primary_key = primary_key
         self.summarize_columns = summarize_columns
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
                                             completion_llm, is_verbose)
-        self.sub_domain = "sub_domain"
         self.product_cache = GiftSuql()
 
     def set_column_products(self, working_products): 
@@ -266,7 +265,7 @@ class InferenceLoader(DatasetLoader):
     def product_by_domain(self, products):
         domain_products = defaultdict(list)
         for product in products:
-            domain_products[product[self.sub_domain]].append(product)
+            domain_products[product[self.subdomain_column]].append(product)
         return domain_products
     
     def extract_columns(self, products):
@@ -295,12 +294,12 @@ class InferenceDomain(InferenceLoader):
     def __init__(self, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
-                 completion_llm, is_verbose):
+                 completion_llm, is_verbose, subdomain_column = "sub_domain"):
         super().__init__(domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
-        print("SUBDOMAIN_NAMES=" + str(self.get_subdomain_names()))        
+        self.subdomain_column = subdomain_column
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
         self.enum_values = self.set_enum_values()
@@ -312,14 +311,15 @@ class InferenceDomain(InferenceLoader):
         return self.inference_columns    
     
     def augmentation_column_products(self):
-        return self.set_column_products(self.get_domain_products()) 
+        products = self.set_column_products(self.get_domain_products()) 
+        return [p for p in products if p[self.subdomain_column] == self.subdomain_name]
     
     def set_enum_values(self):
         enum_exclude = [col for col in self.get_columns() 
                         if col in self.summarize_columns or col == self.primary_key or col == self.price_column]
         return DataTransformer.set_enum_values(self.get_columns(),
-                                                           self.get_products(),
-                                                           enum_exclude)        
+                                               self.get_products(),
+                                               enum_exclude)        
 
 
 class InferenceParser():
@@ -333,7 +333,7 @@ class InferenceParser():
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
-        self.domain_inference[subdomain_name] = domain_inference
+            self.domain_inference[subdomain_name] = domain_inference
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
