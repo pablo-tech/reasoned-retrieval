@@ -356,6 +356,7 @@ class InferenceDomain(InferenceLoader):
                     products_out.append(product)
             except Exception as e:
                 print("SUBDOMAIN_ERROR="+str(e)+"\t"+str(product))
+        print("SUBDOMAIN_SIZE="+str(len(products_out))+"x"+str(len(columns)))
         return columns, products_out
         # print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
     
