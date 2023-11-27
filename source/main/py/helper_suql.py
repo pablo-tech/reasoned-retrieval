@@ -315,6 +315,7 @@ class InferenceParser(DatasetLoader):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, 
                  db_instance, completion_llm, is_verbose)
+        print("SUBDOMAIN_NAMES=" + str(self.get_subdomain_names()))        
         self.ds_augmenter = DatasetAugmenter(is_run_inference,
                                              column_annotation, summarize_columns, primary_key,
                                              completion_llm, is_verbose)        
