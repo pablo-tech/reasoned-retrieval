@@ -224,9 +224,9 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 class InferenceLoader(DatasetLoader):
 
     def __init__(self, is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns, 
-                 column_annotation, db_instance, 
-                 completion_llm, is_verbose):
+                 picked_columns, primary_key, price_column, subdomain_column, 
+                 summarize_columns, column_annotation, 
+                 db_instance, completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
                          picked_columns, primary_key, price_column, subdomain_column, 
                          db_instance, completion_llm, is_verbose)
@@ -297,9 +297,9 @@ class InferenceDomain(InferenceLoader):
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__(is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, summarize_columns,
-                 column_annotation, db_instance, 
-                 completion_llm, is_verbose)
+                 picked_columns, primary_key, price_column, subdomain_column, 
+                 summarize_columns, column_annotation, 
+                 db_instance, completion_llm, is_verbose)
         self.subdomain_column = subdomain_column
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
