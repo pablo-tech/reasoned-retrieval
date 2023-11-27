@@ -163,7 +163,7 @@ class DatasetLoader(SchemaCreator):
 INSERT INTO {table_name} VALUES {table_rows}
 """    
 
-    def schema_sql(self):
+    def get_schema_sql(self):
         return self.create_sql(self.get_table_name(), 
                                self.get_columns())
         
@@ -225,6 +225,11 @@ class ContextParser(DatasetReducer):
                          subdomain_column,
                          picked_columns, primary_key, price_column, summarize_columns,
                          db_instance, completion_llm, is_verbose)
+
+    def get_invocations(self):
+        return [(self.get_schema_sql(), 
+                 self.get_enum_values(), 
+                 self.get_fewshot_examples)]
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -387,9 +392,6 @@ class InferenceParser():
     def get_products(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_products()
 
-    def schema_sql(self, subdomain_name):
-        return self.domain_inference[subdomain_name].schema_sql()
-
     def load_items(self):
         for subdomain_name, inference_domain in self.domain_inference.items():
             try:
@@ -399,8 +401,16 @@ class InferenceParser():
                 print("LOAD_SUBDOMAIN_ERROR=" + str(subdomain_name))
                 pass
 
+    def get_invocations(self):
+        return [(self.get_schema_sql(sd), 
+                 self.get_enum_values(sd), 
+                 self.get_fewshot_examples) for sd in self.domain_inference.keys()]
+
+    def get_schema_sql(self, subdomain_name):
+        return self.domain_inference[subdomain_name].schema_sql()
+
     def get_enum_values(self, subdomain_name):
-        return self.domain_inference[subdomain_name].get_enum_values()    
+        return self.domain_inference[subdomain_name].get_enum_values()            
 
     def get_fewshot_examples(self, subdomain_name):
         domain_inference = self.domain_inference[subdomain_name]

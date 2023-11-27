@@ -124,12 +124,18 @@ class SqlSemanticParser(RunInference):
                            self.domain_oracle.get_wholistic_parser())
 
     def invoke(self, query_english, n, product_parser):
-        prompt = self.get_prompt(query_english, product_parser)
-        query_sql = self.run_inference(prompt)
-        response = self.db_cursor.execute(query_sql)
-        return self.new_response(query_sql,
-                                 product_parser.get_columns(),
-                                 [row for row in response][:n])
+        results = []
+        for invocation in product_parser.get_invocations():
+            schema_sql, enum_values, get_fewshot_examples = invocation
+            prompt = self.get_prompt(query_english, schema_sql, 
+                                     enum_values, get_fewshot_examples)
+            query_sql = self.run_inference(prompt)
+            response = self.db_cursor.execute(query_sql)
+            response = self.new_response(query_sql,
+                                         product_parser.get_columns(),
+                                        [row for row in response][:n])
+            results.append(response)
+        return results
     
     def new_response(self, query_sql, result_columns, result_rows):
         user_state, is_success = self.user_state(query_sql)
@@ -177,17 +183,17 @@ class SqlSemanticParser(RunInference):
         column_name = column_name.replace(";", "")
         return column_name
             
-    def get_prompt(self, question, product_parser):
+    def get_prompt(self, question, schema_sql, enum_values, get_fewshot_examples):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
-        prompt += f"{product_parser.schema_sql()}" 
+        prompt += f"{schema_sql}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in product_parser.get_enum_values().items():
+        for column, values in enum_values.items():
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
-        prompt += f"{product_parser.get_fewshot_examples()}" + "\n"
+        prompt += f"{get_fewshot_examples}" + "\n"
         prompt += f"Question: {question}" + "\n"
 
         if self.is_verbose:
