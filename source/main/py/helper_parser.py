@@ -141,7 +141,6 @@ class SqlSemanticParser(RunInference):
         for invocation in product_parser.get_invocations():
             try:
                 subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
-                print("---> " + subdomain_name)                
                 # enum_values = self.reduced_enums(enum_values)
                 # print("INVOKE_COLS=>"+str(columns))
                 # print("INVOKE_ENUM=>"+str(enum_values))
@@ -155,6 +154,7 @@ class SqlSemanticParser(RunInference):
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses][:n]
                 if len(responses) > 0:
+                    print("---> " + subdomain_name)                
                     consolidated = self.new_response(query_sql,
                                                     columns,
                                                     responses)
