@@ -66,7 +66,8 @@ class DataTransformer():
         key = key.replace(")", "_") 
         key = key.replace("%", "percent") 
         key = key.replace(".", "") 
-        # return "_"+key.lower()    
+        if key[0].isdigit():
+            key = "n_" + key.lower()    
         return key       
 
 
