@@ -274,6 +274,7 @@ class InferenceLoader(DatasetLoader):
                 products = self.summary_tagger.invoke(context_products)
                 inference_products.extend(products)
                 self.product_cache.save_corpus(subdomain_name, products)
+        inference_products = [DataTransformer.legal_product(p) for p in inference_products]                
         columns = self.extract_columns(inference_products)
         return columns, inference_products
     
