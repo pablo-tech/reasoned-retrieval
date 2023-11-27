@@ -397,15 +397,17 @@ class InferenceParser():
         return self.domain_inference[subdomain_name].get_enum_values()    
 
     def get_fewshot_examples(self, subdomain_name):
-        columns = self.domain_inference[subdomain_name].get_columns()
+        domain_inference = self.domain_inference[subdomain_name]
+        columns = domain_inference.get_columns()
         columns = ", ".join(columns)
+        table_name = domain_inference.get_table_name()
         return f"""        
 Question: what types of backpacks do you have? 
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_types = 'backpack';
+Answer: SELECT {columns} FROM {table_name} WHERE product_types = 'backpack';
 Question: what 22 litter backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_size = '22 ltrs';
+Answer: SELECT {columns} FROM {table_name} WHERE product_size = '22 ltrs';
 Question: what 2 wheel trolleys do your products have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type = '2 wheel';
+Answer: SELECT {columns} FROM {table_name} WHERE product_wheel_type = '2 wheel';
 """
 
 
