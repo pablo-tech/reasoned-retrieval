@@ -55,6 +55,10 @@ class DataTransformer():
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
             product_out[k] = v
+        try:
+            del product_out["case"]
+        except:
+            pass
         return product_out
 
     def legal_key(key):
