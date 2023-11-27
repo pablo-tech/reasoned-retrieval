@@ -8,9 +8,11 @@ from collections import defaultdict
 class SchemaCreator(DomainSchema):
 
     def __init__(self, domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column, subdomain_column,
+                 picked_columns, primary_key, price_column, 
+                 subdomain_name, subdomain_column,
                  db_instance, completion_llm, is_verbose):
         super().__init__(data_sets=domain_datasets,
+                         subdomain_name=subdomain_name,
                          subdomain_column=subdomain_column,
                          completion_llm=completion_llm,
                          is_verbose=is_verbose)
@@ -71,11 +73,13 @@ class SchemaCreator(DomainSchema):
 
 class DatasetLoader(SchemaCreator):
 
-    def __init__(self, nick_name, domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column, subdomain_column,
+    def __init__(self, nick_name, domain_name, domain_datasets,
+                 subdomain_name, subdomain_column,  
+                 picked_columns, primary_key, price_column, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column, subdomain_column,
+                 picked_columns, primary_key, price_column, 
+                 subdomain_name, subdomain_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
         self.db_instance = db_instance
@@ -160,10 +164,12 @@ INSERT INTO {table_name} VALUES {table_rows}
 class DatasetReducer(DatasetLoader):
 
     def __init__(self, nick_name, domain_name, domain_datasets, 
+                 subdomain_name, subdomain_column, 
                  picked_columns, primary_key, price_column, summarize_columns,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(nick_name, domain_name, domain_datasets, 
-                         picked_columns, primary_key, price_column,  
+                         subdomain_name, subdomain_column, 
+                         picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.products = self.get_domain_products(subdomain_name="")
@@ -224,12 +230,14 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 
 class InferenceLoader(DatasetLoader):
 
-    def __init__(self, is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, 
+    def __init__(self, is_run_inference, domain_name, domain_datasets,
+                 subdomain_name, subdomain_column, 
+                 picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
-                         picked_columns, primary_key, price_column, subdomain_column, 
+                         subdomain_name, subdomain_column, 
+                         picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
         self.is_run_inference = is_run_inference
         self.subdomain_name = subdomain_name
@@ -293,8 +301,9 @@ class InferenceLoader(DatasetLoader):
 
 class InferenceDomain(InferenceLoader):
     
-    def __init__(self, is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
+    def __init__(self, is_run_inference, domain_name, domain_datasets,
+                 subdomain_name, subdomain_column, 
+                 picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__(is_run_inference, domain_name, subdomain_name, domain_datasets,
@@ -335,14 +344,16 @@ class InferenceDomain(InferenceLoader):
 
 class InferenceParser():
 
-    def __init__(self, is_run_inference, domain_name, subdomain_names, domain_datasets, 
-                 picked_columns, primary_key, price_column, subdomain_column, 
+    def __init__(self, is_run_inference, domain_name, domain_datasets, 
+                 subdomain_names, subdomain_column,
+                 picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         self.domain_inference = {}
         for subdomain_name in subdomain_names:
-            domain_inference = InferenceDomain(is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, 
+            domain_inference = InferenceDomain(is_run_inference, domain_name, domain_datasets, 
+                                               subdomain_name, subdomain_column,
+                                               picked_columns, primary_key, price_column,  
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose)
             self.domain_inference[subdomain_name] = domain_inference

@@ -264,9 +264,11 @@ class DomainIngestion():
 
 class DomainSchema(DomainIngestion):
 
-    def __init__(self, data_sets, subdomain_column,
+    def __init__(self, data_sets, 
+                 subdomain_name, subdomain_column,
                  completion_llm, is_verbose):
-        super().__init__(data_sets, subdomain_column,
+        super().__init__(data_sets, 
+                         subdomain_name, subdomain_column,
                          completion_llm, is_verbose)
         self.slot_values = defaultdict(set)
 
