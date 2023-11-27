@@ -147,7 +147,7 @@ class SqlSemanticParser(RunInference):
                 # print("INVOKE_SCHEMA=>"+str(schema_sql))
                 prompt = self.get_prompt(query_english, schema_sql, 
                                          enum_values, get_fewshot_examples)
-                print(subdomain_name + ": EXAMPLES=>" + str(get_fewshot_examples))
+                # print(subdomain_name + ": EXAMPLES=>" + str(get_fewshot_examples))
                 print(subdomain_name + ": PROMPT_LENGTH=" + str(len(prompt)))            
                 query_sql = self.run_inference(prompt)
                 print(subdomain_name + ": QUERY_SQL=>" + str(query_sql))            
