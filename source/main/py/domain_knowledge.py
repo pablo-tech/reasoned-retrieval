@@ -243,7 +243,13 @@ class DomainIngestion():
 
     def get_subdomain_products(self):
         return self.domain_clean
+
+    def get_subdomain_products(self):
+        return self.domain_clean
     
+    def get_subdomain_names(self, sub_domain='sub_domain'):
+        return set([p[sub_domain] for p in self.get_domain_products()])
+
 
 class DomainSchema(DomainIngestion):
 
