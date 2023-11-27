@@ -175,6 +175,8 @@ class SqlSemanticParser(RunInference):
                  "result_items": result_items }
     
     def response_items(self, result_columns, result_rows):
+        print("RESULT_COLS="+str(result_columns))
+        print("RESULT_ROWS="+str(result_rows))
         result_columns = [self.simple_name(column) for column in result_columns]
         items = []
         for row in result_rows:
