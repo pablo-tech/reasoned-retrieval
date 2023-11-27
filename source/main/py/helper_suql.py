@@ -335,7 +335,7 @@ class InferenceDomain(InferenceLoader):
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose,
-                 n=100):
+                 n=25):
         super().__init__(is_run_inference, domain_name, subdomain_dataset_func,
                          subdomain_name, subdomain_column,
                          picked_columns, primary_key, price_column,  
