@@ -211,10 +211,10 @@ class DomainIngestion():
             print(subdomain_name+"="+str(len(subdomain_corpus)))
             for key, raw_product in subdomain_corpus.items():
                 try:
-                    raw_product = self.legal_product(raw_product)
                     raw_product = eval(raw_product)
                     clean_product = self.shorten_json(flatten(raw_product))
-                    clean_product['sub_domain'] = subdomain_name
+                    clean_product = self.legal_product(clean_product)
+                    clean_product[self.subdomain_column] = subdomain_name
                     if DatasetValidation.is_valid_json(clean_product):
                         self.raw_data[key] = raw_product
                         self.clean_data[key] = clean_product
