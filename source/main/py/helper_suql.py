@@ -227,7 +227,8 @@ class ContextParser(DatasetReducer):
                          db_instance, completion_llm, is_verbose)
 
     def get_invocations(self):
-        return [(self.get_columns(),
+        return [(self.domain_name,
+                 self.get_columns(),
                  self.get_schema_sql(), 
                  self.get_enum_values(), 
                  self.get_fewshot_examples)]
@@ -403,10 +404,12 @@ class InferenceParser():
                 pass
 
     def get_invocations(self):
-        return [(self.get_columns(sd), 
-                 self.get_schema_sql(sd), 
-                 self.get_enum_values(sd), 
-                 self.get_fewshot_examples) for sd in self.domain_inference.keys()]
+        return [(subdomain_name,
+                 self.get_columns(subdomain_name), 
+                 self.get_schema_sql(subdomain_name), 
+                 self.get_enum_values(subdomain_name), 
+                 self.get_fewshot_examples) 
+                 for subdomain_name in self.domain_inference.keys()]
 
     def get_schema_sql(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_schema_sql()
