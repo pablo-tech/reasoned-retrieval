@@ -26,16 +26,24 @@ class SchemaCreator(DomainSchema):
         self.is_verbose = is_verbose
 
     def create_table(self, table_name, column_names):
-        self.execute_query(self.create_sql(table_name, column_names))
+        self.drop_table(table_name)
+        self.new_table(self.create_sql(table_name, column_names))
 
-    def execute_query(self, create_sql):
+    def drop_table(self, table_name):
         try:
-          self.db_execute(f"DROP TABLE IF EXISTS {self.domain_name};")
-          self.db_execute(create_sql)
-          if self.is_verbose:
-              print(create_sql)
+            self.db_execute(f"DROP TABLE IF EXISTS {self.domain_name};")
         except Exception as e:
-          print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
+            print("DELETE_TABLE_ERROR="+str(table_name)+"\t"+str(e))
+            pass
+
+    def new_table(self, create_sql):
+        try:
+            self.db_execute(create_sql)
+            if self.is_verbose:
+                print(create_sql)
+        except Exception as e:
+            print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
+            pass
 
     def db_execute(self, query):
         return self.db_instance.db_cursor.execute(query)
