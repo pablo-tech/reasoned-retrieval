@@ -50,7 +50,7 @@ class DataTransformer():
         return { k: v for k, v in enum_vals.items()
                  if len(v) > 1 }    
 
-    def legal_product(product_in, n=3):
+    def legal_product(product_in, n=2):
         product_out = {}
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
