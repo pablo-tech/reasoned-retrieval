@@ -131,20 +131,23 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, product_parser):
         results = []
         for invocation in product_parser.get_invocations():
-            subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
-            enum_values = self.reduced_enums(enum_values)
-            # print("INVOKE_COLS=>"+str(columns))
-            # print("INVOKE_ENUM=>"+str(enum_values))
-            # print("INVOKE_SCHEMA=>"+str(schema_sql))
-            prompt = self.get_prompt(query_english, schema_sql, 
-                                     enum_values, get_fewshot_examples)
-            print(subdomain_name + " PROMPT_LENGTH=" + str(len(prompt)))            
-            query_sql = self.run_inference(prompt)
-            response = self.db_cursor.execute(query_sql)
-            response = self.new_response(query_sql,
-                                         columns,
-                                         [row for row in response])
-            results.extend(response)
+            try:
+                subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
+                enum_values = self.reduced_enums(enum_values)
+                # print("INVOKE_COLS=>"+str(columns))
+                # print("INVOKE_ENUM=>"+str(enum_values))
+                # print("INVOKE_SCHEMA=>"+str(schema_sql))
+                prompt = self.get_prompt(query_english, schema_sql, 
+                                        enum_values, get_fewshot_examples)
+                print(subdomain_name + " PROMPT_LENGTH=" + str(len(prompt)))            
+                query_sql = self.run_inference(prompt)
+                response = self.db_cursor.execute(query_sql)
+                response = self.new_response(query_sql,
+                                            columns,
+                                            [row for row in response])
+                results.extend(response)
+            except Exception as e:
+                print("INVOKE_ERROR=" +str(e))
         return results
     
     def reduced_enums(self, enum_values, n=15):
