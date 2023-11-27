@@ -313,7 +313,6 @@ class InferenceDomain(InferenceLoader):
                          picked_columns, primary_key, price_column,  
                          summarize_columns, column_annotation, 
                          db_instance, completion_llm, is_verbose)
-        self.subdomain_column = subdomain_column
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
         self.enum_values = self.set_enum_values()
@@ -361,6 +360,9 @@ class InferenceParser():
                  db_instance, completion_llm, is_verbose)
             self.domain_inference[subdomain_name] = domain_inference
 
+    def get_columns(self, subdomain_name):
+        return self.domain_inference[subdomain_name].get_columns()
+    
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
