@@ -31,7 +31,7 @@ class SchemaCreator(DomainSchema):
 
     def drop_table(self, table_name):
         try:
-            self.db_execute(f"DROP TABLE IF EXISTS {self.domain_name};")
+            self.db_execute(f"DROP TABLE IF EXISTS {table_name};")
         except Exception as e:
             print("DELETE_TABLE_ERROR="+str(table_name)+"\t"+str(e))
             pass
