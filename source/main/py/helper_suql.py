@@ -85,10 +85,10 @@ class DatasetLoader(SchemaCreator):
         self.db_instance = db_instance
         self.subdomain_column = subdomain_column
 
-    def table_name(self, domain):
+    def table_name(self, subdomain_name):
         name = self.get_domain_name() + "_" + self.nick_name 
-        if domain != "":
-            name += "_" + domain
+        if subdomain_name != "":
+            name += "_" + subdomain_name
         return name
 
     def load_items(self, domain=""):
@@ -150,8 +150,8 @@ class DatasetLoader(SchemaCreator):
 INSERT INTO {table_name} VALUES {table_rows}
 """    
 
-    def schema_sql(self, domain):
-        return self.create_sql(self.table_name(domain), 
+    def schema_sql(self):
+        return self.create_sql(self.table_name(self.subdomain_name), 
                                self.get_columns())
         
     def get_enums(self):
