@@ -22,7 +22,7 @@ class DatabaseInstance():
 
 class GiftOracle():
 
-    def __init__(self, completion_llm, sub_domains=[]):
+    def __init__(self, is_run_inference, sub_domains, completion_llm):
         domain_name="CLIQ"
         domain_datasets=[GiftDataset2()]
         picked_columns=['id', 'price', 
@@ -40,7 +40,7 @@ class GiftOracle():
         column_annotation = self.get_annotation()  
         if len(sub_domains) == 0:
             sub_domains = self.context_parser.get_subdomain_names()    
-        self.inference_parser = InferenceParser(domain_name, sub_domains, domain_datasets, 
+        self.inference_parser = InferenceParser(is_run_inference, domain_name, sub_domains, domain_datasets, 
                 picked_columns, primary_key, price_column, subdomain_column, 
                 summarize_columns, column_annotation, 
                 self.db_instance, completion_llm, is_verbose=False)

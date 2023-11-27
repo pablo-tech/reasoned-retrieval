@@ -223,13 +223,14 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 
 class InferenceLoader(DatasetLoader):
 
-    def __init__(self, domain_name, subdomain_name, domain_datasets,
+    def __init__(self, is_run_inference, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, subdomain_column, summarize_columns, 
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
                          picked_columns, primary_key, price_column, subdomain_column, 
                          db_instance, completion_llm, is_verbose)
+        self.is_run_inference = is_run_inference
         self.subdomain_name = subdomain_name
         self.column_annotation = column_annotation
         self.primary_key = primary_key
@@ -291,11 +292,11 @@ class InferenceLoader(DatasetLoader):
 
 class InferenceDomain(InferenceLoader):
     
-    def __init__(self, domain_name, subdomain_name, domain_datasets,
+    def __init__(self, is_run_inference, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
-        super().__init__(domain_name, subdomain_name, domain_datasets,
+        super().__init__(is_run_inference, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
@@ -324,13 +325,13 @@ class InferenceDomain(InferenceLoader):
 
 class InferenceParser():
 
-    def __init__(self, domain_name, sub_domains, domain_datasets, 
+    def __init__(self, is_run_inference, domain_name, sub_domains, domain_datasets, 
                  picked_columns, primary_key, price_column, subdomain_column, 
                  summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         self.domain_inference = {}
         for subdomain_name in sub_domains:
-            domain_inference = InferenceDomain(domain_name, subdomain_name, domain_datasets,
+            domain_inference = InferenceDomain(is_run_inference, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
