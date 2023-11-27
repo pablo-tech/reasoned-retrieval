@@ -292,9 +292,9 @@ class InferenceLoader(DatasetLoader):
 class InferenceDomain(InferenceLoader):
     
     def __init__(self, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, summarize_columns,
+                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
                  column_annotation, db_instance, 
-                 completion_llm, is_verbose, subdomain_column = "sub_domain"):
+                 completion_llm, is_verbose):
         super().__init__(domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
@@ -325,12 +325,13 @@ class InferenceDomain(InferenceLoader):
 class InferenceParser():
 
     def __init__(self, domain_name, sub_domains, domain_datasets, 
-                 picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
+                 picked_columns, primary_key, price_column, subdomain_column, 
+                 summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
         self.domain_inference = {}
         for subdomain_name in sub_domains:
             domain_inference = InferenceDomain(domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, summarize_columns,
+                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
             self.domain_inference[subdomain_name] = domain_inference

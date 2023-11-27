@@ -41,7 +41,8 @@ class GiftOracle():
         column_annotation = self.get_annotation()  
         sub_domains = self.context_parser.get_subdomain_names()    
         self.inference_parser = InferenceParser(domain_name, sub_domains, domain_datasets, 
-                picked_columns, primary_key, price_column, subdomain_column, summarize_columns, column_annotation, 
+                picked_columns, primary_key, price_column, subdomain_column, 
+                summarize_columns, column_annotation, 
                 self.db_instance, completion_llm, is_verbose=False)
         self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
