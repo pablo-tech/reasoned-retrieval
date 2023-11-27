@@ -81,7 +81,7 @@ class DatasetLoader(SchemaCreator):
         self.db_instance = db_instance
         self.sub_domain = 'sub_domain'
 
-    def table_name(self, domain=""):
+    def table_name(self, domain):
         name = self.get_domain_name() + "_" + self.nick_name 
         if domain != "":
             name += "_" + domain
@@ -195,19 +195,19 @@ class ContextParser(DatasetLoader):
         columns = ", ".join(self.get_columns())
         return f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Aristocrat';
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Guess';
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Scharf' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%GW0403L2%';
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
 Question: "Glassses for women?"
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
     def get_products(self):
