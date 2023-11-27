@@ -283,7 +283,7 @@ class InferenceLoader(DatasetLoader):
                 columns.append(concept)
                 for value in values:
                     for product in products:
-                        if value in product[self.sub_domain]:
+                        if value in product[self.subdomain_column]:
                             product[concept] = True
                         else:
                             product[concept] = False
