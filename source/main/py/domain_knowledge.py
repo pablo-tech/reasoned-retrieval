@@ -244,8 +244,11 @@ class DomainIngestion():
     def get_raw_products(self):
         return self.raw_data
     
+    def get_all_products(self):
+        return list(self.clean_data.values())
+    
     def get_domain_products(self):
-        products = list(self.clean_data.values())
+        products = self.get_all_products() 
         if self.subdomain_name == "":
             return products
         return [p for p in products 
@@ -258,7 +261,7 @@ class DomainIngestion():
         return self.domain_clean
     
     def get_subdomain_names(self):
-        subdomain_products = self.get_domain_products(self.subdomain_name)
+        subdomain_products = self.get_all_products()
         return sorted(list(set([p[self.subdomain_column] 
                                 for p in subdomain_products])))
 
