@@ -63,6 +63,7 @@ class DataTransformer():
             del product_out["case"]
         except:
             pass
+        print("product_out=" + str(product_out))
         return product_out
 
     def legal_key(key):
