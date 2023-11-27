@@ -92,8 +92,10 @@ class DatasetLoader(SchemaCreator):
         self.nick_name = nick_name
         self.db_instance = db_instance
         self.subdomain_column = subdomain_column
+        self.table_name = self.set_table_name()
 
-    def table_name(self, subdomain_name):
+    def set_table_name(self):
+        subdomain_name = self.subdomain_name
         name = self.get_domain_name() + "_" + self.nick_name 
         if subdomain_name != "":
             subdomain_name = subdomain_name.upper()
@@ -106,7 +108,7 @@ class DatasetLoader(SchemaCreator):
         columns, products = self.get_columns(), self.get_products()
         print("COLUMNS=>" + str(columns))
         products = self.domain_unique_products(products, self.subdomain_name)
-        table_name = self.table_name(self.subdomain_name)
+        table_name = self.get_table_name()
         self.create_table(table_name, columns)  
         self.batch_load(columns, products, table_name)      
         return columns, products
@@ -162,7 +164,7 @@ INSERT INTO {table_name} VALUES {table_rows}
 """    
 
     def schema_sql(self):
-        return self.create_sql(self.table_name(self.subdomain_name), 
+        return self.create_sql(self.get_table_name(), 
                                self.get_columns())
         
     def get_enums(self):
@@ -170,6 +172,9 @@ INSERT INTO {table_name} VALUES {table_rows}
  
     def get_enum_values(self):
         return self.enum_values
+
+    def get_table_name(self):
+        return self.table_name
 
 
 class DatasetReducer(DatasetLoader):
