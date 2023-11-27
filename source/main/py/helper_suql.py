@@ -8,14 +8,14 @@ from collections import defaultdict
 class SchemaCreator(DomainSchema):
 
     def __init__(self, domain_name, domain_datasets, 
-                 selected_columns, primary_key, price_column,
+                 picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose):
         super().__init__(data_sets=domain_datasets,
                          completion_llm=completion_llm,
                          is_verbose=is_verbose)
         self.domain_name = domain_name.upper()
         self.domain_datasets = domain_datasets
-        self.selected_columns = selected_columns
+        self.picked_columns = picked_columns
         self.primary_key = primary_key
         self.price_column = price_column
         self.db_instance = db_instance
@@ -156,49 +156,76 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.enum_values
 
 
-class DatasetReducer():
+# class DatasetReducer():
 
-    def __init__(self, primary_key, price_column,
-                 picked_columns, summarize_columns, 
-                 domain_columns, domain_products):
-        self.primary_key = primary_key
-        self.price_column = price_column
-        self.picked_columns = picked_columns
+#     def __init__(self, primary_key, price_column,
+#                  picked_columns, summarize_columns, 
+#                  domain_columns, domain_products):
+#         self.primary_key = primary_key
+#         self.price_column = price_column
+#         self.picked_columns = picked_columns
+#         self.summarize_columns = summarize_columns
+#         self.domain_columns = domain_columns
+#         self.domain_products = domain_products
+
+
+class DatasetReducer(DatasetLoader):
+
+    def __init__(self, nick_name, domain_name, domain_datasets, 
+                 primary_key, price_column, picked_columns, summarize_columns,
+                 db_instance, completion_llm, is_verbose=False):
+        super().__init__(nick_name, domain_name, domain_datasets, 
+                         primary_key, price_column, picked_columns, 
+                         db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
-        self.domain_columns = domain_columns
-        self.domain_products = domain_products
+        self.columns = self.set_columns()
+        self.products = self.set_products()
+        self.enum_values = self.set_enum_values()
 
-    def columns(self):
-        columns = [col for col in self.domain_columns if col in self.picked_columns]
+    def get_columns(self):
+        return self.columns
+    
+    def set_columns(self):
+        columns = [col for col in self.get_domain_columns() 
+                   if col in self.picked_columns]
         columns = list(set(columns))
         return DataTransformer.fill_cols(sorted(columns))   
 
-    def products(self):
-        return self.domain_products
+    def get_products(self):
+        return self.get_products
+    
+    def set_products(self):
+        return self.get_domain_products()
 
     # def reduction_columns(self):
     #     return self.columns(self.column_names()) 
 
-    def enum_values(self):
-        enum_exclude = [col for col in self.columns() 
+    def get_enum_values(self):
+        return self.enum_values
+    
+    def set_enum_values(self):
+        enum_exclude = [col for col in self.get_columns() 
                         if col in self.summarize_columns or col not in self.picked_columns or col == self.primary_key or col == self.price_column]
-        self.enum_values = DataTransformer.set_enum_values(self.columns(),
-                                                           self.products(),
-                                                           enum_exclude)        
-class ContextParser(DatasetLoader):
+        return DataTransformer.set_enum_values(self.get_columns(),
+                                               self.get_products(),
+                                               enum_exclude)        
+
+# class ContextParser(DatasetLoader):
+class ContextParser(DatasetReducer):
 
     def __init__(self, domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column,
-                 db_instance, completion_llm, is_verbose)
-        self.ds_reducer = DatasetReducer(primary_key, price_column,
-                                         picked_columns, summarize_columns,
-                                         self.get_domain_columns(), self.get_domain_products())
-        self.context_products = self.ds_reducer.products()
-        self.context_columns = self.ds_reducer.columns()
-        self.context_enum_values = self.ds_reducer.enum_values()
+                         primary_key, price_column, picked_columns, summarize_columns,
+                         db_instance, completion_llm, is_verbose)
+        # self.ds_reducer = DatasetReducer(primary_key, price_column,
+        #                                  picked_columns, summarize_columns,
+        #                                  self.get_domain_columns(), self.get_domain_products())
+        # self.context_products = self.ds_reducer.products()
+        # self.context_columns = self.ds_reducer.columns()
+        # self.context_enum_values = self.ds_reducer.enum_values()
+
         # self.context_products = self.reduction_products()
         # self.context_columns = self.reduction_columns()
         # enum_exclude = [col for col in self.get_columns() 
@@ -226,14 +253,14 @@ Question: "Glassses for women?"
 Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
-    def get_products(self):
-        return self.context_products
+    # def get_products(self):
+    #     return self.context_products
 
-    def get_columns(self):
-        return self.context_columns
+    # def get_columns(self):
+    #     return self.context_columns
     
-    def get_enum_values(self):
-        return self.context_enum_values
+    # def get_enum_values(self):
+    #     return self.context_enum_values
 
     # def reduction_products(self):
     #     return self.working_products
