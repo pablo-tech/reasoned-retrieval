@@ -172,10 +172,10 @@ INSERT INTO {table_name} VALUES {table_rows}
 class DatasetReducer(DatasetLoader):
 
     def __init__(self, nick_name, domain_name, domain_datasets, 
-                 primary_key, price_column, picked_columns, summarize_columns,
+                 picked_columns, primary_key, price_column, summarize_columns,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(nick_name, domain_name, domain_datasets, 
-                         primary_key, price_column, picked_columns, 
+                         picked_columns, primary_key, price_column,  
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.columns = self.set_columns()
@@ -217,7 +217,7 @@ class ContextParser(DatasetReducer):
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
-                         primary_key, price_column, picked_columns, summarize_columns,
+                         picked_columns, primary_key, price_column, summarize_columns,
                          db_instance, completion_llm, is_verbose)
         # self.ds_reducer = DatasetReducer(primary_key, price_column,
         #                                  picked_columns, summarize_columns,
