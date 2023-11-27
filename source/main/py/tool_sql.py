@@ -50,7 +50,7 @@ class GiftOracle():
                 "trending_gifts": []
                 },
             "shop_gifts": {
-                "for_her": ["wallets-women", "watch-women", "fragrances-women", "handbags-women", "backpacks-women"], 
+                "for_her": ["wallets-women", "watch-women", "fragrances-women", "handbags-women", "backpacks-women", "clutches-women"], 
                 "for_him": ["wallets-men", "watch-men", "fragrances-men", "backpacks-men"], 
                 "for_teens": [], 
                 "for_kids": ["watch-kids", "watch-kids"],
@@ -64,7 +64,7 @@ class GiftOracle():
                 "fashion": [], 
                 "home_and_kitchen": ["bedsheets", "candle_holders", "dinner_sets", "tea_sets", "home_fragrances"],
                 "sports_and_outdoors": [], 
-                "jewelry": ["silver_artifacts"],
+                "jewelry": ["silver_artifacts", "clutches"],
                 "beauty": []
                 },
             "holiday_shopping": {
