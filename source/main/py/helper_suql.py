@@ -96,6 +96,8 @@ class DatasetLoader(SchemaCreator):
 
     def load_items(self):
         columns, products = self.get_columns(), self.get_products()
+        columns = columns.replace("/", "")
+        columns = columns.replace("__", "_")
         print("COLUMNS=>" + str(columns))
         products = self.domain_unique_products(products, self.subdomain_name)
         table_name = self.table_name(self.subdomain_name)
