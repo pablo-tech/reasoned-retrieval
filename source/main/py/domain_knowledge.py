@@ -184,9 +184,11 @@ class GiftSuql():
 
 class DomainIngestion():
 
-    def __init__(self, data_sets, subdomain_column,
+    def __init__(self, data_sets, 
+                 subdomain_name, subdomain_column,
                  completion_llm, is_verbose):
         self.data_sets = data_sets
+        self.subdomain_name = subdomain_name
         self.subdomain_column = subdomain_column
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
@@ -255,7 +257,9 @@ class DomainIngestion():
         return self.domain_clean
     
     def get_subdomain_names(self):
-        return sorted(list(set([p[self.subdomain_column] for p in self.get_domain_products()])))
+        subdomain_products = self.get_domain_products(self.subdomain_name)
+        return sorted(list(set([p[self.subdomain_column] 
+                                for p in subdomain_products])))
 
 
 class DomainSchema(DomainIngestion):
