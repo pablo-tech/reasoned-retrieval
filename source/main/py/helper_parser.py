@@ -54,7 +54,7 @@ class DataTransformer():
         product_out = {}
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
-            if len(k.split("_")) < n:
+            if len(k.split("_")) <= n:
                 product_out[k] = v # .lower()
         try:
             del product_out["case"]
