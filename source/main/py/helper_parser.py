@@ -138,7 +138,7 @@ class SqlSemanticParser(RunInference):
             results.append(response)
         return results[:n]
     
-    def reduced_enums(self, enum_values, n=10):
+    def reduced_enums(self, enum_values, n=15):
         return { k:v for k, v in enum_values.items() 
                 if len(v) > n }
     
