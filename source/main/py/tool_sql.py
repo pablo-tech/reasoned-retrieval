@@ -35,7 +35,7 @@ class GiftOracle():
         subdomain_column = 'sub_domain'
         self.db_instance = DatabaseInstance()
         self.context_parser = ContextParser(domain_name, domain_datasets, 
-                                            "", price_column,
+                                            "", subdomain_column,
                                             picked_columns, primary_key, price_column, summarize_columns,
                                             self.db_instance, completion_llm, is_verbose=False)
         column_annotation = self.get_annotation()  
