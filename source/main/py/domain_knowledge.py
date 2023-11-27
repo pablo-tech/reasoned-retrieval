@@ -209,23 +209,33 @@ class DomainIngestion():
             subdomain_corpus = dataset.get_corpus(subdomain_name)
             n += len(subdomain_corpus)
             print(subdomain_name+"="+str(len(subdomain_corpus)))
-            for key, item in subdomain_corpus.items():
+            for key, raw_product in subdomain_corpus.items():
                 try:
-                    item = eval(item)
-                    # item['sub_domain'] = subdomain_name
-                    clean = self.shorten_json(flatten(item))
-                    clean['sub_domain'] = subdomain_name
-                    # try: # TODO
-                    #     del clean['specification']
-                    # except:
-                    #     pass
-                    if DatasetValidation.is_valid_json(clean):
-                        self.raw_data[key] = item
-                        self.clean_data[key] = clean
-                        self.domain_clean[subdomain_name][key] = clean
+                    raw_product = self.legal_product(raw_product)
+                    raw_product = eval(raw_product)
+                    clean_product = self.shorten_json(flatten(raw_product))
+                    clean_product['sub_domain'] = subdomain_name
+                    if DatasetValidation.is_valid_json(clean_product):
+                        self.raw_data[key] = raw_product
+                        self.clean_data[key] = clean_product
+                        self.domain_clean[subdomain_name][key] = clean_product
                 except Exception as e:
-                    print("FLATEN_ERROR=" + str(e) + " " + str(type(item)) + " " + str(item))
-        print("DATASET_SIZE="+str(n))                    
+                    print("FLATEN_ERROR=" + str(e) + " " + str(type(raw_product)) + " " + str(raw_product))
+        print("DATASET_SIZE="+str(n))
+
+    def legal_product(self, product_in):
+        product_out = {}
+        for k, v in product_in.items():
+            k = self.legal_key(k)
+            product_out[k] = v
+        return product_out
+
+    def legal_key(self, key):
+        key = key.replace("/", "")
+        key = key.replace("__", "_")
+        key = key.replace("__", "_") 
+        key = key.replace("%", "percent") 
+        return key           
     
     def shorten_json(self, long):
         short = {}
