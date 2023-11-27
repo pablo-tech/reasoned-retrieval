@@ -65,6 +65,7 @@ class DataTransformer():
         key = key.replace("(", "_") 
         key = key.replace(")", "_") 
         key = key.replace("%", "percent") 
+        key = key.replace(".", "") 
         return key.lower()           
 
 
