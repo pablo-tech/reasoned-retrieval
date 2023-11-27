@@ -351,9 +351,9 @@ class InferenceParser(DatasetAugmenter):
         #          picked_columns, primary_key, price_column, 
         #          db_instance, completion_llm, is_verbose)
         print("SUBDOMAIN_NAMES=" + str(self.get_subdomain_names()))        
-        self.ds_augmenter = DatasetAugmenter(is_run_inference,
-                                             column_annotation, summarize_columns, primary_key,
-                                             completion_llm, is_verbose)        
+        # self.ds_augmenter = DatasetAugmenter(is_run_inference,
+        #                                      column_annotation, summarize_columns, primary_key,
+        #                                      completion_llm, is_verbose)        
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
         enum_exclude = [col for col in self.get_columns() 
@@ -379,7 +379,7 @@ Answer: SELECT {columns} FROM {self.get_table_name()} WHERE product_wheel_type =
         return self.inference_columns    
     
     def augmentation_column_products(self):
-        return self.ds_augmenter.column_products(self.get_domain_products()) 
+        return self.column_products(self.get_domain_products()) 
 
 
 class WholisticParser():
