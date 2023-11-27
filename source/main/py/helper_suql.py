@@ -329,12 +329,6 @@ class InferenceDomain(InferenceLoader):
                 self.augmentation_column_products()
         self.enum_values = self.set_enum_values()
 
-    def get_products(self):
-        return self.inference_products
-
-    def get_columns(self):
-        return self.inference_columns    
-    
     def augmentation_column_products(self):
         subdomain_products = self.get_domain_products()
         columns, products_in = self.set_column_products(subdomain_products) 
@@ -355,6 +349,15 @@ class InferenceDomain(InferenceLoader):
                                                self.get_products(),
                                                enum_exclude)        
 
+    def get_products(self):
+        return self.inference_products
+
+    def get_columns(self):
+        return self.inference_columns  
+
+    def get_enum_values(self):
+        return self.enum_values 
+    
 
 class InferenceParser():
 
