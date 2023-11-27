@@ -231,7 +231,7 @@ class ContextParser(DatasetReducer):
                  self.get_columns(),
                  self.get_schema_sql(), 
                  self.get_enum_values(), 
-                 self.get_fewshot_examples)]
+                 self.get_fewshot_examples())]
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
@@ -413,7 +413,7 @@ class InferenceParser():
                  self.get_columns(subdomain_name), 
                  self.get_schema_sql(subdomain_name), 
                  self.get_enum_values(subdomain_name), 
-                 self.get_fewshot_examples) 
+                 self.get_fewshot_examples(subdomain_name)) 
                  for subdomain_name in self.domain_inference.keys()]
 
     def get_schema_sql(self, subdomain_name):
