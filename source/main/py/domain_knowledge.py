@@ -232,6 +232,8 @@ class DomainIngestion():
 
     def legal_key(self, key):
         key = key.replace("/", "")
+        key = key.replace("/", "")
+        key = key.replace("&", "")
         key = key.replace("__", "_")
         key = key.replace("__", "_") 
         key = key.replace("%", "percent") 
