@@ -231,13 +231,14 @@ class DomainIngestion():
         return product_out
 
     def legal_key(self, key):
-        key = key.replace("/", "")
-        key = key.replace("/", "")
-        key = key.replace("&", "")
+        key = key.replace("/", "_")
+        key = key.replace("&", "_")
         key = key.replace("__", "_")
         key = key.replace("__", "_") 
+        key = key.replace("(", "_") 
+        key = key.replace(")", "_") 
         key = key.replace("%", "percent") 
-        return key           
+        return key.lower()           
     
     def shorten_json(self, long):
         short = {}
