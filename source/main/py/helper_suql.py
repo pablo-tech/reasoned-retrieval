@@ -308,10 +308,11 @@ class InferenceDomain(InferenceLoader):
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
-        super().__init__(is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, 
-                 summarize_columns, column_annotation, 
-                 db_instance, completion_llm, is_verbose)
+        super().__init__(is_run_inference, domain_name, domain_datasets,
+                         subdomain_name, subdomain_column,
+                         picked_columns, primary_key, price_column,  
+                         summarize_columns, column_annotation, 
+                         db_instance, completion_llm, is_verbose)
         self.subdomain_column = subdomain_column
         self.inference_columns, self.inference_products =\
                 self.augmentation_column_products()
