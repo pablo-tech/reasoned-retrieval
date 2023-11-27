@@ -192,7 +192,7 @@ class DatasetReducer(DatasetLoader):
         return DataTransformer.fill_cols(sorted(columns))   
 
     def get_products(self):
-        return self.get_products
+        return self.products
     
     def set_products(self):
         return self.get_domain_products()
