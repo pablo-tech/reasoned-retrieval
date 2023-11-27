@@ -250,9 +250,8 @@ class DomainSchema(DomainIngestion):
     def __init__(self, data_sets, completion_llm, is_verbose):
         super().__init__(data_sets, completion_llm, is_verbose)
         self.slot_values = defaultdict(set)
-        self.working_products = self.get_domain_products()        
 
-    def column_names(self):
+    def get_domain_columns(self):
         all_columns = set()
         for subdomain_data in self.get_subdomain_products().values():
             for item in subdomain_data.values():

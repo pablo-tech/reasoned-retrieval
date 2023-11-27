@@ -158,18 +158,19 @@ INSERT INTO {table_name} VALUES {table_rows}
 
 class DatasetReducer():
 
-    def __init__(self, primary_key, picked_columns, working_products):
-        self.primary_key = primary_key
+    def __init__(self, picked_columns, 
+                 domain_columns, domain_products):
         self.picked_columns = picked_columns
-        self.working_products = working_products
+        self.domain_columns = domain_columns
+        self.domain_products = domain_products
 
-    def columns(self, columns):
-        columns = [col for col in columns if col in self.picked_columns]
+    def columns(self):
+        columns = [col for col in self.domain_columns if col in self.picked_columns]
         columns = list(set(columns))
         return DataTransformer.fill_cols(sorted(columns))   
 
     def products(self):
-        return self.working_products
+        return self.domain_products
 
     # def reduction_columns(self):
     #     return self.columns(self.column_names()) 
@@ -183,7 +184,8 @@ class ContextParser(DatasetLoader):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column,
                  db_instance, completion_llm, is_verbose)
-        self.ds_reducer = DatasetReducer(primary_key, picked_columns, self.working_products)
+        self.ds_reducer = DatasetReducer(picked_columns, 
+                                         self.get_domain_columns(), self.get_domain_products())
         self.context_products = self.ds_reducer.products()
         self.context_columns = self.ds_reducer.columns()
         # self.context_products = self.reduction_products()
