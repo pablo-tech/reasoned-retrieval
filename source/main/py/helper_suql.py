@@ -228,21 +228,22 @@ class ContextParser(DatasetReducer):
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
+        table_name = self.get_table_name()
         return f"""        
 Question: what ARISTOCRAT products do you have? 
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Aristocrat';
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Aristocrat';
 Question: what GESTS products do you have?
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Guess';
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Scharf' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%GW0403L2%';
+Answer: SELECT {columns} FROM {table_name} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
+Answer: SELECT {columns} FROM {table_name} WHERE title LIKE '%bag%' AND title NOT LIKE '%women%';
 Question: "Glassses for women?"
-Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
+Answer: SELECT {columns} FROM {table_name} WHERE title LIKE '%glass%' AND title NOT LIKE '% men%';
 """
     
 
