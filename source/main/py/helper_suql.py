@@ -22,9 +22,6 @@ class SchemaCreator(DomainSchema):
         self.completion_llm = completion_llm
         self.is_verbose = is_verbose
 
-    def get_domain_name(self):
-        return self.domain_name
-
     def create_table(self, table_name, column_names):
         self.execute_query(self.create_sql(table_name, column_names))
 
@@ -66,7 +63,10 @@ class SchemaCreator(DomainSchema):
 
     def non_primary(self, primary_key, column_names):
         return sorted([name for name in column_names if name!=primary_key]) 
-            
+
+    def get_domain_name(self):
+        return self.domain_name
+
 
 class DatasetLoader(SchemaCreator):
 
@@ -165,27 +165,15 @@ class DatasetReducer(DatasetLoader):
                          picked_columns, primary_key, price_column,  
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
+        self.products = self.get_domain_products()
         self.columns = self.set_columns()
-        self.products = self.set_products()
         self.enum_values = self.set_enum_values()
 
-    def get_columns(self):
-        return self.columns
-    
     def set_columns(self):
         columns = [col for col in self.get_domain_columns() 
                    if col in self.picked_columns]
         columns = list(set(columns))
         return DataTransformer.fill_cols(sorted(columns))   
-
-    def get_products(self):
-        return self.products
-    
-    def set_products(self):
-        return self.get_domain_products()
-
-    def get_enum_values(self):
-        return self.enum_values
     
     def set_enum_values(self):
         enum_exclude = [col for col in self.get_columns() 
@@ -193,6 +181,15 @@ class DatasetReducer(DatasetLoader):
         return DataTransformer.set_enum_values(self.get_columns(),
                                                self.get_products(),
                                                enum_exclude)        
+
+    def get_columns(self):
+        return self.columns
+        
+    def get_products(self):
+        return self.products
+    
+    def get_enum_values(self):
+        return self.enum_values
 
 
 class ContextParser(DatasetReducer):
@@ -242,7 +239,7 @@ class InferenceLoader(DatasetLoader):
         self.sub_domain = "sub_domain"
         self.product_cache = GiftSuql()
 
-    def column_products(self, working_products): 
+    def set_column_products(self, working_products): 
         columns, products = self.summary_column_products(working_products)
         columns, products = self.annotation_column_products(columns, products)
         columns = set(columns)
@@ -315,7 +312,7 @@ class DatasetAugmenter(InferenceLoader):
         return self.inference_columns    
     
     def augmentation_column_products(self):
-        return self.column_products(self.get_domain_products()) 
+        return self.set_column_products(self.get_domain_products()) 
     
     def set_enum_values(self):
         enum_exclude = [col for col in self.get_columns() 
