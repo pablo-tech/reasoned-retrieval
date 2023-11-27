@@ -145,8 +145,8 @@ class DatasetLoader(SchemaCreator):
 INSERT INTO {table_name} VALUES {table_rows}
 """    
 
-    def schema_sql(self):
-        return self.create_sql(self.table_name(), 
+    def schema_sql(self, domain):
+        return self.create_sql(self.table_name(domain), 
                                self.get_columns())
         
     # def get_table_name(self):
