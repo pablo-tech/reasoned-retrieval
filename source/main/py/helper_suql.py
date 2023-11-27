@@ -164,11 +164,11 @@ INSERT INTO {table_name} VALUES {table_rows}
 class DatasetReducer(DatasetLoader):
 
     def __init__(self, nick_name, domain_name, domain_datasets, 
-                 subdomain_name, subdomain_column, 
+                 subdomain_column, 
                  picked_columns, primary_key, price_column, summarize_columns,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(nick_name, domain_name, domain_datasets, 
-                         subdomain_name, subdomain_column, 
+                         "", subdomain_column, 
                          picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
@@ -202,11 +202,11 @@ class DatasetReducer(DatasetLoader):
 class ContextParser(DatasetReducer):
 
     def __init__(self, domain_name, domain_datasets, 
-                 subdomain_name, subdomain_column,
+                 subdomain_column,
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
-                         subdomain_name, subdomain_column,
+                         subdomain_column,
                          picked_columns, primary_key, price_column, summarize_columns,
                          db_instance, completion_llm, is_verbose)
 
@@ -262,15 +262,15 @@ class InferenceLoader(DatasetLoader):
         inference_products = []
         domain_products = self.product_by_domain(context_products)
         if not self.is_run_inference:
-            for sub_domain in domain_products.keys():
-                products = self.product_cache.get_corpus(sub_domain)
+            for subdomain_name in domain_products.keys():
+                products = self.product_cache.get_corpus(subdomain_name)
                 inference_products.extend(products)
             # context_products = context_products[:n]
         else:
-            for sub_domain, context_products in domain_products.items():
+            for subdomain_name, context_products in domain_products.items():
                 products = self.summary_tagger.invoke(context_products)
                 inference_products.extend(products)
-                self.product_cache.save_corpus(sub_domain, products)
+                self.product_cache.save_corpus(subdomain_name, products)
         columns = self.extract_columns(inference_products)
         return columns, inference_products
     

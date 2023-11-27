@@ -147,17 +147,16 @@ class GiftDataset2(DomainDataset):
 
 class GiftSuql():
 
-    def __init__(self, subdomain_names,
+    def __init__(self, 
                  dir_path="/content/drive/MyDrive/StanfordLLM/qa_data/suql_qa/"):
-        self.subdomain_names = subdomain_names
         self.dir_path = dir_path
 
-    def file_path(self, domain):
-        return self.dir_path + domain 
+    def file_path(self, sub_domain):
+        return self.dir_path + sub_domain
 
-    def save_corpus(self, domain, products):
-        print("saving... " + str(domain))
-        file_path = self.file_path(domain)
+    def save_corpus(self, sub_domain, products):
+        file_path = self.file_path()
+        print("saving... " + str(file_path))
         try:
             os.remove(file_path)
         except:
@@ -166,7 +165,7 @@ class GiftSuql():
             with open(file_path, 'w') as fp:
                 json.dump(products, fp)        
         except:
-            print("SAVE_FILE_ERROR="+str(domain))
+            print("SAVE_FILE_ERROR="+str(sub_domain))
             pass
 
     def get_corpus(self, domain):
