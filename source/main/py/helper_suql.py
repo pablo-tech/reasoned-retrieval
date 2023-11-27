@@ -313,6 +313,7 @@ class InferenceDomain(InferenceLoader):
     
     def augmentation_column_products(self):
         products = self.set_column_products(self.get_domain_products()) 
+        print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
         return [p for p in products if p[self.subdomain_column] == self.subdomain_name]
     
     def set_enum_values(self):
@@ -332,9 +333,9 @@ class InferenceParser():
         self.domain_inference = {}
         for subdomain_name in sub_domains:
             domain_inference = InferenceDomain(is_run_inference, domain_name, subdomain_name, domain_datasets,
-                 picked_columns, primary_key, price_column, subdomain_column, summarize_columns,
-                 column_annotation, db_instance, 
-                 completion_llm, is_verbose)
+                 picked_columns, primary_key, price_column, subdomain_column, 
+                 summarize_columns, column_annotation, 
+                 db_instance, completion_llm, is_verbose)
             self.domain_inference[subdomain_name] = domain_inference
 
     def get_fewshot_examples(self):
