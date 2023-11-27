@@ -8,9 +8,10 @@ from collections import defaultdict
 class SchemaCreator(DomainSchema):
 
     def __init__(self, domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column,
+                 picked_columns, primary_key, price_column, subdomain_column,
                  db_instance, completion_llm, is_verbose):
         super().__init__(data_sets=domain_datasets,
+                         subdomain_column=subdomain_column,
                          completion_llm=completion_llm,
                          is_verbose=is_verbose)
         self.domain_name = domain_name.upper()
@@ -74,7 +75,7 @@ class DatasetLoader(SchemaCreator):
                  picked_columns, primary_key, price_column, subdomain_column,
                  db_instance, completion_llm, is_verbose=False):
         super().__init__(domain_name, domain_datasets, 
-                 picked_columns, primary_key, price_column,
+                 picked_columns, primary_key, price_column, subdomain_column,
                  db_instance, completion_llm, is_verbose)
         self.nick_name = nick_name
         self.db_instance = db_instance
