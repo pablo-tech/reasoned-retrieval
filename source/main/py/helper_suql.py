@@ -369,6 +369,15 @@ class InferenceParser():
     def schema_sql(self, subdomain_name):
         return self.domain_inference[subdomain_name].schema_sql()
 
+    def load_items(self):
+        for subdomain_name, inference_domain in self.domain_inference.items():
+            try:
+                print("loading... " + str(subdomain_name))
+                inference_domain.load_items()
+            except Exception as e:
+                print("LOAD_SUBDOMAIN_ERROR=" + str(subdomain_name))
+                pass
+
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())
         return f"""        
