@@ -223,14 +223,14 @@ Answer: SELECT {columns} FROM {self.table_name("")} WHERE title LIKE '%glass%' A
 
 class InferenceLoader(DatasetLoader):
 
-    def __init__(self, is_run_inference, domain_name, domain_datasets,
+    def __init__(self, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
         super().__init__("INFERENCE", domain_name, domain_datasets, 
                          picked_columns, primary_key, price_column, 
                          db_instance, completion_llm, is_verbose)
-        self.is_run_inference = is_run_inference
+        self.sub_domain = sub_domain
         self.column_annotation = column_annotation
         self.primary_key = primary_key
         self.summarize_columns = summarize_columns
@@ -290,13 +290,13 @@ class InferenceLoader(DatasetLoader):
         return columns, products
 
 
-class DatasetAugmenter(InferenceLoader):
+class InferenceDomain(InferenceLoader):
     
-    def __init__(self, is_run_inference, domain_name, domain_datasets,
+    def __init__(self, domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose):
-        super().__init__(is_run_inference, domain_name, domain_datasets,
+        super().__init__(domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
@@ -322,16 +322,18 @@ class DatasetAugmenter(InferenceLoader):
                                                            enum_exclude)        
 
 
-class InferenceParser(DatasetAugmenter):
+class InferenceParser():
 
-    def __init__(self, is_run_inference,
-                 domain_name, domain_datasets, 
+    def __init__(self, domain_name, sub_domains, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
-        super().__init__(is_run_inference, domain_name, domain_datasets,
+        self.domain_inference = {}
+        for subdomain_name in sub_domains:
+            domain_inference = InferenceDomain(domain_name, subdomain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
+        self.domain_inference[subdomain_name] = domain_inference
 
     def get_fewshot_examples(self):
         columns = ", ".join(self.get_columns())

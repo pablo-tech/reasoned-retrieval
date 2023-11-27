@@ -248,7 +248,7 @@ class DomainIngestion():
         return self.domain_clean
     
     def get_subdomain_names(self, sub_domain='sub_domain'):
-        return set([p[sub_domain] for p in self.get_domain_products()])
+        return sorted(list(set([p[sub_domain] for p in self.get_domain_products()])))
 
 
 class DomainSchema(DomainIngestion):
