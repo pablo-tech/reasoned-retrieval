@@ -141,7 +141,7 @@ class SqlSemanticParser(RunInference):
                                         enum_values, get_fewshot_examples)
                 print(subdomain_name + " PROMPT_LENGTH=" + str(len(prompt)))            
                 query_sql = self.run_inference(prompt)
-                print(query_sql + " QUERY_SQL=" + str(query_sql))            
+                print("QUERY_SQL=>" + str(query_sql))            
                 response = self.db_cursor.execute(query_sql)
                 response = self.new_response(query_sql,
                                             columns,
