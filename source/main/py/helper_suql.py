@@ -91,11 +91,11 @@ class DatasetLoader(SchemaCreator):
             name += "_" + subdomain_name
         return name
 
-    def load_items(self, domain=""):
+    def load_items(self):
         columns, products = self.get_columns(), self.get_products()
         print("COLUMNS=>" + str(columns))
-        products = self.domain_unique_products(products, domain)
-        table_name = self.table_name(domain)
+        products = self.domain_unique_products(products, self.subdomain_name)
+        table_name = self.table_name(self.subdomain_name)
         self.create_table(table_name, columns)  
         self.batch_load(columns, products, table_name)      
         return columns, products
@@ -121,9 +121,9 @@ class DatasetLoader(SchemaCreator):
             j+=n
         print("FAILURE_COUNT="+str(fails))
     
-    def domain_unique_products(self, products_in, domain):
-        if domain != "":
-            products_in = [p for p in products_in if p[self.subdomain_column]==domain]
+    def domain_unique_products(self, products_in, subdomain_name):
+        if subdomain_name != "":
+            products_in = [p for p in products_in if p[self.subdomain_column]==subdomain_name]
         products_out = []
         unique = set()
         for product in products_in:
