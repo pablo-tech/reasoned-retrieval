@@ -61,7 +61,7 @@ class DataTransformer():
         key = key.replace("/", "_")
         key = key.replace("&", "_")
         key = key.replace("__", "_")
-        key = key.replace("__", "_") 
+        key = key.replace("-", "_")
         key = key.replace("(", "_") 
         key = key.replace(")", "_") 
         key = key.replace("%", "percent") 
