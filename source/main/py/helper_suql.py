@@ -343,7 +343,7 @@ class InferenceParser(DatasetAugmenter):
                  domain_name, domain_datasets, 
                  picked_columns, primary_key, price_column, summarize_columns, column_annotation, 
                  db_instance, completion_llm, is_verbose=False): 
-        super().__init__(domain_name, domain_datasets,
+        super().__init__(is_run_inference, domain_name, domain_datasets,
                  picked_columns, primary_key, price_column, summarize_columns,
                  column_annotation, db_instance, 
                  completion_llm, is_verbose)
