@@ -134,6 +134,7 @@ class SqlSemanticParser(RunInference):
             # print("INVOKE_SCHEMA=>"+str(schema_sql))
             prompt = self.get_prompt(query_english, schema_sql, 
                                      enum_values, get_fewshot_examples)
+            print("PROMPT_LENGTH="+str(len(prompt)))            
             query_sql = self.run_inference(prompt)
             response = self.db_cursor.execute(query_sql)
             response = self.new_response(query_sql,
