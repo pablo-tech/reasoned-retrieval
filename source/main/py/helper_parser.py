@@ -50,6 +50,23 @@ class DataTransformer():
         return { k: v for k, v in enum_vals.items()
                  if len(v) > 1 }    
 
+    def legal_product(product_in):
+        product_out = {}
+        for k, v in product_in.items():
+            k = DataTransformer.legal_key(k)
+            product_out[k] = v
+        return product_out
+
+    def legal_key(key):
+        key = key.replace("/", "_")
+        key = key.replace("&", "_")
+        key = key.replace("__", "_")
+        key = key.replace("__", "_") 
+        key = key.replace("(", "_") 
+        key = key.replace(")", "_") 
+        key = key.replace("%", "percent") 
+        return key.lower()           
+
 
 class RunInference():
 
@@ -197,6 +214,8 @@ class SummaryTagger(RunInference):
             if i%25 == 0:
                 print("summary_inference... " + str(i))
             i+=1
+        
+        products_out = [DataTransformer.legal_product(p) for p in products_out]
         return products_out 
     
     def get_product_str(self, product):

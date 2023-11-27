@@ -4,6 +4,8 @@ import json
 
 from collections import defaultdict
 
+from helper_parser import DataTransformer
+
 from flatten_json import flatten
 
 
@@ -213,7 +215,7 @@ class DomainIngestion():
                 try:
                     raw_product = eval(raw_product)
                     clean_product = self.shorten_json(flatten(raw_product))
-                    clean_product = self.legal_product(clean_product)
+                    clean_product = DataTransformer.legal_product(clean_product)
                     clean_product[self.subdomain_column] = subdomain_name
                     if DatasetValidation.is_valid_json(clean_product):
                         self.raw_data[key] = raw_product
@@ -222,23 +224,6 @@ class DomainIngestion():
                 except Exception as e:
                     print("FLATEN_ERROR=" + str(e) + " " + str(type(raw_product)) + " " + str(raw_product))
         print("DATASET_SIZE="+str(n))
-
-    def legal_product(self, product_in):
-        product_out = {}
-        for k, v in product_in.items():
-            k = self.legal_key(k)
-            product_out[k] = v
-        return product_out
-
-    def legal_key(self, key):
-        key = key.replace("/", "_")
-        key = key.replace("&", "_")
-        key = key.replace("__", "_")
-        key = key.replace("__", "_") 
-        key = key.replace("(", "_") 
-        key = key.replace(")", "_") 
-        key = key.replace("%", "percent") 
-        return key.lower()           
     
     def shorten_json(self, long):
         short = {}
