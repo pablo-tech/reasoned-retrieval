@@ -202,9 +202,11 @@ class DatasetReducer(DatasetLoader):
 class ContextParser(DatasetReducer):
 
     def __init__(self, domain_name, domain_datasets, 
+                 subdomain_name, subdomain_column,
                  picked_columns, primary_key, price_column, summarize_columns, 
                  db_instance, completion_llm, is_verbose=False):
         super().__init__("CONTEXT", domain_name, domain_datasets, 
+                         subdomain_name, subdomain_column,
                          picked_columns, primary_key, price_column, summarize_columns,
                          db_instance, completion_llm, is_verbose)
 
