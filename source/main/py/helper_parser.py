@@ -51,13 +51,14 @@ class DataTransformer():
                  if len(v) > 1 }    
 
     def legal_product(product_in, 
-                      n=2, keys=["product"]):
+                      n=2, valids=["product"]):
         product_out = {}
         for k, v in product_in.items():
             k = DataTransformer.legal_key(k)
             if len(k.split("_")) <= n:
-                if k in keys:
-                    product_out[k] = v # .lower()
+                for valid in valids:
+                    if valid in k:
+                        product_out[k] = v # .lower()
         try:
             del product_out["case"]
         except:
