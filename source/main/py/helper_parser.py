@@ -150,9 +150,10 @@ class SqlSemanticParser(RunInference):
             try:
                 subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
                 print("---> " + subdomain_name)                
-                # print("INVOKE_COLS=>"+str(columns))
-                # print("INVOKE_ENUM=>"+str(enum_values))
-                # print("INVOKE_SCHEMA=>"+str(schema_sql))
+                print("INVOKE_COLS=>"+str(columns))
+                print("INVOKE_SCHEMA=>"+str(schema_sql))
+                print("INVOKE_ENUM=>"+str(enum_values))
+                print("INVOKE_EXAMPLES=>"+str(fewshot_examples))
 
                 prompt = self.get_prompt(query_english, schema_sql, 
                                          enum_values, fewshot_examples)
