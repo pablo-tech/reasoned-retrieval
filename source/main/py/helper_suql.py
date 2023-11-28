@@ -181,8 +181,8 @@ INSERT INTO {table_name} VALUES {table_rows}
         columns += self.summarize_columns
         return columns
     
-    def set_enum_values(self):
-        exclude = [c for c in self.get_domain_columns()
+    def set_enum_values(self, column_basis):
+        exclude = [c for c in column_basis
                    if c not in self.picked_columns]
         exclude += self.default_columns()
         return DataTransformer.set_enum_values(self.get_domain_columns(),
@@ -226,7 +226,7 @@ class DatasetReducer(DatasetLoader):
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.products = self.get_domain_products()
-        self.enum_values = self.set_enum_values()
+        self.enum_values = self.set_enum_values(self.get_domain_columns())
         self.columns = self.set_columns()
         self.products = self.lower_enums()
         
@@ -349,9 +349,15 @@ class InferenceDomain(InferenceLoader):
                          db_instance, completion_llm, is_verbose)
         self.n = n    
         self.products = self.augmented_products(self.n)    
-        self.enum_values = self.set_enum_values()
+        self.enum_values = self.set_enum_values(self.column_basis())
         self.columns = self.set_columns()
         self.products = self.lower_enums()
+
+    def column_basis(self):
+        columns = set()
+        for p in self.get_products():
+            columns.update(list(p.keys()))
+        return columns
             
 
 class InferenceParser():
