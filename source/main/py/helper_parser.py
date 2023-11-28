@@ -253,16 +253,19 @@ class SqlSemanticParser(RunInference):
             i = 0
             for value in row:
                 if value != '':
-                    key = result_columns[i]
-                    if key == 'price':
-                        value = float(value)
-                    if "is_" in key:
-                        if value == '1':
-                            value = True
-                        else:
-                            value = ''
-                    if value != '':
-                        item[key] = value
+                    try:
+                        key = result_columns[i]
+                        if key == 'price':
+                            value = float(value)
+                        if "is_" in key:
+                            if value == '1':
+                                value = True
+                            else:
+                                value = ''
+                        if value != '':
+                            item[key] = value
+                    except Exception as e:
+                        print("RESPONSE_ITEMS_ERROR=" + str(e))
                 i+=1
             items.append(item)
         return items
