@@ -95,6 +95,7 @@ class RunInference():
 
     def run_inference(self, prompt):
         inferred = self.completion_llm.invoke(prompt)
+        print("INFERRED_ACTUAL=>"+str(inferred))
         if isinstance(self.completion_llm, ChatOpenAI):
             inferred = inferred.content
         if self.is_verbose:            
@@ -231,8 +232,9 @@ class SqlSemanticParser(RunInference):
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
         prompt += f"{schema_sql}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
-        for column, values in enum_values.items():
-            prompt += f"{column} => {values}" + "\n"
+        prompt += str(enum_values)
+        # for column, values in enum_values.items():
+        #     prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
         prompt += f"{fewshot_examples}" + "\n"
