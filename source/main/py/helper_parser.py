@@ -101,19 +101,21 @@ class RunInference():
         if self.is_verbose:            
             print(inferred)
         inferred = self.post_infernece(inferred)
-        # print("INFERRED=" + str(inferred))            
+        print("INFERRED_FINAL=" + str(inferred))            
         return inferred
     
     def post_infernece(self, inferred):
-        try:
-            inferred = inferred.split("Answer:")[1].strip()
-        except: 
-            inferred = inferred.strip() 
-        try:
-            inferred = inferred.split("SQL Query:")[1].strip()
-        except: 
-            inferred = inferred.strip() 
-        return inferred
+        if "Answer" in inferred:
+            try:
+                return inferred.split("Answer:")[1].strip()
+            except:
+                return inferred.strip()
+        if "SQL" in inferred:
+            try:
+                return inferred.split("SQL Query:")[1].strip()
+            except:
+                return inferred.strip()            
+        return inferred.strip() 
 
 
 class SqlSemanticParser(RunInference):
