@@ -191,7 +191,7 @@ class DatasetReducer(DatasetLoader):
         self.products = self.get_domain_products()
         self.width = self.set_columns()
         self.enum_values = self.set_enum_values()
-        self.columns = self.enum_values.get_keys()
+        self.columns = self.enum_values.keys()
 
     def set_columns(self):
         columns = [col for col in self.get_domain_columns() 
