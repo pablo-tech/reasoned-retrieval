@@ -415,32 +415,45 @@ class InferenceParser():
                 pass
 
     def subdomain_invocation(self, subdomain_name):
+        columns = self.table_join_columns(self.get_columns(subdomain_name))
+        schema_sql = self.table_join_schema_sql(subdomain_name)
+        enum_values = self.table_join_enum_values(subdomain_name)
+        table_name = self.table_join_name(subdomain_name)
+        fewshot_examples = self.table_join_fewshot_examples(columns, table_name)
         return (subdomain_name,
-                self.get_columns(subdomain_name), 
-                self.get_schema_sql(subdomain_name), 
-                self.get_enum_values(subdomain_name), 
-                self.get_fewshot_examples(subdomain_name))
+                columns,
+                schema_sql,
+                enum_values,
+                fewshot_examples)
+                # self.get_columns(subdomain_name), 
+                # self.get_schema_sql(subdomain_name), 
+                # self.get_enum_values(subdomain_name), 
+                # self.get_fewshot_examples(subdomain_name))
 
     def get_invocations(self):
         return [self.subdomain_invocation(subdomain_name)
                 for subdomain_name in self.domain_inference.keys()]
 
-    def get_schema_sql(self, subdomain_name):
+    def table_join_schema_sql(self, subdomain_name):
         return f"""
 {self.domain_inference[subdomain_name].get_schema_sql()}
     
 {self.context_parser.get_schema_sql()}
 """    
 
-    def get_enum_values(self, subdomain_name):
+    def table_join_enum_values(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_enum_values()            
         # return { **self.context_parser.get_enum_values(), 
         #          **self.inference_parser.get_enum_values() }
 
-    def get_fewshot_examples(self, subdomain_name):
-        domain_inference = self.domain_inference[subdomain_name]
-        columns = self.table_join_columns(domain_inference.get_columns())
-        table_name = self.table_join_name(domain_inference.get_table_name())
+    # def table_join_fewshot_examples(self, subdomain_name):
+    #     domain_inference = self.domain_inference[subdomain_name]
+    #     columns = self.table_join_columns(domain_inference.get_columns())
+    #     table_name = self.table_join_name(domain_inference.get_table_name())
+    def table_join_fewshot_examples(self, columns, table_name):
+        # domain_inference = self.domain_inference[subdomain_name]
+        # columns = self.table_join_columns(domain_inference.get_columns())
+        # table_name = self.table_join_name(domain_inference.get_table_name())
         return f"""        
 Question: Antonio banderas Backpack? 
 Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
@@ -452,7 +465,8 @@ Answer: SELECT {columns} FROM {table_name} WHERE product_wheel_type = '2 wheel';
 # Question: what types of backpacks do you have? 
 # Answer: SELECT {columns} FROM {table_name} WHERE product_type = 'backpack';
 
-    def table_join_name(self, inference_table):
+    def table_join_name(self, subdomain_name):
+        inference_table = self.domain_inference[subdomain_name].get_table_name()
         return f"""
 {self.context_parser.get_table_name()} AS context JOIN
 {inference_table} AS inference 
