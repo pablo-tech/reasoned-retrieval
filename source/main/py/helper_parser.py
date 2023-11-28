@@ -33,7 +33,8 @@ class DataTransformer():
         return rows                  
 
     def set_enum_values(picked_enums, products, exclude_columns,
-                        max_value_length=3):
+                        min_value_length=1, max_value_spacing=3,
+                        min_value_count=1):
         enum_vals = defaultdict(set)
         for product in products:
             for col in picked_enums:
@@ -43,14 +44,14 @@ class DataTransformer():
                         if isinstance(value, bool):
                             enum_vals[col].add(True)
                             enum_vals[col].add(False)
-                        elif len(str(value).split(" ")) <= max_value_length:
-                            if len(value) > 1:
+                        elif len(str(value).split(" ")) <= max_value_spacing:
+                            if len(value) > min_value_length:
                                 enum_vals[col].add(value.lower())
                     except Exception as e:
                         # print("ENUM_ERROR="+str(e))
                         pass
         return { k: v for k, v in enum_vals.items()
-                 if len(v) > 1 }    
+                 if len(v) > min_value_count }    
 
     def legal_product(product_in, 
                       n=2, valids=["product"]):
