@@ -5,7 +5,7 @@ import openai
 
 import langchain
 # from langchain import OpenAI
-from langchain.chat_models import ChatOpenAI
+# from langchain.chat_models import ChatOpenAI
 from langchain.llms import GooglePalm
 from langchain.llms import HuggingFacePipeline
 from langchain import HuggingFaceHub
@@ -86,10 +86,10 @@ class AzureBase():
                                 max_tokens=max_tokens)
 
     def chat_llm_40(self, temperature=0, max_tokens = 1000):
-        return langchain.ChatOpenAI(openai_api_key=self.api_key,
-                                    engine="tdl-gpt-4",
-                                    temperature=temperature,
-                                    max_tokens=max_tokens)
+        return langchain.chat_models.ChatOpenAI(openai_api_key=self.api_key,
+                                                engine="tdl-gpt-4",
+                                                temperature=temperature,
+                                                max_tokens=max_tokens)
     
     # def chat_llm_40_turbo(self, temperature=0, max_tokens = 256):
     #     return ChatOpenAI(openai_api_key=self.api_key,
