@@ -189,28 +189,37 @@ class DatasetReducer(DatasetLoader):
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.products = self.get_domain_products()
-        self.width = self.set_columns()
+        # self.columns = self.set_columns()
         self.enum_values = self.set_enum_values()
-        self.columns = self.enum_values.keys()
+        # self.columns = self.enum_values.keys()
+        self.columns = [self.primary_key] + self.enum_values.keys()
 
     def set_columns(self):
-        columns = [col for col in self.get_domain_columns() 
+        columns = [col for col in self.get_enum_values().keys() 
                    if col in self.picked_columns]
         columns = list(set(columns))
-        return DataTransformer.fill_cols(sorted(columns))   
+        default = [self.primary_key, self.price_column]
+        return default + DataTransformer.fill_cols(sorted(columns)) 
+            
+    # def set_columns(self):
+    #     columns = [col for col in self.get_domain_columns() 
+    #                if col in self.picked_columns]
+    #     columns = list(set(columns))
+    #     return DataTransformer.fill_cols(sorted(columns))   
     
     def set_enum_values(self):
-        enum_exclude = [col for col in self.get_width() 
-                        if col in self.summarize_columns or 
-                        col not in self.picked_columns or 
-                        col == self.primary_key or 
-                        col == self.price_column]
-        return DataTransformer.set_enum_values(self.get_width(),
+        enum_exclude = [self.primary_key, self.price_column]
+        # enum_exclude = [col for col in self.get_columns() 
+        #                 if col in self.summarize_columns or 
+        #                 col not in self.picked_columns or 
+        #                 col == self.primary_key or 
+        #                 col == self.price_column]
+        return DataTransformer.set_enum_values(self.get_domain_columns(),
                                                self.get_products(),
                                                enum_exclude)        
         
-    def get_width(self):
-        return self.width
+    # def get_width(self):
+    #     return self.width
     
     def get_columns(self):
         return self.columns
