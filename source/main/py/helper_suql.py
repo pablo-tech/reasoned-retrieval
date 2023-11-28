@@ -215,9 +215,11 @@ class DatasetReducer(DatasetLoader):
         #         col == self.price_column]
     
     def set_enum_values(self):
+        exclude = self.default_columns() + [c for c in self.get_domain_columns()
+                                            if c not in self.summarize_columns]
         return DataTransformer.set_enum_values(self.get_domain_columns(),
                                                self.get_products(),
-                                               self.default_columns())        
+                                               exclude)        
         
     # def get_width(self):
     #     return self.width
