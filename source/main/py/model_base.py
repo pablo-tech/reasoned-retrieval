@@ -1,7 +1,7 @@
 import os
 
 import openai
-from openai import OpenAI
+# from openai import OpenAI
 
 import langchain
 # from langchain import OpenAI
@@ -28,7 +28,7 @@ class OpenaiBase():
     def __init__(self):
         self.MODEL = 'gpt-4-1106-preview'
         self.TOKEN_LIMIT=3500
-        self.client = OpenAI(api_key="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")
+        self.client = openai.OpenAI(api_key="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")
 
     def invoke(self, 
                message,
