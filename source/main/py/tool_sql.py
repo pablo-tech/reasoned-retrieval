@@ -69,40 +69,41 @@ class GiftOracle():
                 "fitness_buffs": ["speaker_mediaplayer"], 
                 "gamers": ["gaming", "headphones_earphones"], 
                 "home_chefs": ["dinner_sets"], 
-                "gear_heads": [], 
-                "DIYers": [],
-                "adventure_seekers": [], 
-                "trending_gifts": []
+                # "gear_heads": [], 
+                # "DIYers": [],
+                # "adventure_seekers": [], 
+                # "trending_gifts": []
                 },
             "shop_gifts": {
-                "for_her": ["wallets-women", "watch-women", "fragrances-women", "handbags-women", "backpacks-women", "clutches-women"], 
-                "for_him": ["wallets-men", "watch-men", "fragrances-men", "backpacks-men"], 
-                "for_teens": [], 
+                "for_mom": ["wallets-women", "handbags-women", "backpacks-women"], 
+                "for_her": ["watch-women", "fragrances-women",  "clutches-women"], 
+                "for_him": ["watch-men", "fragrances-men"], 
+                "for_dad": ["wallets-men","backpacks-men"], 
                 "for_kids": ["watch-kids", "watch-kids"],
-                "babies_and_toddlers": [], 
-                "for_pets": [],
                 "for_retirement": ["watch-men", "watch-women"],
-                "for_mom": ["watch-women", "fragrances-women", "handbags-women"],
+                # "for_teens": [], 
+                # "babies_and_toddlers": [], 
+                # "for_pets": [],
             },
             "by_category": {
                 "electronics": ["headphones_earphones", "instant_camera", "mobiles", "speaker_mediaplayer", "tab_ereader"], 
-                "fashion": [], 
                 "home_and_kitchen": ["bedsheets", "candle_holders", "dinner_sets", "tea_sets", "home_fragrances"],
                 "sports_and_outdoors": [], 
                 "jewelry": ["silver_artifacts", "clutches"],
-                "beauty": []
+                # "beauty": []
+                # "fashion": [], 
                 },
             "holiday_shopping": {
                 "most_loved_gifts": ["chocolates", "sweets"], 
+                "valentines_day": ["chocolates"],
                 "decor": ["candle_holders", "silver_artifacts"],
-                "valentines": ["chocolates"],
                 "gifts_for_all": ["drinking_glass"], 
-                "toys": [], 
                 "stocking_stuffers": ["chocolates", "sweets"],
                 "unique_gifts": ["silver_bullion"], 
-                "hosting_essentials": [], 
-                "white_elephant": [],
-                "same_day_delivery": []
+                # "toys": [], 
+                # "hosting_essentials": [], 
+                # "white_elephant": [],
+                # "same_day_delivery": []
             }
         } 
 
