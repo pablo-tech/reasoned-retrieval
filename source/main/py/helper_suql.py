@@ -365,6 +365,7 @@ class InferenceDomain(InferenceLoader):
         # exclude = [c for c in column_basis
         #            if c not in self.picked_columns]
         exclude += self.default_columns()
+        print("exclude ==> " + str(exclude))
         return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
                                                exclude)        
