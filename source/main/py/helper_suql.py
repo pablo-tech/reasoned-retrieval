@@ -405,8 +405,6 @@ class InferenceParser():
         columns = ", ".join(columns)
         table_name = domain_inference.get_table_name()
         return f"""        
-Question: what types of backpacks do you have? 
-Answer: SELECT {columns} FROM {table_name} WHERE product_type = 'backpack';
 Question: Antonio banderas Backpack? 
 Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
 Question: what 22 litter backpacks do you have?
@@ -414,6 +412,8 @@ Answer: SELECT {columns} FROM {table_name} WHERE product_size = '22 ltrs';
 Question: what 2 wheel trolleys do your products have?
 Answer: SELECT {columns} FROM {table_name} WHERE product_wheel_type = '2 wheel';
 """
+# Question: what types of backpacks do you have? 
+# Answer: SELECT {columns} FROM {table_name} WHERE product_type = 'backpack';
 
 
 class WholisticParser():
@@ -448,9 +448,9 @@ Question: what backpacks do you have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_type = 'backpack';
 Question: what 22 liter backpacks do you have?
 Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
-Question: what color trolleys do your products have?
-Answer: SELECT DISTINCT product_color FROM {self.get_table_name()} WHERE inference.product_type = 'duffle trolley bag';
 """
+# Question: what color trolleys do your products have?
+# Answer: SELECT DISTINCT product_color FROM {self.get_table_name()} WHERE inference.product_type = 'duffle trolley bag';
 
     def get_columns(self):
         columns = ["context.id", "context.price", "context.title"] 
