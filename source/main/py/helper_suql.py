@@ -478,3 +478,9 @@ Answer: SELECT DISTINCT product_color FROM {self.get_table_name()} WHERE inferen
         columns += ["inference."+col for col in self.inference_parser.get_enums()]
         return columns    
 
+    def get_invocations(self):
+        return [(self.domain_name,
+                 self.get_columns(),
+                 self.get_schema_sql(), 
+                 self.get_enum_values(), 
+                 self.get_fewshot_examples())]

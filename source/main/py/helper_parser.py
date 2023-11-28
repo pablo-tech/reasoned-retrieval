@@ -141,20 +141,17 @@ class SqlSemanticParser(RunInference):
         for invocation in product_parser.get_invocations():
             try:
                 subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
-                # enum_values = self.reduced_enums(enum_values)
+                print("---> " + subdomain_name)                
                 # print("INVOKE_COLS=>"+str(columns))
                 # print("INVOKE_ENUM=>"+str(enum_values))
                 # print("INVOKE_SCHEMA=>"+str(schema_sql))
                 prompt = self.get_prompt(query_english, schema_sql, 
                                          enum_values, get_fewshot_examples)
-                # print(subdomain_name + ": EXAMPLES=>" + str(get_fewshot_examples))
-                # print(subdomain_name + ": PROMPT_LENGTH=" + str(len(prompt)))            
                 query_sql = self.run_inference(prompt)
-                # print(subdomain_name + ": QUERY_SQL=>" + str(query_sql))            
+                # print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses][:n]
                 if len(responses) > 0:
-                    print("---> " + subdomain_name)                
                     consolidated = self.new_response(query_sql,
                                                     columns,
                                                     responses)
@@ -163,11 +160,7 @@ class SqlSemanticParser(RunInference):
                 print("INVOKE_ERROR=" +str(e))
 
         return results
-    
-    # def reduced_enums(self, enum_values, n=15):
-    #     return { k:v for k, v in enum_values.items() 
-    #             if len(v) > n }
-    
+        
     def new_response(self, query_sql, result_columns, result_rows):
         user_state, is_success = self.user_state(query_sql)
         if is_success:
