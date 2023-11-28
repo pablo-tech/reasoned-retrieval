@@ -230,7 +230,7 @@ class SqlSemanticParser(RunInference):
         
     def new_response(self, query_sql, result_columns, 
                      result_rows, n):
-        user_state, result_items = []
+        user_state, result_items = "", []
         try:
             if len(result_rows) > n:
                 result_rows = result_rows[:n]
