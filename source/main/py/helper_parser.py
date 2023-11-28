@@ -128,20 +128,25 @@ class SqlSemanticParser(RunInference):
         return self.db_cursor.execute(query)
     
     def invoke_context(self, query, n):
-        return self.invoke(query, n,
-                           self.domain_oracle.get_context_parser())
+        invocations = self.domain_oracle.get_context_parser().get_invocations()
+        return self.invoke(query, n, invocations)
+
+    def invoke_subdomain_inference(self, query, n, subdomain_name):
+        invocations = self.domain_oracle.get_inference_parser().subdomain_invocations(subdomain_name)
+        return self.invoke(query, n, invocations)
 
     def invoke_inference(self, query, n):
-        return self.invoke(query, n, 
-                           self.domain_oracle.get_inference_parser())
+        invocations = self.domain_oracle.get_inference_parser().get_invocations()
+        return self.invoke(query, n, invocations)
 
-    def invoke_wholistic(self, query, n):
-        return self.invoke(query, n, 
-                           self.domain_oracle.get_wholistic_parser())
+    # def invoke_wholistic(self, query, n):
+    #     invocations
+    #     return self.invoke(query, n, 
+    #                        self.domain_oracle.get_wholistic_parser())
 
-    def invoke(self, query_english, n, product_parser):
+    def invoke(self, query_english, n, invocations):
         results = []
-        for invocation in product_parser.get_invocations():
+        for invocation in invocations:
             try:
                 subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
                 print("---> " + subdomain_name)                

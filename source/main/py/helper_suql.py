@@ -413,13 +413,16 @@ class InferenceParser():
                 print("LOAD_SUBDOMAIN_ERROR=" + str(subdomain_name))
                 pass
 
+    def subdomain_invocations(self, subdomain_name):
+        return (subdomain_name,
+                self.get_columns(subdomain_name), 
+                self.get_schema_sql(subdomain_name), 
+                self.get_enum_values(subdomain_name), 
+                self.get_fewshot_examples(subdomain_name))
+
     def get_invocations(self):
-        return [(subdomain_name,
-                 self.get_columns(subdomain_name), 
-                 self.get_schema_sql(subdomain_name), 
-                 self.get_enum_values(subdomain_name), 
-                 self.get_fewshot_examples(subdomain_name)) 
-                 for subdomain_name in self.domain_inference.keys()]
+        return [self.subdomain_invocations(subdomain_name)
+                for subdomain_name in self.domain_inference.keys()]
 
     def get_schema_sql(self, subdomain_name):
         return self.domain_inference[subdomain_name].get_schema_sql()
@@ -444,50 +447,50 @@ Answer: SELECT {columns} FROM {table_name} WHERE product_wheel_type = '2 wheel';
 # Answer: SELECT {columns} FROM {table_name} WHERE product_type = 'backpack';
 
 
-class WholisticParser():
+# class WholisticParser():
 
-    def __init__(self, context_parser, inference_parser):
-        self.context_parser = context_parser
-        self.inference_parser = inference_parser
+#     def __init__(self, context_parser, inference_parser):
+#         self.context_parser = context_parser
+#         self.inference_parser = inference_parser
 
-    def schema_sql(self):
-        return f"""
-{self.context_parser.schema_sql()}
+#     def schema_sql(self):
+#         return f"""
+# {self.context_parser.schema_sql()}
 
-{self.inference_parser.schema_sql()}
-"""
-    def get_table_name(self):
-        return f"""
-{self.context_parser.get_table_name()} AS context JOIN
-{self.inference_parser.get_table_name()} AS inference 
-ON context.id = inference.id
-""".replace("\n", " ")        
+# {self.inference_parser.schema_sql()}
+# """
+#     def get_table_name(self):
+#         return f"""
+# {self.context_parser.get_table_name()} AS context JOIN
+# {self.inference_parser.get_table_name()} AS inference 
+# ON context.id = inference.id
+# """.replace("\n", " ")        
 
-    def get_enum_values(self):
-        return self.inference_parser.get_enum_values()
-        # return { **self.context_parser.get_enum_values(), 
-        #          **self.inference_parser.get_enum_values() }
+#     def get_enum_values(self):
+#         return self.inference_parser.get_enum_values()
+#         # return { **self.context_parser.get_enum_values(), 
+#         #          **self.inference_parser.get_enum_values() }
 
-    def get_fewshot_examples(self):
-        columns = self.get_columns()
-        columns = ", ".join(columns)
-        return f"""        
-Question: what backpacks do you have? 
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_type = 'backpack';
-Question: what 22 liter backpacks do you have?
-Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
-"""
-# Question: what color trolleys do your products have?
-# Answer: SELECT DISTINCT product_color FROM {self.get_table_name()} WHERE inference.product_type = 'duffle trolley bag';
+#     def get_fewshot_examples(self):
+#         columns = self.get_columns()
+#         columns = ", ".join(columns)
+#         return f"""        
+# Question: what backpacks do you have? 
+# Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_type = 'backpack';
+# Question: what 22 liter backpacks do you have?
+# Answer: SELECT {columns} FROM {self.get_table_name()} WHERE inference.product_size = '22 Ltrs';
+# """
+# # Question: what color trolleys do your products have?
+# # Answer: SELECT DISTINCT product_color FROM {self.get_table_name()} WHERE inference.product_type = 'duffle trolley bag';
 
-    def get_columns(self):
-        columns = ["context.id", "context.price", "context.title"] 
-        columns += ["inference."+col for col in self.inference_parser.get_enums()]
-        return columns    
+#     def get_columns(self):
+#         columns = ["context.id", "context.price", "context.title"] 
+#         columns += ["inference."+col for col in self.inference_parser.get_enums()]
+#         return columns    
 
-    def get_invocations(self):
-        return [(self.domain_name,
-                 self.get_columns(),
-                 self.get_schema_sql(), 
-                 self.get_enum_values(), 
-                 self.get_fewshot_examples())]
+#     def get_invocations(self):
+#         return [(self.domain_name,
+#                  self.get_columns(),
+#                  self.get_schema_sql(), 
+#                  self.get_enum_values(), 
+#                  self.get_fewshot_examples())]
