@@ -151,7 +151,7 @@ class SqlSemanticParser(RunInference):
                 prompt = self.get_prompt(query_english, schema_sql, 
                                          enum_values, get_fewshot_examples)
                 query_sql = self.run_inference(prompt)
-                # print("QUERY_SQL=>" + str(query_sql))            
+                print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses][:n]
                 if len(responses) > 0:
