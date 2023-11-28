@@ -365,6 +365,7 @@ class InferenceDomain(InferenceLoader):
         # exclude = [c for c in column_basis
         #            if c not in self.picked_columns]
         exclude += self.default_columns()
+        exclude = sorted(list(exclude))
         print("exclude ==> " + str(exclude))
         return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
@@ -374,7 +375,7 @@ class InferenceDomain(InferenceLoader):
         columns = set()
         for p in self.get_products():
             columns.update(list(p.keys()))
-        return columns
+        return sorted(list(columns))
             
     def get_column_basis(self):
         return self.column_basis
