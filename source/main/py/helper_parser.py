@@ -163,17 +163,18 @@ class SqlSemanticParser(RunInference):
                 responses = [row for row in responses]
                 if len(responses) > 0:
                     response = self.new_response(query_sql,
-                                                  columns,
-                                                  responses)
+                                                 columns,
+                                                 responses,
+                                                 n)
                     results.append(response)
             except Exception as e:
                 print("INVOKE_ERROR="+str(e))
 
-        if len(results) > n:
-            return results[:n]
         return results
         
-    def new_response(self, query_sql, result_columns, result_rows):
+    def new_response(self, query_sql, result_columns, result_rows, n):
+        if len(result_rows) > n:
+            result_rows = result_rows[:n]
         user_state, is_success = self.user_state(query_sql)
         if is_success:
             result_items = self.response_items(result_columns, result_rows)
