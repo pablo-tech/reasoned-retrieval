@@ -373,7 +373,7 @@ class InferenceDomain(InferenceLoader):
         return sorted(list(columns))
 
     def set_columns(self):
-        columns = [self.primary_key]
+        columns = [self.primary_key, self.subdomain_column]
         columns += list(self.get_enum_values().keys())
         columns = sorted(list(set(columns)))    
         return columns     

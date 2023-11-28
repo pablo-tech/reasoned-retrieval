@@ -26,7 +26,7 @@ class GiftOracle():
         domain_name="CLIQ"
         picked_columns=['id', 'price', 
                         'brand', 'colors', 'gender',
-                        'title', 'description', 'sub_domain'] # 'category', 'store', 
+                        'title', 'description'] 
         primary_key='id'
         price_column = 'price'
         summarize_columns=['title', 'description']
