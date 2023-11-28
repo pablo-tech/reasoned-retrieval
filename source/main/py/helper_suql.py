@@ -181,12 +181,6 @@ INSERT INTO {table_name} VALUES {table_rows}
         columns += self.summarize_columns
         return columns
     
-    def set_columns(self):
-        columns = self.default_columns()
-        columns += list(self.get_enum_values().keys())
-        columns = sorted(list(set(columns)))    
-        return columns     
-
     def lower_enums(self):
         products_out = []
         for product_in in self.get_products():
@@ -232,6 +226,12 @@ class DatasetReducer(DatasetLoader):
         return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
                                                exclude)        
+
+    def set_columns(self):
+        columns = self.default_columns()
+        columns += list(self.get_enum_values().keys())
+        columns = sorted(list(set(columns)))    
+        return columns     
 
 
 class ContextParser(DatasetReducer):
@@ -365,7 +365,7 @@ class InferenceDomain(InferenceLoader):
         # exclude = [c for c in column_basis
         #            if c not in self.picked_columns]
         exclude += self.default_columns()
-        exclude = sorted(list(exclude))
+        exclude = sorted(list(set(exclude)))
         print("exclude ==> " + str(exclude))
         return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
@@ -376,7 +376,13 @@ class InferenceDomain(InferenceLoader):
         for p in self.get_products():
             columns.update(list(p.keys()))
         return sorted(list(columns))
-            
+
+    def set_columns(self):
+        # columns = self.default_columns()
+        columns = list(self.get_enum_values().keys())
+        columns = sorted(list(set(columns)))    
+        return columns     
+
     def get_column_basis(self):
         return self.column_basis
 
