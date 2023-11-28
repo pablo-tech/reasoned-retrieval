@@ -192,7 +192,7 @@ class DatasetReducer(DatasetLoader):
         # self.columns = self.set_columns()
         self.enum_values = self.set_enum_values()
         # self.columns = self.enum_values.keys()
-        self.columns = [self.primary_key] + self.enum_values.keys()
+        self.columns = [self.primary_key] + list(self.enum_values.keys())
 
     def set_columns(self):
         columns = [col for col in self.get_enum_values().keys() 
