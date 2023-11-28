@@ -200,12 +200,18 @@ class DatasetReducer(DatasetLoader):
         return DataTransformer.fill_cols(sorted(columns))   
     
     def set_enum_values(self):
-        enum_exclude = [col for col in self.get_columns() 
-                        if col in self.summarize_columns or col not in self.picked_columns or col == self.primary_key or col == self.price_column]
-        return DataTransformer.set_enum_values(self.get_columns(),
+        enum_exclude = [col for col in self.get_width() 
+                        if col in self.summarize_columns or 
+                        col not in self.picked_columns or 
+                        col == self.primary_key or 
+                        col == self.price_column]
+        return DataTransformer.set_enum_values(self.get_width(),
                                                self.get_products(),
                                                enum_exclude)        
         
+    def get_width(self):
+        return self.width
+    
     def get_columns(self):
         return self.columns
         
