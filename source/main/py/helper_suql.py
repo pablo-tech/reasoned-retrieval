@@ -189,14 +189,12 @@ class DatasetReducer(DatasetLoader):
                          db_instance, completion_llm, is_verbose)
         self.summarize_columns = summarize_columns
         self.products = self.get_domain_products()
-        # self.columns = self.set_columns()
         self.enum_values = self.set_enum_values()
-        # self.columns = self.enum_values.keys()
-        self.columns = self.default_columns() + list(self.enum_values.keys())
+        self.columns = self.set_columns()
 
     def set_columns(self):
         columns = self.default_columns()
-        columns += list(self.enum_values.keys())
+        columns += list(self.get_enum_values().keys())
         columns = sorted(list(set(columns)))    
         return columns            
     
