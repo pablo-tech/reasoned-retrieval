@@ -357,6 +357,7 @@ class InferenceDomain(InferenceLoader):
         columns = set()
         for p in self.get_products():
             columns.update(list(p.keys()))
+        print("column_basis=>"+str(columns))
         return columns
             
 
