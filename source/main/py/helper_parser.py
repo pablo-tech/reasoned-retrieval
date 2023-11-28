@@ -166,7 +166,7 @@ class SqlSemanticParser(RunInference):
                                                     responses)
                     results.append(consolidated)
             except Exception as e:
-                print("INVOKE_ERROR=" +str(e))
+                print("INVOKE_ERROR="+str(e)+"\t invocation=>"+str(invocation))
 
         return results
         
