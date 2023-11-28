@@ -292,8 +292,6 @@ class SqlSemanticParser(RunInference):
         prompt += f"{schema_sql}" 
         prompt += "Note that table columns take the following enumerated values:" + "\n"
         prompt += str(enum_values)
-        # for column, values in enum_values.items():
-        #     prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
         prompt += f"{fewshot_examples}" + "\n"

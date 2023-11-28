@@ -425,10 +425,6 @@ class InferenceParser():
                 schema_sql,
                 enum_values,
                 fewshot_examples)
-                # self.get_columns(subdomain_name), 
-                # self.get_schema_sql(subdomain_name), 
-                # self.get_enum_values(subdomain_name), 
-                # self.get_fewshot_examples(subdomain_name))
 
     def get_invocations(self):
         return [self.subdomain_invocation(subdomain_name)
@@ -446,15 +442,8 @@ class InferenceParser():
         # return { **self.context_parser.get_enum_values(), 
         #          **self.inference_parser.get_enum_values() }
 
-    # def join_fewshot_examples(self, subdomain_name):
-    #     domain_inference = self.domain_inference[subdomain_name]
-    #     columns = self.join_columns(domain_inference.get_columns())
-    #     table_name = self.join_name(domain_inference.get_table_name())
     def join_fewshot_examples(self, columns, table_name):
         columns = ", ".join(columns)
-        # domain_inference = self.domain_inference[subdomain_name]
-        # columns = self.join_columns(domain_inference.get_columns())
-        # table_name = self.join_name(domain_inference.get_table_name())
         return f"""        
 Question: Antonio banderas Backpack? 
 Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
