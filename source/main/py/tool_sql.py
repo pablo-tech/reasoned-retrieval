@@ -1,4 +1,4 @@
-from helper_suql import ContextParser, InferenceParser, WholisticParser
+from helper_suql import ContextParser, InferenceParser
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
 
 from model_base import OpenaiBase
@@ -44,7 +44,7 @@ class GiftOracle():
                                                 picked_columns, primary_key, price_column,  
                                                 summarize_columns, column_annotation, 
                                                 self.db_instance, completion_llm, is_verbose=False)
-        self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
+        # self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def subdomain_dataset_func(self, subdomain_names):
         return [GiftDataset2(subdomain_names)]
