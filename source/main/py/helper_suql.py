@@ -182,7 +182,8 @@ INSERT INTO {table_name} VALUES {table_rows}
         return columns
     
     def set_enum_values(self, column_basis):
-        column_basis += self.get_domain_columns()
+        column_basis += list(column_basis) + list(self.get_domain_columns())
+        column_basis = set(column_basis)
         exclude = [c for c in column_basis
                    if c not in self.picked_columns]
         exclude += self.default_columns()
