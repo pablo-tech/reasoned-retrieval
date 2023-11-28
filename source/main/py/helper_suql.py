@@ -359,14 +359,9 @@ class InferenceDomain(InferenceLoader):
 
     def set_enum_values(self):
         column_basis = self.get_column_basis()
-        print("column_basis ==> " + str(column_basis))
         exclude = self.get_domain_columns()
-        # column_basis = self.get_domain_columns()
-        # exclude = [c for c in column_basis
-        #            if c not in self.picked_columns]
         exclude += self.default_columns()
         exclude = sorted(list(set(exclude)))
-        print("exclude ==> " + str(exclude))
         return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
                                                exclude)        
@@ -378,8 +373,8 @@ class InferenceDomain(InferenceLoader):
         return sorted(list(columns))
 
     def set_columns(self):
-        # columns = self.default_columns()
-        columns = list(self.get_enum_values().keys())
+        columns = [self.primary_key]
+        columns += list(self.get_enum_values().keys())
         columns = sorted(list(set(columns)))    
         return columns     
 
