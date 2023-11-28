@@ -32,7 +32,8 @@ class DataTransformer():
                     rows += ",\n" + str(tuple(values))
         return rows                  
 
-    def set_enum_values(picked_enums, products, exclude_columns):
+    def set_enum_values(picked_enums, products, exclude_columns,
+                        max_value_length=3):
         enum_vals = defaultdict(set)
         for product in products:
             for col in picked_enums:
@@ -42,8 +43,8 @@ class DataTransformer():
                         if isinstance(value, bool):
                             enum_vals[col].add(True)
                             enum_vals[col].add(False)
-                        elif len(str(value).split(" ")) <= 3:
-                            enum_vals[col].add(value)
+                        elif len(str(value).split(" ")) <= max_value_length:
+                            enum_vals[col].add(value.lower())
                     except Exception as e:
                         # print("ENUM_ERROR="+str(e))
                         pass
