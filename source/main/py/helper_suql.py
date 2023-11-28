@@ -253,14 +253,14 @@ class ContextParser(DatasetReducer):
         columns = ", ".join(self.get_columns())
         table_name = self.get_table_name()
         return f"""        
-Question: what ARISTOCRAT products do you have? 
-Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Aristocrat';
+Question: what Anna Sui products do you have? 
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'anna sui';
 Question: what GESTS products do you have?
-Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Guess';
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'guess';
 Question: what are the cheapest Scharf products?
-Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Scharf' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'scharf' ORDER BY price ASC;
 Question: "what are the cheapest Carpisa watches?"
-Answer: SELECT {columns} FROM {table_name} WHERE brand = 'Carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'carpisa' AND title LIKE '%watch%' ORDER BY price ASC;
 Question: "What is GW0403L2?"
 Answer: SELECT {columns} FROM {table_name} WHERE title LIKE '%GW0403L2%';
 Question: "Bags for men?"
@@ -446,6 +446,8 @@ class InferenceParser():
         return f"""        
 Question: what types of backpacks do you have? 
 Answer: SELECT {columns} FROM {table_name} WHERE product_types = 'backpack';
+Question: Antonio banderas Backpack? 
+Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
 Question: what 22 litter backpacks do you have?
 Answer: SELECT {columns} FROM {table_name} WHERE product_size = '22 ltrs';
 Question: what 2 wheel trolleys do your products have?
