@@ -44,7 +44,8 @@ class DataTransformer():
                             enum_vals[col].add(True)
                             enum_vals[col].add(False)
                         elif len(str(value).split(" ")) <= max_value_length:
-                            enum_vals[col].add(value.lower())
+                            if len(value) > 1:
+                                enum_vals[col].add(value.lower())
                     except Exception as e:
                         # print("ENUM_ERROR="+str(e))
                         pass
