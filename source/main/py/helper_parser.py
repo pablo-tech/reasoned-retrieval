@@ -128,12 +128,12 @@ class SqlSemanticParser(RunInference):
         return self.db_cursor.execute(query)
     
     def invoke_context(self, query, n):
-        invocation = self.domain_oracle.get_context_parser().get_invocations()
-        return self.invoke(query, n, [invocation])
+        invocations = self.domain_oracle.get_context_parser().get_invocations()
+        return self.invoke(query, n, invocations)
 
     def invoke_subdomain_inference(self, query, n, subdomain_name):
-        invocations = self.domain_oracle.get_inference_parser().subdomain_invocations(subdomain_name)
-        return self.invoke(query, n, invocations)
+        invocation = self.domain_oracle.get_inference_parser().subdomain_invocation(subdomain_name)
+        return self.invoke(query, n, [invocation])
 
     def invoke_inference(self, query, n):
         invocations = self.domain_oracle.get_inference_parser().get_invocations()

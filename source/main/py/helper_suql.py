@@ -413,7 +413,7 @@ class InferenceParser():
                 print("LOAD_SUBDOMAIN_ERROR=" + str(subdomain_name))
                 pass
 
-    def subdomain_invocations(self, subdomain_name):
+    def subdomain_invocation(self, subdomain_name):
         return (subdomain_name,
                 self.get_columns(subdomain_name), 
                 self.get_schema_sql(subdomain_name), 
@@ -421,7 +421,7 @@ class InferenceParser():
                 self.get_fewshot_examples(subdomain_name))
 
     def get_invocations(self):
-        return [self.subdomain_invocations(subdomain_name)
+        return [self.subdomain_invocation(subdomain_name)
                 for subdomain_name in self.domain_inference.keys()]
 
     def get_schema_sql(self, subdomain_name):
