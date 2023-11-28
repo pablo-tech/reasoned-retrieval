@@ -147,6 +147,7 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, invocations):
         results = []
         for invocation in invocations:
+            responses = []
             try:
                 subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
                 print("---> " + subdomain_name)                
@@ -156,18 +157,22 @@ class SqlSemanticParser(RunInference):
                 print("INVOKE_EXAMPLES=>"+str(fewshot_examples))
 
                 prompt = self.get_prompt(query_english, schema_sql, 
-                                         enum_values, fewshot_examples)
+                                        enum_values, fewshot_examples)
                 query_sql = self.run_inference(prompt)
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses][:n]
-                if len(responses) > 0:
+            except Exception as e:
+                print("INVOKE_ERROR="+str(e))
+
+            if len(responses) > 0:
+                try:
                     consolidated = self.new_response(query_sql,
                                                     columns,
                                                     responses)
                     results.append(consolidated)
-            except Exception as e:
-                print("INVOKE_ERROR="+str(e)+"\t invocation=>"+str(invocation))
+                except:
+                    print("CONSOLIDATION_ERROR="+str(e))
 
         return results
         
