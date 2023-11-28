@@ -192,7 +192,9 @@ INSERT INTO {table_name} VALUES {table_rows}
         for product_in in self.get_products():
             for k, v in product_in.items():
                 if k in self.get_enum_values():
-                    product_in[k] = v.lower()
+                    if not isinstance(v, bool):
+                        v = v.lower()
+                    product_in[k] = v
             products_out.append(product_in)       
         return products_out
 
