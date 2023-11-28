@@ -94,16 +94,17 @@ class RunInference():
         self.is_verbose = is_verbose
 
     def run_inference(self, prompt):
-        inferred = self.completion_llm.invoke(prompt)
-        # print("INFERRED_ACTUAL=>"+str(inferred))
-        if isinstance(self.completion_llm, ChatOpenAI):
-            inferred = inferred.content
-        if self.is_verbose:            
-            print(inferred)
-        inferred = self.post_infernece(inferred)
-        print("INFERRED_FINAL=" + str(inferred))            
-        return inferred
-    
+        try:
+            inferred = self.completion_llm.invoke(prompt)
+            if isinstance(self.completion_llm, ChatOpenAI):
+                inferred = inferred.content
+            if self.is_verbose:            
+                print(inferred)
+            inferred = self.post_infernece(inferred)
+            return inferred
+        except Exception as e:
+            print("INFERRENCE_ERROR="+str(e))
+
     def post_infernece(self, inferred):
         if "Answer" in inferred:
             try:
