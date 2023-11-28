@@ -155,34 +155,22 @@ class SqlSemanticParser(RunInference):
             try:
                 subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
                 print("---> " + subdomain_name)                
-                # print("INVOKE_COLS=>"+str(columns))
-                # print("INVOKE_SCHEMA=>"+str(schema_sql))
-                # print("INVOKE_ENUM=>"+str(enum_values))
-                # print("INVOKE_EXAMPLES=>"+str(fewshot_examples))
-
                 prompt = self.get_prompt(query_english, schema_sql, 
                                          enum_values, fewshot_examples)
-                # print("INVOKE_PROMPT=>"+str(prompt))                
                 query_sql = self.run_inference(prompt)
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
-                # print("EXECUTE_RESPONSES1=>" + str(responses))            
                 responses = [row for row in responses]
-                # if len(responses) > n:
-                #     responses = responses[:n]
-                # print("EXECUTE_RESPONSES2=>" + str(responses))            
+                if len(responses) > 0:
+                    response = self.new_response(query_sql,
+                                                  columns,
+                                                  responses)
+                    results.append(response)
             except Exception as e:
                 print("INVOKE_ERROR="+str(e))
 
-            if len(responses) > 0:
-                try:
-                    consolidated = self.new_response(query_sql,
-                                                     columns,
-                                                     responses)
-                    results.append(consolidated)
-                except:
-                    print("CONSOLIDATION_ERROR="+str(e))
-
+        if len(results) > n:
+            return results[:n]
         return results
         
     def new_response(self, query_sql, result_columns, result_rows):
