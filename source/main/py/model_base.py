@@ -1,7 +1,10 @@
-import openai
 import os
 
-from langchain import OpenAI
+import openai
+# from openai import OpenAI
+
+import langchain
+# from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import GooglePalm
 from langchain.llms import HuggingFacePipeline
@@ -23,6 +26,42 @@ from model_huggingface import HuggingFaceRemote
 class OpenaiBase():
 
     def __init__(self):
+        self.MODEL = 'gpt-4-1106-preview'
+        self.TOKEN_LIMIT=3500
+        self.client = openai.OpenAI(api_key="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")
+
+    def invoke(self, 
+               message,
+               temperature=0.5, 
+               streaming=False):
+        messages = [{"role": "system", 
+                     "content": message}]
+        try:
+            response = self.client.chat.completions.create(model=self.MODEL,
+                                                    messages=messages,
+                                                    temperature=temperature,
+                                                    max_tokens=self.TOKEN_LIMIT,
+                                                    stream=streaming)
+            return response.choices[0].message.content
+
+            # if streaming:
+            #     for event in response:
+            #         event_text = event.choices[0].delta.content
+            #         if event_text is not None:
+            #             yield event_text
+            # else:
+            #     output = response.choices[0].message.content
+            #     yield output
+
+        except Exception as e:
+            print(e)
+            return ""
+            # yield ""
+
+
+class AzureBase():
+
+    def __init__(self):
         self.api_key = "95a179d989cd4aeb84d36edb2fc8991a"
 
         self.api_version = "2023-07-01-preview" # "2023-03-15-preview"
@@ -39,18 +78,18 @@ class OpenaiBase():
         os.environ["OPENAI_API_BASE"] = self.api_base
         os.environ["OPENAI_API_KEY"] = self.api_key
 
-    def inference_llm_30(self, temperature=0, max_tokens = 1000):
-        return OpenAI(openai_api_key=self.api_key,
-                      model_name='text-davinci-003',
-                      engine="bot-davinci",
-                      temperature=temperature,
-                      max_tokens=max_tokens)
+    def inference_llm_35(self, temperature=0, max_tokens = 1000):
+        return langchain.OpenAI(openai_api_key=self.api_key,
+                                model_name='text-davinci-003',
+                                engine="bot-davinci",
+                                temperature=temperature,
+                                max_tokens=max_tokens)
 
     def chat_llm_40(self, temperature=0, max_tokens = 1000):
-        return ChatOpenAI(openai_api_key=self.api_key,
-                          engine="tdl-gpt-4",
-                          temperature=temperature,
-                          max_tokens=max_tokens)
+        return langchain.ChatOpenAI(openai_api_key=self.api_key,
+                                    engine="tdl-gpt-4",
+                                    temperature=temperature,
+                                    max_tokens=max_tokens)
     
     # def chat_llm_40_turbo(self, temperature=0, max_tokens = 256):
     #     return ChatOpenAI(openai_api_key=self.api_key,
