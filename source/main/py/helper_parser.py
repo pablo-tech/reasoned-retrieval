@@ -239,8 +239,8 @@ class SqlSemanticParser(RunInference):
                 result_items = self.response_items(result_columns, result_rows)
             else:
                 result_items = list(result_rows[0])
-        except:
-            print("NEW_RESPONSE_ERROR")
+        except Exception as e:
+            print("NEW_RESPONSE_ERROR=>" + str(e))
         return user_state, result_items            
     
     def response_items(self, result_columns, result_rows):
