@@ -359,6 +359,7 @@ class InferenceDomain(InferenceLoader):
 
     def set_enum_values(self):
         column_basis = self.get_column_basis()
+        print("column_basis ==> " + str(column_basis))
         exclude = self.get_domain_columns()
         # column_basis = self.get_domain_columns()
         # exclude = [c for c in column_basis
