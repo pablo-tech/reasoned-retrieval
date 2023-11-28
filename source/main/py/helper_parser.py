@@ -143,14 +143,14 @@ class SqlSemanticParser(RunInference):
         results = []
         for invocation in product_parser.get_invocations():
             try:
-                subdomain_name, columns, schema_sql, enum_values, get_fewshot_examples = invocation
+                subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
                 print("---> " + subdomain_name)                
                 # print("INVOKE_COLS=>"+str(columns))
                 # print("INVOKE_ENUM=>"+str(enum_values))
                 # print("INVOKE_SCHEMA=>"+str(schema_sql))
-                
+
                 prompt = self.get_prompt(query_english, schema_sql, 
-                                         enum_values, get_fewshot_examples)
+                                         enum_values, fewshot_examples)
                 query_sql = self.run_inference(prompt)
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
@@ -213,7 +213,7 @@ class SqlSemanticParser(RunInference):
         column_name = column_name.replace(";", "")
         return column_name
             
-    def get_prompt(self, question, schema_sql, enum_values, get_fewshot_examples):
+    def get_prompt(self, user_question, schema_sql, enum_values, fewshot_examples):
         prompt = "You are an AI expert semantic parser."
         prompt += "Your task is to generate a SQL query string for the provided question." + "\n"
         prompt += "The database to generate the SQL for has the following signature: " + "\n"  
@@ -223,8 +223,8 @@ class SqlSemanticParser(RunInference):
             prompt += f"{column} => {values}" + "\n"
         prompt += "Importantly, you must adjust queries for any possible question mispellings."
         prompt += "EXAMPLES:" + "\n"
-        prompt += f"{get_fewshot_examples}" + "\n"
-        prompt += f"Question: {question}" + "\n"
+        prompt += f"{fewshot_examples}" + "\n"
+        prompt += f"Question: {user_question}" + "\n"
 
         if self.is_verbose:
             print("PROMPT=>"+str(prompt))
