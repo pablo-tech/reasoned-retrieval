@@ -24,11 +24,10 @@ class GiftOracle():
 
     def __init__(self, is_run_inference, subdomain_names, completion_llm):
         domain_name="CLIQ"
-        # domain_datasets=[GiftDataset2(subdomain_names)]
         picked_columns=['id', 'price', 
                         'brand', 'colors',
-                        'category', 'store', 'gender',
-                        'title', 'description']
+                        'gender',
+                        'title', 'description'] # 'category', 'store', 
         primary_key='id'
         price_column = 'price'
         summarize_columns=['title', 'description']
