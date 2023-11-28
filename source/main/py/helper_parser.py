@@ -119,6 +119,67 @@ class RunInference():
         return inferred.strip() 
 
 
+class SummaryTagger(RunInference):
+
+    def __init__(self, summarize_columns, primary_key,
+                 completion_llm, is_verbose):
+        super().__init__(completion_llm, is_verbose)
+        self.summarize_columns = summarize_columns
+        self.primary_key = primary_key
+        self.sub_domain = 'sub_domain'
+            
+    def invoke(self, products_in):
+        products_out= []
+        i = 0
+        for product_in in products_in:
+            product_out = {}
+            try:
+                product_out[self.primary_key] = product_in[self.primary_key]
+                product_out[self.sub_domain] = product_in[self.sub_domain]
+                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product_in)))
+                for summary_value in eval(inferred_tags):
+                    tag = DataTransformer.fil_col(summary_value[0])
+                    value = summary_value[1]
+                    product_out[tag] = value
+                    if self.is_verbose:
+                        print(str(i) + "/" + str(len(products_in)) + "\t" + "summary_value="+str(summary_value))
+                products_out.append(product_out)    
+            except Exception as e:
+                pass                
+            if i%25 == 0:
+                print("summary_inference... " + str(i))
+            i+=1
+        
+        products_out = [DataTransformer.legal_product(p) for p in products_out]
+        return products_out 
+    
+    def get_product_str(self, product):
+        query = "" # TODO: if too long, summarize
+        for column in self.summarize_columns:
+            if column != self.primary_key:
+                query += str(product[column]) + "\n"
+        return query
+            
+    def get_prompt(self, product_str):
+        return f"""
+You are an AI expert at asking at formulating brief classifications that can be answered by a text,
+as well as identifying the instantiation of that classification.
+Respond with a python list of double-quoted string tuples, where the first value is the category classification,
+and the second is the instance.
+EXAMPLES:
+Question: Guess Analog Clear Dial Women's Watch GW0403L2
+Answer: 
+[("product gender", "for women"), ("product type", "watch"), ("watch type", "analog"), ("watch dial type", "clear"), ("product model", "GW0403L2"), ("product collection", "Guess")]
+Question: Teakwood Leathers Navy & Red Medium Duffle Bag
+Answer: 
+[("product brand", "Teakwood Leathers"), ("product color", "navy & red"), ("product size", "medium"), ("product type", "duffle bag")]
+Question: Aristocrat 32 Ltrs Green Medium Backpack
+Answer: 
+[("product brand", "Aristocrat"), ("product capacity", "32 Ltrs"), ("product color", "green"), ("product size", "medium"), ("product type", "backpack")]
+Question: {product_str}
+"""
+    
+    
 class SqlSemanticParser(RunInference):
 
     def __init__(self, 
@@ -142,11 +203,6 @@ class SqlSemanticParser(RunInference):
     def invoke_inference(self, query, n):
         invocations = self.domain_oracle.get_inference_parser().get_invocations()
         return self.invoke(query, n, invocations)
-
-    # def invoke_wholistic(self, query, n):
-    #     invocations
-    #     return self.invoke(query, n, 
-    #                        self.domain_oracle.get_wholistic_parser())
 
     def invoke(self, query_english, n, invocations):
         results = []
@@ -239,65 +295,4 @@ class SqlSemanticParser(RunInference):
         if self.is_verbose:
             print("PROMPT=>"+str(prompt))
         return prompt            
-
-
-class SummaryTagger(RunInference):
-
-    def __init__(self, summarize_columns, primary_key,
-                 completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
-        self.summarize_columns = summarize_columns
-        self.primary_key = primary_key
-        self.sub_domain = 'sub_domain'
-            
-    def invoke(self, products_in):
-        products_out= []
-        i = 0
-        for product_in in products_in:
-            product_out = {}
-            try:
-                product_out[self.primary_key] = product_in[self.primary_key]
-                product_out[self.sub_domain] = product_in[self.sub_domain]
-                inferred_tags = self.run_inference(self.get_prompt(self.get_product_str(product_in)))
-                for summary_value in eval(inferred_tags):
-                    tag = DataTransformer.fil_col(summary_value[0])
-                    value = summary_value[1]
-                    product_out[tag] = value
-                    if self.is_verbose:
-                        print(str(i) + "/" + str(len(products_in)) + "\t" + "summary_value="+str(summary_value))
-                products_out.append(product_out)    
-            except Exception as e:
-                pass                
-            if i%25 == 0:
-                print("summary_inference... " + str(i))
-            i+=1
-        
-        products_out = [DataTransformer.legal_product(p) for p in products_out]
-        return products_out 
-    
-    def get_product_str(self, product):
-        query = "" # TODO: if too long, summarize
-        for column in self.summarize_columns:
-            if column != self.primary_key:
-                query += str(product[column]) + "\n"
-        return query
-            
-    def get_prompt(self, product_str):
-        return f"""
-You are an AI expert at asking at formulating brief classifications that can be answered by a text,
-as well as identifying the instantiation of that classification.
-Respond with a python list of double-quoted string tuples, where the first value is the category classification,
-and the second is the instance.
-EXAMPLES:
-Question: Guess Analog Clear Dial Women's Watch GW0403L2
-Answer: 
-[("product gender", "for women"), ("product type", "watch"), ("watch type", "analog"), ("watch dial type", "clear"), ("product model", "GW0403L2"), ("product collection", "Guess")]
-Question: Teakwood Leathers Navy & Red Medium Duffle Bag
-Answer: 
-[("product brand", "Teakwood Leathers"), ("product color", "navy & red"), ("product size", "medium"), ("product type", "duffle bag")]
-Question: Aristocrat 32 Ltrs Green Medium Backpack
-Answer: 
-[("product brand", "Aristocrat"), ("product capacity", "32 Ltrs"), ("product color", "green"), ("product size", "medium"), ("product type", "backpack")]
-Question: {product_str}
-"""
     
