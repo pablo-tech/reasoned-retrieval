@@ -181,17 +181,6 @@ INSERT INTO {table_name} VALUES {table_rows}
         columns += self.summarize_columns
         return columns
     
-    def set_enum_values(self, column_basis):
-        column_basis += list(column_basis) + list(self.get_domain_columns())
-        column_basis = set(column_basis)
-        exclude = [c for c in column_basis
-                   if c not in self.picked_columns]
-        exclude += self.default_columns()
-        exclude = set(exclude)
-        return DataTransformer.set_enum_values(column_basis,
-                                               self.get_products(),
-                                               exclude)        
-
     def set_columns(self):
         columns = self.default_columns()
         columns += list(self.get_enum_values().keys())
@@ -232,7 +221,16 @@ class DatasetReducer(DatasetLoader):
         self.enum_values = self.set_enum_values(self.get_domain_columns())
         self.columns = self.set_columns()
         self.products = self.lower_enums()
-        
+
+    def set_enum_values(self):
+        column_basis = self.get_domain_columns()
+        exclude = [c for c in column_basis
+                   if c not in self.picked_columns]
+        exclude += self.default_columns()
+        return DataTransformer.set_enum_values(column_basis,
+                                               self.get_products(),
+                                               exclude)        
+
 
 class ContextParser(DatasetReducer):
 
@@ -351,17 +349,32 @@ class InferenceDomain(InferenceLoader):
                          summarize_columns, column_annotation, 
                          db_instance, completion_llm, is_verbose)
         self.n = n    
-        self.products = self.augmented_products(self.n)    
-        self.enum_values = self.set_enum_values(self.column_basis())
+        self.products = self.augmented_products(self.n)  
+        self.column_basis = self.set_column_basis()  
+        self.enum_values = self.set_enum_values()
         self.columns = self.set_columns()
         self.products = self.lower_enums()
 
-    def column_basis(self):
+    def set_enum_values(self):
+        column_basis = self.get_column_basis()
+        exclude = self.get_domain_columns()
+        # column_basis = self.get_domain_columns()
+        # exclude = [c for c in column_basis
+        #            if c not in self.picked_columns]
+        exclude += self.default_columns()
+        return DataTransformer.set_enum_values(column_basis,
+                                               self.get_products(),
+                                               exclude)        
+
+    def set_column_basis(self):
         columns = set()
         for p in self.get_products():
             columns.update(list(p.keys()))
         return columns
             
+    def get_column_basis(self):
+        return self.column_basis
+
 
 class InferenceParser():
 
