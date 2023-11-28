@@ -191,6 +191,7 @@ class DatasetReducer(DatasetLoader):
         self.products = self.get_domain_products()
         self.enum_values = self.set_enum_values()
         self.columns = self.set_columns()
+        self.products = self.lower_enums()
         
     def default_columns(self):
         columns = [self.primary_key,  self.price_column] 
@@ -209,7 +210,16 @@ class DatasetReducer(DatasetLoader):
         columns = self.default_columns()
         columns += list(self.get_enum_values().keys())
         columns = sorted(list(set(columns)))    
-        return columns            
+        return columns     
+
+    def lower_enums(self):
+        products_out = []
+        for product_in in self.get_products():
+            for k, v in product_in.items():
+                if k in self.get_enum_values():
+                    product_in[k] = v.lower()
+            products_out.append(product_in)       
+        return products_out
 
     def get_columns(self):
         return self.columns
