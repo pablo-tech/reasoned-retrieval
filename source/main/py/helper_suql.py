@@ -415,11 +415,11 @@ class InferenceParser():
                 pass
 
     def subdomain_invocation(self, subdomain_name):
-        columns = self.table_join_columns(self.get_columns(subdomain_name))
-        schema_sql = self.table_join_schema_sql(subdomain_name)
-        enum_values = self.table_join_enum_values(subdomain_name)
-        table_name = self.table_join_name(subdomain_name)
-        fewshot_examples = self.table_join_fewshot_examples(columns, table_name)
+        columns = self.join_columns(self.get_columns(subdomain_name))
+        schema_sql = self.join_schema_sql(subdomain_name)
+        enum_values = self.join_enum_values(subdomain_name)
+        table_name = self.join_name(subdomain_name)
+        fewshot_examples = self.join_fewshot_examples(columns, table_name)
         return (subdomain_name,
                 columns,
                 schema_sql,
@@ -448,12 +448,12 @@ class InferenceParser():
 
     # def table_join_fewshot_examples(self, subdomain_name):
     #     domain_inference = self.domain_inference[subdomain_name]
-    #     columns = self.table_join_columns(domain_inference.get_columns())
-    #     table_name = self.table_join_name(domain_inference.get_table_name())
+    #     columns = self.join_columns(domain_inference.get_columns())
+    #     table_name = self.join_name(domain_inference.get_table_name())
     def table_join_fewshot_examples(self, columns, table_name):
         # domain_inference = self.domain_inference[subdomain_name]
-        # columns = self.table_join_columns(domain_inference.get_columns())
-        # table_name = self.table_join_name(domain_inference.get_table_name())
+        # columns = self.join_columns(domain_inference.get_columns())
+        # table_name = self.join_name(domain_inference.get_table_name())
         return f"""        
 Question: Antonio banderas Backpack? 
 Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
