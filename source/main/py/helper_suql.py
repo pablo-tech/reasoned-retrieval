@@ -194,6 +194,12 @@ class DatasetReducer(DatasetLoader):
         # self.columns = self.enum_values.keys()
         self.columns = self.default_columns() + list(self.enum_values.keys())
 
+    def set_columns(self):
+        columns = self.default_columns()
+        columns += list(self.enum_values.keys())
+        columns = sorted(list(set(columns)))    
+        return columns            
+    
     # def set_columns(self):
     #     columns = [col for col in self.get_enum_values().keys() 
     #                if col in self.picked_columns]
@@ -217,6 +223,7 @@ class DatasetReducer(DatasetLoader):
     def set_enum_values(self):
         exclude = [c for c in self.get_domain_columns()
                    if c not in self.picked_columns]
+        exclude += self.default_columns()
         # exclude = self.default_columns() + [c for c in self.get_domain_columns()
         #                                     if c not in self.summarize_columns]
         return DataTransformer.set_enum_values(self.get_domain_columns(),
