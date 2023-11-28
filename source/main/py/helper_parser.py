@@ -157,7 +157,8 @@ class SqlSemanticParser(RunInference):
                 print("INVOKE_EXAMPLES=>"+str(fewshot_examples))
 
                 prompt = self.get_prompt(query_english, schema_sql, 
-                                        enum_values, fewshot_examples)
+                                         enum_values, fewshot_examples)
+                print("INVOKE_PROMPT=>"+str(prompt))                
                 query_sql = self.run_inference(prompt)
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
@@ -168,8 +169,8 @@ class SqlSemanticParser(RunInference):
             if len(responses) > 0:
                 try:
                     consolidated = self.new_response(query_sql,
-                                                    columns,
-                                                    responses)
+                                                     columns,
+                                                     responses)
                     results.append(consolidated)
                 except:
                     print("CONSOLIDATION_ERROR="+str(e))
