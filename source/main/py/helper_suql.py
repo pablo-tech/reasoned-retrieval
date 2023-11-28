@@ -207,11 +207,12 @@ class DatasetReducer(DatasetLoader):
     #     return DataTransformer.fill_cols(sorted(columns))   
     
     def default_columns(self):
-        return [col for col in self.get_domain_columns() 
-                if col in self.summarize_columns or 
-                col not in self.picked_columns or 
-                col == self.primary_key or 
-                col == self.price_column]
+        return [self.primary_key,  self.price_column] + self.summarize_columns
+        # return [col for col in self.get_domain_columns() 
+        #         if col in self.summarize_columns or 
+        #         col not in self.picked_columns or 
+        #         col == self.primary_key or 
+        #         col == self.price_column]
     
     def set_enum_values(self):
         return DataTransformer.set_enum_values(self.get_domain_columns(),
