@@ -104,6 +104,7 @@ class RunInference():
             return inferred
         except Exception as e:
             print("INFERRENCE_ERROR="+str(e))
+            return ""
 
     def post_infernece(self, inferred):
         if "Answer" in inferred:
@@ -179,7 +180,7 @@ Answer:
 Question: {product_str}
 """
     
-    
+
 class SqlSemanticParser(RunInference):
 
     def __init__(self, 
@@ -218,26 +219,29 @@ class SqlSemanticParser(RunInference):
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses]
                 if len(responses) > 0:
-                    response = self.new_response(query_sql,
-                                                 columns,
-                                                 responses,
-                                                 n)
-                    results.append(response)
+                    user_state, result_items = self.new_response(query_sql, columns,
+                                                                 responses, n)
+                    results.append({"user_state": user_state,
+                                    "result_items": result_items})
             except Exception as e:
                 print("INVOKE_ERROR="+str(e))
 
         return results
         
-    def new_response(self, query_sql, result_columns, result_rows, n):
-        if len(result_rows) > n:
-            result_rows = result_rows[:n]
-        user_state, is_success = self.user_state(query_sql)
-        if is_success:
-            result_items = self.response_items(result_columns, result_rows)
-        else:
-            result_items = list(result_rows[0])
-        return { "user_state": user_state,
-                 "result_items": result_items }
+    def new_response(self, query_sql, result_columns, 
+                     result_rows, n):
+        user_state, result_items = []
+        try:
+            if len(result_rows) > n:
+                result_rows = result_rows[:n]
+            user_state, is_success = self.user_state(query_sql)
+            if is_success:
+                result_items = self.response_items(result_columns, result_rows)
+            else:
+                result_items = list(result_rows[0])
+        except:
+            print("NEW_RESPONSE_ERROR")
+        return user_state, result_items            
     
     def response_items(self, result_columns, result_rows):
         print("RESULT_COLS="+str(result_columns))
