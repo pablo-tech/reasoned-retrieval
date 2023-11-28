@@ -165,7 +165,9 @@ class SqlSemanticParser(RunInference):
                 query_sql = self.run_inference(prompt)
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
+                print("EXECUTE_RESPONSES1=>" + str(responses))            
                 responses = [row for row in responses][:n]
+                print("EXECUTE_RESPONSES2=>" + str(responses))            
             except Exception as e:
                 print("INVOKE_ERROR="+str(e))
 
