@@ -182,10 +182,12 @@ INSERT INTO {table_name} VALUES {table_rows}
         return columns
     
     def set_enum_values(self, column_basis):
+        column_basis += self.get_domain_columns()
         exclude = [c for c in column_basis
                    if c not in self.picked_columns]
         exclude += self.default_columns()
-        return DataTransformer.set_enum_values(self.get_domain_columns(),
+        exclude = set(exclude)
+        return DataTransformer.set_enum_values(column_basis,
                                                self.get_products(),
                                                exclude)        
 
@@ -357,7 +359,6 @@ class InferenceDomain(InferenceLoader):
         columns = set()
         for p in self.get_products():
             columns.update(list(p.keys()))
-        print("column_basis=>"+str(columns))
         return columns
             
 
