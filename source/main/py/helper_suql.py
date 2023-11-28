@@ -176,23 +176,6 @@ INSERT INTO {table_name} VALUES {table_rows}
     def get_table_name(self):
         return self.table_name
 
-
-class DatasetReducer(DatasetLoader):
-
-    def __init__(self, nick_name, domain_name, subdomain_dataset_func, 
-                 subdomain_column, 
-                 picked_columns, primary_key, price_column, summarize_columns,
-                 db_instance, completion_llm, is_verbose=False):
-        super().__init__(nick_name, domain_name, subdomain_dataset_func([]), 
-                         "", subdomain_column, 
-                         picked_columns, primary_key, price_column, 
-                         db_instance, completion_llm, is_verbose)
-        self.summarize_columns = summarize_columns
-        self.products = self.get_domain_products()
-        self.enum_values = self.set_enum_values()
-        self.columns = self.set_columns()
-        self.products = self.lower_enums()
-        
     def default_columns(self):
         columns = [self.primary_key,  self.price_column] 
         columns += self.summarize_columns
@@ -230,6 +213,23 @@ class DatasetReducer(DatasetLoader):
     def get_enum_values(self):
         return self.enum_values
 
+
+class DatasetReducer(DatasetLoader):
+
+    def __init__(self, nick_name, domain_name, subdomain_dataset_func, 
+                 subdomain_column, 
+                 picked_columns, primary_key, price_column, summarize_columns,
+                 db_instance, completion_llm, is_verbose=False):
+        super().__init__(nick_name, domain_name, subdomain_dataset_func([]), 
+                         "", subdomain_column, 
+                         picked_columns, primary_key, price_column, 
+                         db_instance, completion_llm, is_verbose)
+        self.summarize_columns = summarize_columns
+        self.products = self.get_domain_products()
+        self.enum_values = self.set_enum_values()
+        self.columns = self.set_columns()
+        self.products = self.lower_enums()
+        
 
 class ContextParser(DatasetReducer):
 
@@ -289,59 +289,49 @@ class InferenceLoader(DatasetLoader):
         self.summary_tagger = SummaryTagger(summarize_columns, primary_key,
                                             completion_llm, is_verbose)
         self.product_cache = GiftSuql()
+        self.annotation_name = "is_"
 
-    def set_column_products(self, working_products, n): 
-        columns, products = self.summary_column_products(working_products, n)
-        columns, products = self.annotation_column_products(columns, products)
-        columns = set(columns)
-        columns.add(self.primary_key)
-        columns = list(columns)
-        return DataTransformer.fill_cols(sorted(columns)), products
+    def augmented_products(self, n): 
+        products = self.get_domain_products()
+        products = self.summary_products(products)
+        products = self.annotate_products(products)
+        if n is not None:
+            products = products[:n]
+        return products
         
-    def summary_column_products(self, context_products, n): 
+    def summary_products(self, context_products): 
         inference_products = []
         domain_products = self.product_by_domain(context_products)
         if not self.is_run_inference:
             for subdomain_name in domain_products.keys():
                 products = self.product_cache.get_corpus(subdomain_name)
                 inference_products.extend(products)
-            # context_products = context_products[:n]
         else:
             for subdomain_name, context_products in domain_products.items():
                 products = self.summary_tagger.invoke(context_products)
                 inference_products.extend(products)
                 self.product_cache.save_corpus(subdomain_name, products)
         inference_products = [DataTransformer.legal_product(p) for p in inference_products]                
-        if n is not None:
-            inference_products = inference_products[:n]
-        columns = self.extract_columns(inference_products)
-        return columns, inference_products
+        return inference_products
     
     def product_by_domain(self, products):
         domain_products = defaultdict(list)
         for product in products:
             domain_products[product[self.subdomain_column]].append(product)
         return domain_products
-    
-    def extract_columns(self, products):
-        columns = set()
-        for product in products:
-            columns.update(list(product.keys()))
-        return list(columns)
-    
-    def annotation_column_products(self, columns, products):
+        
+    def annotate_products(self, products):
         groupings = self.column_annotation.values()
         for grouping in groupings:
             for concept, values in grouping.items():
-                concept = "is_" + concept
-                columns.append(concept)
+                concept = self.annotation_name + concept
                 for value in values:
                     for product in products:
                         if value in product[self.subdomain_column]:
                             product[concept] = True
                         else:
                             product[concept] = False
-        return columns, products
+        return products
 
 
 class InferenceDomain(InferenceLoader):
@@ -357,41 +347,12 @@ class InferenceDomain(InferenceLoader):
                          picked_columns, primary_key, price_column,  
                          summarize_columns, column_annotation, 
                          db_instance, completion_llm, is_verbose)
-        self.n = n        
-        self.inference_columns, self.inference_products =\
-                self.augmentation_column_products()
+        self.n = n    
+        self.products = self.augmented_products(self.n)    
         self.enum_values = self.set_enum_values()
-
-    def augmentation_column_products(self):
-        subdomain_products = self.get_domain_products()
-        columns, products_out = self.set_column_products(subdomain_products, self.n) 
-        # products_out = []
-        # for product in products_in:
-        #     try:
-        #         if product[self.subdomain_column] == self.subdomain_name:
-        #             products_out.append(product)
-        #     except Exception as e:
-        #         print(self.subdomain_name + ": SUBDOMAIN_ERROR=>"+str(e)+"\t"+str(product))
-        print("SUBDOMAIN_SIZE="+str(len(products_out))+"x"+str(len(columns)))
-        return columns, products_out
-        # print("subdomain_column=>" + str(self.subdomain_column) + "\t" + str(self.subdomain_name))
-    
-    def set_enum_values(self):
-        enum_exclude = [col for col in self.get_columns() 
-                        if col in self.summarize_columns or col == self.primary_key or col == self.price_column]
-        return DataTransformer.set_enum_values(self.get_columns(),
-                                               self.get_products(),
-                                               enum_exclude)        
-
-    def get_products(self):
-        return self.inference_products
-
-    def get_columns(self):
-        return self.inference_columns  
-
-    def get_enum_values(self):
-        return self.enum_values 
-    
+        self.columns = self.set_columns()
+        self.products = self.lower_enums()
+            
 
 class InferenceParser():
 
@@ -445,7 +406,7 @@ class InferenceParser():
         table_name = domain_inference.get_table_name()
         return f"""        
 Question: what types of backpacks do you have? 
-Answer: SELECT {columns} FROM {table_name} WHERE product_types = 'backpack';
+Answer: SELECT {columns} FROM {table_name} WHERE product_type = 'backpack';
 Question: Antonio banderas Backpack? 
 Answer: SELECT {columns} FROM {table_name} WHERE brand = 'antonio banderas';
 Question: what 22 litter backpacks do you have?
