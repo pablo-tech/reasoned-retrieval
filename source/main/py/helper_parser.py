@@ -101,7 +101,7 @@ class RunInference():
         if self.is_verbose:            
             print(inferred)
         inferred = self.post_infernece(inferred)
-        # print("INFERRED_FINAL=" + str(inferred))            
+        print("INFERRED_FINAL=" + str(inferred))            
         return inferred
     
     def post_infernece(self, inferred):
@@ -167,8 +167,8 @@ class SqlSemanticParser(RunInference):
                 responses = self.db_cursor.execute(query_sql)
                 # print("EXECUTE_RESPONSES1=>" + str(responses))            
                 responses = [row for row in responses]
-                if len(responses) > n:
-                    responses = responses[:n]
+                # if len(responses) > n:
+                #     responses = responses[:n]
                 # print("EXECUTE_RESPONSES2=>" + str(responses))            
             except Exception as e:
                 print("INVOKE_ERROR="+str(e))
