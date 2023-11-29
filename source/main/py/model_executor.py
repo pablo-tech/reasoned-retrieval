@@ -118,7 +118,7 @@ class QueryExecutor(ModelExecutor):
                             final_state.add(user_state)
                         state_items = state_items['result_items']
                         if len(state_items) > 0:
-                            final_items.append(state_items)
+                            final_items.extend(state_items)
             except Exception as e:
                 print("DOMAIN_EXECUTION_ERROR="+str(e))
         return final_state, final_items
