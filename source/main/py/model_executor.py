@@ -89,7 +89,7 @@ class ModelExecutor(QueryExecutor):
                         model_answer = model_answer.content
                     print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_name] = model_answer
-                    model_latency[executable_name] = time_end - time_start                    
+                    model_latency[executable_name] = "{:0.2f}".format(time_end-time_start)                    
                 except Exception as e:
                     print("ERROR_COMPOSING_ANSWER=" + str(e))
 

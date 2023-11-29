@@ -180,7 +180,7 @@ Answer:
 Question: {product_str}
 """
     
-    
+
 class ParserQuery(RunInference):
 
     def __init__(self, completion_llm, is_verbose=False):
@@ -215,8 +215,8 @@ class ParserQuery(RunInference):
             user_state, is_success = self.user_state(query_sql)
             if is_success:
                 result_items = self.response_items(result_columns, result_rows)
-            else:
-                result_items = list(result_rows[0])
+            # else:
+            #     result_items = list(result_rows[0])
         except Exception as e:
             print("NEW_RESPONSE_ERROR=>" + str(e))
         return user_state, result_items            
@@ -299,34 +299,9 @@ class SemanticQuery(ParserQuery):
         for invocation in self.invocations:
             user_state, result_items =\
                  self.invoke_query(query_english, self.n, invocation)
-            results.append(self.state_items(user_state, result_items))
+            if user_state != "" or len(result_items) > 0:
+                results.append(self.state_items(user_state, result_items))
         return results
-
-
-
-# class SqlSemanticParser(RunInference):
-
-#     def __init__(self, 
-#                  domain_oracle,
-#                  completion_llm, is_verbose=False):
-#         super().__init__(completion_llm, is_verbose)
-#         self.domain_oracle = domain_oracle
-#         self.db_cursor = self.domain_oracle.get_db_cursor()
-
-#     def db_execute(self, query):
-#         return self.db_cursor.execute(query)
-
-#     def invoke_subdomain_inference(self, query, n, subdomain_name):
-#         invocation = self.domain_oracle.get_inference_parser().subdomain_invocation(subdomain_name)
-#         return self.invoke(query, n, invocation)
-
-    # def invoke_inference(self, query_english, n):
-    #     invocations = self.domain_oracle.get_inference_parser().get_invocations()
-    #     results = []
-    #     for invocation in invocations:
-    #         user_state, result_items = self.invoke_query(query_english, n, invocation)
-    #         results.append(self.state_items(user_state, result_items))
-    #     return results
 
 
     
