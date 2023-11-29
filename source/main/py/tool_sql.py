@@ -10,7 +10,8 @@ class DatabaseInstance():
     
     def __init__(self, 
                  database_name="tutorial.db"):
-        self.db_connection = sqlite3.connect(database_name)
+        self.db_connection = sqlite3.connect(database_name,
+                                             check_same_thread=False)
         self.db_cursor = self.db_connection.cursor()
 
     def get_db_connection(self):
