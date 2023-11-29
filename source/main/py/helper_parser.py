@@ -201,7 +201,8 @@ class ParserQuery(RunInference):
                 user_state, result_items = self.new_response(query_sql, columns,
                                                             responses, n)
         except Exception as e:
-            print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
+            # print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
+            pass 
 
         return user_state, result_items
         
