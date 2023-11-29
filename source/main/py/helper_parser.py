@@ -201,32 +201,33 @@ class SqlSemanticParser(RunInference):
         invocation = self.domain_oracle.get_inference_parser().subdomain_invocation(subdomain_name)
         return self.invoke(query, n, [invocation])
 
-    def invoke_inference(self, query, n):
+    def invoke_inference(self, query_english, n):
         invocations = self.domain_oracle.get_inference_parser().get_invocations()
-        return self.invoke(query, n, invocations)
-
-    def invoke(self, query_english, n, invocations):
         results = []
         for invocation in invocations:
-            responses = []
-            try:
-                subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
-                print("---> " + subdomain_name)                
-                prompt = self.get_prompt(query_english, schema_sql, 
-                                         enum_values, fewshot_examples)
-                query_sql = self.run_inference(prompt)
-                print("QUERY_SQL=>" + str(query_sql))            
-                responses = self.db_cursor.execute(query_sql)
-                responses = [row for row in responses]
-                if len(responses) > 0:
-                    user_state, result_items = self.new_response(query_sql, columns,
-                                                                 responses, n)
-                    results.append({"user_state": user_state,
-                                    "result_items": result_items})
-            except Exception as e:
-                print("INVOKE_ERROR="+str(e))
-
+            user_state, result_items = self.invoke(query_english, n, invocation)
+            results.append({"user_state": user_state,
+                            "result_items": result_items})
         return results
+
+    def invoke(self, query_english, n, invocation):
+        user_state, result_items = "", []
+        try:
+            subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
+            print("---> " + subdomain_name)                
+            prompt = self.get_prompt(query_english, schema_sql, 
+                                        enum_values, fewshot_examples)
+            query_sql = self.run_inference(prompt)
+            print("QUERY_SQL=>" + str(query_sql))            
+            responses = self.db_cursor.execute(query_sql)
+            responses = [row for row in responses]
+            if len(responses) > 0:
+                user_state, result_items = self.new_response(query_sql, columns,
+                                                            responses, n)
+        except Exception as e:
+            print("INVOKE_ERROR="+str(e))
+
+        return user_state, result_items
         
     def new_response(self, query_sql, result_columns, 
                      result_rows, n):
