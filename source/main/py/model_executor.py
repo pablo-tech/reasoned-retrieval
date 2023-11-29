@@ -109,11 +109,13 @@ class QueryExecutor(ModelExecutor):
         final_state = defaultdict(list)
         final_items = defaultdict(list)
         for answered_content in answered_contents:
-            for domain, state_items in answered_content.get_model_answers().items():
-                user_state = state_items['user_state']
-                if  user_state != '':
-                    final_state[domain].append(user_state)
-                state_items = state_items['result_items']
-                if len(state_items) > 0:
-                    final_items[domain].append(state_items)
+            for domain, answers in answered_content.model_answers.items():
+                print("state_items=>"+str(state_items))
+                for state_items in answers:
+                    user_state = state_items['user_state']
+                    if  user_state != '':
+                        final_state[domain].append(user_state)
+                    state_items = state_items['result_items']
+                    if len(state_items) > 0:
+                        final_items[domain].append(state_items)
         return final_state, final_items
