@@ -288,7 +288,7 @@ class ContextSemanticQuery(SemanticParser):
         self.context_parser = context_parser
         self.db_cursor = db_cursor
 
-    def invoke_context(self, query_english, n):
+    def invoke(self, query_english, n):
         invocations = self.context_parser.get_invocations()
         results = []
         for invocation in invocations:
