@@ -185,7 +185,7 @@ class SemanticQuery(RunInference):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def invoke(self, query_english, n, invocation):
+    def invoke_query(self, query_english, n, invocation):
         user_state, result_items = "", []
         try:
             print("invocation==>"+str(invocation))
@@ -292,11 +292,15 @@ class ContextSemanticQuery(SemanticQuery):
         invocations = self.context_parser.get_invocations()
         results = []
         for invocation in invocations:
-            user_state, result_items = self.invoke(query_english, n, invocation)
+            user_state, result_items = self.invoke_query(query_english, n, invocation)
             results.append({"user_state": user_state,
                             "result_items": result_items})
         return results
     
+    def state_items(self, user_state, result_items):
+        return {"user_state": user_state,
+                "result_items": result_items}        
+
 
 class SqlSemanticParser(RunInference):
 
@@ -319,9 +323,8 @@ class SqlSemanticParser(RunInference):
         invocations = self.domain_oracle.get_inference_parser().get_invocations()
         results = []
         for invocation in invocations:
-            user_state, result_items = self.invoke(query_english, n, invocation)
-            results.append({"user_state": user_state,
-                            "result_items": result_items})
+            user_state, result_items = self.invoke_query(query_english, n, invocation)
+            results.append(self.state_items(user_state, result_items))
         return results
 
 
