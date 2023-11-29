@@ -186,7 +186,7 @@ class ParserQuery(RunInference):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def invoke_query(self, query_english, n, invocation):
+    def invoke_query(self, query_english, query_limit, invocation):
         user_state, result_items = "", []
         try:
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
@@ -196,7 +196,7 @@ class ParserQuery(RunInference):
             query_sql = self.run_inference(prompt)
             # if len(query_sql.split("WHERE")>1):
             if "WHERE" in query_sql:
-                query_sql = query_sql.replace(";", f""" LIMIT {n};""")
+                query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
                 print("QUERY_SQL=>" + str(query_sql))            
                 result_rows = self.db_cursor.execute(query_sql)
                 result_rows = [row for row in result_rows]
@@ -238,6 +238,7 @@ class ParserQuery(RunInference):
     def user_state(self, query_sql):
         try:
             state = query_sql.split("WHERE")[1].strip()
+            state = state.split("LIMIT")[0].strip()
             state = self.simple_name(state)
             return state
         except:
@@ -272,11 +273,10 @@ class ParserQuery(RunInference):
 
 class SemanticQuery(ParserQuery):    
 
-    def __init__(self, n,
-                 invocations, db_cursor,
+    def __init__(self, query_limit, invocations, db_cursor,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
-        self.n = n
+        self.query_limit = query_limit 
         self.invocations = invocations
         self.db_cursor = db_cursor
 
@@ -284,7 +284,7 @@ class SemanticQuery(ParserQuery):
         results = []
         for invocation in self.invocations:
             user_state, result_items =\
-                 self.invoke_query(query_english, self.n, invocation)
+                 self.invoke_query(query_english, self.query_limit, invocation)
             results.append(self.state_items(user_state, result_items))
         return results
 
