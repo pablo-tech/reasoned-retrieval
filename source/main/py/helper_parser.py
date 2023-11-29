@@ -180,7 +180,8 @@ Answer:
 Question: {product_str}
 """
     
-class SemanticQuery(RunInference):
+    
+class ParserQuery(RunInference):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
@@ -188,7 +189,7 @@ class SemanticQuery(RunInference):
     def invoke_query(self, query_english, n, invocation):
         user_state, result_items = "", []
         try:
-            print("invocation==>"+str(invocation))
+            # print("invocation==>"+str(invocation))
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
             print("---> " + subdomain_name)                
             prompt = self.get_prompt(query_english, schema_sql, 
@@ -283,50 +284,49 @@ class SemanticQuery(RunInference):
                 "result_items": result_items}        
 
 
-class ContextSemanticQuery(SemanticQuery):    
+class SemanticQuery(ParserQuery):    
 
     def __init__(self, n,
-                 context_parser, db_cursor,
+                 invocations, db_cursor,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
         self.n = n
-        self.context_parser = context_parser
+        self.invocations = invocations
         self.db_cursor = db_cursor
 
     def invoke(self, query_english):
-        invocations = self.context_parser.get_invocations()
         results = []
-        for invocation in invocations:
+        for invocation in self.invocations:
             user_state, result_items =\
                  self.invoke_query(query_english, self.n, invocation)
             results.append(self.state_items(user_state, result_items))
         return results
-    
 
-class SqlSemanticParser(RunInference):
 
-    def __init__(self, 
-                 domain_oracle,
-                 completion_llm, is_verbose=False):
-        super().__init__(completion_llm, is_verbose)
-        self.domain_oracle = domain_oracle
-        self.db_cursor = self.domain_oracle.get_db_cursor()
 
-    def db_execute(self, query):
-        return self.db_cursor.execute(query)
-    
+# class SqlSemanticParser(RunInference):
 
-    def invoke_subdomain_inference(self, query, n, subdomain_name):
-        invocation = self.domain_oracle.get_inference_parser().subdomain_invocation(subdomain_name)
-        return self.invoke(query, n, invocation)
+#     def __init__(self, 
+#                  domain_oracle,
+#                  completion_llm, is_verbose=False):
+#         super().__init__(completion_llm, is_verbose)
+#         self.domain_oracle = domain_oracle
+#         self.db_cursor = self.domain_oracle.get_db_cursor()
 
-    def invoke_inference(self, query_english, n):
-        invocations = self.domain_oracle.get_inference_parser().get_invocations()
-        results = []
-        for invocation in invocations:
-            user_state, result_items = self.invoke_query(query_english, n, invocation)
-            results.append(self.state_items(user_state, result_items))
-        return results
+#     def db_execute(self, query):
+#         return self.db_cursor.execute(query)
+
+#     def invoke_subdomain_inference(self, query, n, subdomain_name):
+#         invocation = self.domain_oracle.get_inference_parser().subdomain_invocation(subdomain_name)
+#         return self.invoke(query, n, invocation)
+
+    # def invoke_inference(self, query_english, n):
+    #     invocations = self.domain_oracle.get_inference_parser().get_invocations()
+    #     results = []
+    #     for invocation in invocations:
+    #         user_state, result_items = self.invoke_query(query_english, n, invocation)
+    #         results.append(self.state_items(user_state, result_items))
+    #     return results
 
 
     
