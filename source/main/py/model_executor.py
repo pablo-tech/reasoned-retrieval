@@ -31,16 +31,20 @@ class ModelExecutor(QueryExecutor):
         if len(execution_payloads) == 0:
             print("NOTHING_TO_DO execution count=" + str(len(execution_payloads)))
             return []
-        max_workers = len(execution_payloads)
-        for payload in execution_payloads:
-            max_workers *= len(payload.get_executable_names()) 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as thread_executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers(execution_payloads)) as thread_executor:
             for execution_payload in execution_payloads:
               try:
                   thread_executor.submit(self.payload_model_answers, execution_payload, payload_answers)
               except:
                   print("UNABLE_TO_THREAD=" + str(execution_payload.content_context))
         return list(payload_answers.values())
+    
+    def max_workers(self, execution_payloads):
+        max_workers = 1
+        for payload in execution_payloads:
+            max_workers += len(payload.get_executable_names()) 
+        return max_workers            
+
 
     def payload_model_answers(self, execution_payload, payload_answers):
         model_answers = {}
