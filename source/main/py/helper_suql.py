@@ -334,8 +334,8 @@ class InferenceLoader(DatasetLoader):
                         if value in product[self.subdomain_column]:
                             # print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
                             product[concept] = True
-                        else:
-                            product[concept] = False
+                        # else:
+                        #     product[concept] = False
                         products_out.append(product)
                         # if value == "watch-women":
                         #     print(f"""value={value} concept={concept} p.concept={product[concept]}""")
