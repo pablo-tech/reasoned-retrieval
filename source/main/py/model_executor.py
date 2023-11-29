@@ -31,7 +31,8 @@ class ModelExecutor(QueryExecutor):
         if len(execution_payloads) == 0:
             print("NOTHING_TO_DO execution count=" + str(len(execution_payloads)))
             return []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=len(execution_payloads)) as thread_executor:
+        max_workers = len(execution_payloads) * len(execution_payloads.get_executable_names()) 
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as thread_executor:
             for execution_payload in execution_payloads:
               try:
                   thread_executor.submit(self.payload_model_answers, execution_payload, payload_answers)
@@ -42,7 +43,7 @@ class ModelExecutor(QueryExecutor):
     def payload_model_answers(self, execution_payload, payload_answers):
         model_answers = {}
         model_latency = {}
-        for executable_name in execution_payload.executable_choice:
+        for executable_name in execution_payload.executable_names():
                 try:
                     
                     qna_model = self.model_factory.new_model(executable_name)
@@ -64,21 +65,27 @@ class ModelExecutor(QueryExecutor):
                                           content_id = execution_payload.get_content_id())
         payload_answers[execution_payload.payload_id] = content_answers
 
-    def new_payload(self, model_payload, executable_choice):
-        return ExecutionPlayload(model_payload, executable_choice, payload_id = str(uuid.uuid4()))        
+    # def new_payload(self, model_payload, executable_choice):
+    #     return ExecutionPlayload(model_payload, executable_choice, payload_id = str(uuid.uuid4()))        
 
 
 class ExecutionPlayload():
 
     def __init__(self, 
                  model_payload,
-                 executable_choice, 
+                 executable_names, 
                  payload_id=str(uuid.uuid4()),
                  content_id=str(uuid.uuid4())):
         self.model_payload = model_payload
-        self.executable_choice = executable_choice
+        self.executable_names = executable_names
         self.payload_id = payload_id
         self.content_id = content_id
+
+    def get_model_payload(self):
+        return self.model_payload
+    
+    def get_executable_names(self):
+        return self.executable_names
 
     def get_payload_id(self):
         return self.payload_id
