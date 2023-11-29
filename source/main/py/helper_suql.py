@@ -327,17 +327,19 @@ class InferenceLoader(DatasetLoader):
         for grouping in self.column_annotation.values():
             for concept, values in grouping.items():
                 concept = self.annotation_name + concept
-                print(f"{concept} CONCEPT_VALUES=>"+str(values))                
+                # print(f"{concept} CONCEPT_VALUES=>"+str(values))                
                 for value in values:
                     for product in products:
                         if value in product[self.subdomain_column]:
-                            print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
+                            # print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
                             product[concept] = True
                         else:
                             product[concept] = False
         for p in products:
             if p[self.subdomain_column] == "fragrances-women.json":
                 print(f"""is_for_her=> {p['is_for_her']}""")
+            if p[self.subdomain_column] == "watch-men.json":
+                print(f"""is_for_him=> {p['is_for_him']}""")
         return products
 
 
