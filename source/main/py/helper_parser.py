@@ -279,7 +279,7 @@ class SemanticParser(RunInference):
         return prompt            
             
 
-class ContextSemanticParser(SemanticParser):    
+class ContextSemanticQuery(SemanticParser):    
 
     def __init__(self, 
                  context_parser, db_cursor,
