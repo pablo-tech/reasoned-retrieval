@@ -196,7 +196,7 @@ class ParserQuery(RunInference):
             query_sql = self.run_inference(prompt)
             # if len(query_sql.split("WHERE")>1):
             if "WHERE" in query_sql:
-                query_sql = query_sql.replace(";", f"""LIMIT {n};""")
+                query_sql = query_sql.replace(";", f""" LIMIT {n};""")
                 print("QUERY_SQL=>" + str(query_sql))            
                 result_rows = self.db_cursor.execute(query_sql)
                 result_rows = [row for row in result_rows]
