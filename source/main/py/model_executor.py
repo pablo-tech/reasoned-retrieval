@@ -3,6 +3,9 @@ import uuid
 
 from collections import namedtuple
 
+import langchain
+
+
 ### AnsweredContent
 ''' For a given text, each model provides an answer
 '''
@@ -43,6 +46,8 @@ class ModelExecutor(QueryExecutor):
                     qna_model = self.model_factory.new_model(executable_name)
                     model_payload = execution_payload.model_payload
                     model_answer = qna_model.invoke(model_payload)
+                    if isinstance(qna_model, langchain.chat_models.ChatOpenAI):
+                        model_answer = model_answer.content
                     # print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_name] = model_answer
                 except Exception as e:
