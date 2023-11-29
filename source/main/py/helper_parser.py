@@ -282,14 +282,14 @@ class SemanticParser(RunInference):
 class ContextSemanticParser(SemanticParser):    
 
     def __init__(self, 
-                 domain_oracle,
+                 context_parser, db_cursor,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
-        self.domain_oracle = domain_oracle
-        self.db_cursor = self.domain_oracle.get_db_cursor()
+        self.context_parser = context_parser
+        self.db_cursor = db_cursor
 
     def invoke_context(self, query_english, n):
-        invocations = self.domain_oracle.get_context_parser().get_invocations()
+        invocations = self.context_parser.get_invocations()
         results = []
         for invocation in invocations:
             user_state, result_items = self.invoke(query_english, n, invocation)
