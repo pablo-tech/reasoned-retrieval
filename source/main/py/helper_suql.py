@@ -332,16 +332,16 @@ class InferenceLoader(DatasetLoader):
                 for value in values:
                     for product in products_in:
                         if value in product[self.subdomain_column]:
-                            # print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
+                            print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
                             product[concept] = True
                         else:
                             product[concept] = False
                         products_out.append(product)
-        for p in products_out:
-            if p[self.subdomain_column] == "fragrances-women.json":
-                print(f"""is_for_her=> {p['is_for_her']}""")
-            if p[self.subdomain_column] == "watch-men.json":
-                print(f"""is_for_him=> {p['is_for_him']}""")
+        # for p in products_out:
+        #     if p[self.subdomain_column] == "fragrances-women.json":
+        #         print(f"""is_for_her=> {p['is_for_her']}""")
+        #     if p[self.subdomain_column] == "watch-men.json":
+        #         print(f"""is_for_him=> {p['is_for_him']}""")
         return products_out
 
 
