@@ -337,6 +337,9 @@ class InferenceLoader(DatasetLoader):
                         else:
                             product[concept] = False
                         products_out.append(product)
+                        if value == "watch-women":
+                            print(f"""value={value} concept={concept} p.concept={product[concept]}""")
+
         # for p in products_out:
         #     if p[self.subdomain_column] == "fragrances-women.json":
         #         print(f"""is_for_her=> {p['is_for_her']}""")
