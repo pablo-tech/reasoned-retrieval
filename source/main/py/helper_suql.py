@@ -440,7 +440,7 @@ class InferenceParser():
     #         columns.update(["product_brand", "product_type", "product_category"])
     def join_enum_values(self, subdomain_name):
         enum_values = self.domain_inference[subdomain_name].get_enum_values() 
-        for k, v in self.global_enum_values():
+        for k, v in self.global_enum_values().items():
             if k in enum_values:
                 enum_values[k].update(v)          
             else:
@@ -453,7 +453,7 @@ class InferenceParser():
                                                  "product_type", 
                                                  "product_category"]):
         global_enums = defaultdict(set)
-        for subdomain_name, enum_values in self.domain_inference.items():
+        for enum_values in self.domain_inference.values():
             for column in global_columns:
                 try:
                     global_enums[column].update(enum_values[column]) 
