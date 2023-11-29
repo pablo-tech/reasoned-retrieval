@@ -213,6 +213,7 @@ class SqlSemanticParser(RunInference):
     def invoke(self, query_english, n, invocation):
         user_state, result_items = "", []
         try:
+            print("invocation==>"+str(invocation))
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
             print("---> " + subdomain_name)                
             prompt = self.get_prompt(query_english, schema_sql, 
