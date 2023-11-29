@@ -177,7 +177,8 @@ INSERT INTO {table_name} VALUES {table_rows}
         return self.table_name
 
     def default_columns(self):
-        columns = [self.primary_key,  self.price_column] 
+        columns = [self.primary_key,  self.price_column]
+        columns += ["product_type", "product_category"] 
         columns += self.summarize_columns
         return columns
     
