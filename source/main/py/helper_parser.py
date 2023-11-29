@@ -190,11 +190,11 @@ class ParserQuery(RunInference):
         user_state, result_items = "", []
         try:
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
-            print("---> " + subdomain_name)                
             prompt = self.get_prompt(query_english, schema_sql, 
-                                        enum_values, fewshot_examples)
+                                     enum_values, fewshot_examples)
+            print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)}""")                
             query_sql = self.run_inference(prompt)
-            if query_sql != "" and len(query_sql.split("WHERE")>1):
+            if len(query_sql.split("WHERE")>1):
                 print("QUERY_SQL=>" + str(query_sql))            
                 responses = self.db_cursor.execute(query_sql)
                 responses = [row for row in responses]
