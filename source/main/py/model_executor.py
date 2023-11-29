@@ -10,8 +10,8 @@ import langchain
 ### AnsweredContent
 ''' For a given text, each model provides an answer
 '''
-fields = ['model_answers', 'model_latency', 'score', 'exception_text', 'payload_id', 'content_id']
-AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', 0, '', '', ''))
+fields = ['model_answers', 'model_latency', 'exception_text', 'payload_id', 'content_id']
+AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', '', ''))
 
 
 class QueryExecutor():
@@ -26,7 +26,7 @@ class ModelExecutor(QueryExecutor):
         super().__init__()
         self.model_factory = model_factory
 
-    def execute_payloads(self, execution_payloads, answer_score_func):
+    def execute_payloads(self, execution_payloads):
         payload_answers = {}
         if len(execution_payloads) == 0:
             print("NOTHING_TO_DO execution count=" + str(len(execution_payloads)))
@@ -34,12 +34,12 @@ class ModelExecutor(QueryExecutor):
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(execution_payloads)) as thread_executor:
             for execution_payload in execution_payloads:
               try:
-                  thread_executor.submit(self.payload_model_answers, execution_payload, payload_answers, answer_score_func)
+                  thread_executor.submit(self.payload_model_answers, execution_payload, payload_answers)
               except:
                   print("UNABLE_TO_THREAD=" + str(execution_payload.content_context))
         return list(payload_answers.values())
 
-    def payload_model_answers(self, execution_payload, payload_answers, answer_score_func):
+    def payload_model_answers(self, execution_payload, payload_answers):
         model_answers = {}
         model_latency = {}
         for executable_name in execution_payload.executable_choice:
@@ -60,8 +60,7 @@ class ModelExecutor(QueryExecutor):
 
         content_answers = AnsweredContent(model_answers = model_answers, 
                                           model_latency = model_latency,
-                                          score = answer_score_func(model_answers.values()),
-                                          payload_id = execution_payload.payload_id
+                                          payload_id = execution_payload.get_payload_id(),
                                           content_id = execution_payload.get_content_id())
         payload_answers[execution_payload.payload_id] = content_answers
 
