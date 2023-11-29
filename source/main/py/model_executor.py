@@ -1,5 +1,6 @@
 import concurrent.futures
 import uuid
+import time
 
 from collections import namedtuple
 
@@ -9,8 +10,8 @@ import langchain
 ### AnsweredContent
 ''' For a given text, each model provides an answer
 '''
-fields = ['content_id', 'model_answers', 'score', 'payload_id', 'exception_text']
-AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, '', 0, '', ''))
+fields = ['model_answers', 'model_latency', 'score', 'exception_text', 'payload_id', 'content_id']
+AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', 0, '', '', ''))
 
 
 class QueryExecutor():
@@ -40,23 +41,28 @@ class ModelExecutor(QueryExecutor):
 
     def payload_model_answers(self, execution_payload, payload_answers, answer_score_func):
         model_answers = {}
+        model_latency = {}
         for executable_name in execution_payload.executable_choice:
                 try:
                     
                     qna_model = self.model_factory.new_model(executable_name)
                     model_payload = execution_payload.model_payload
+                    time_start = time.time()
                     model_answer = qna_model.invoke(model_payload)
+                    time_end = time.time()
                     if isinstance(qna_model, langchain.chat_models.ChatOpenAI):
                         model_answer = model_answer.content
                     # print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_name] = model_answer
+                    model_latency[executable_name] = time_end - time_start                    
                 except Exception as e:
                     print("ERROR_COMPOSING_ANSWER=" + str(e))
 
-        content_answers = AnsweredContent(content_id = execution_payload.get_content_id(),
-                                          model_answers = model_answers, 
+        content_answers = AnsweredContent(model_answers = model_answers, 
+                                          model_latency = model_latency,
                                           score = answer_score_func(model_answers.values()),
-                                          payload_id = execution_payload.payload_id)
+                                          payload_id = execution_payload.payload_id
+                                          content_id = execution_payload.get_content_id())
         payload_answers[execution_payload.payload_id] = content_answers
 
     def new_payload(self, model_payload, executable_choice):
