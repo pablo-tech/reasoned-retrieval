@@ -46,10 +46,9 @@ class QueryExecutor():
         self.payload_answers_func = payload_answers_func
 
     def max_workers(self, execution_payloads):
-        max_workers = 1
+        max_workers = 5
         for payload in execution_payloads:
             max_workers += len(payload.get_executable_names()) 
-        print("max_workers=>"+str(max_workers))
         return max_workers            
 
     def execute_payloads(self, execution_payloads):
