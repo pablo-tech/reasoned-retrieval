@@ -441,10 +441,11 @@ class InferenceParser():
     def join_enum_values(self, subdomain_name):
         enum_values = self.domain_inference[subdomain_name].get_enum_values() 
         for k, v in self.global_enum_values().items():
+            short_type = v.split(" ")[-1]
             if k in enum_values:
-                enum_values[k].update(v)          
+                enum_values[k].update(short_type)          
             else:
-                enum_values[k] = v
+                enum_values[k] = short_type
         # return { **self.context_parser.get_enum_values(), 
         #          **self.inference_parser.get_enum_values() }
         return enum_values
@@ -460,7 +461,7 @@ class InferenceParser():
                     global_enums[column].update(enum_values[column]) 
                 except:
                     pass
-        print("global_enums==>" + str(global_enums))
+        # print("global_enums==>" + str(global_enums))
         return global_enums
                     
 
