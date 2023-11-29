@@ -110,7 +110,7 @@ class QueryExecutor(ModelExecutor):
         final_items = defaultdict(list)
         for answered_content in answered_contents:
             for domain, answers in answered_content.model_answers.items():
-                print("state_items=>"+str(state_items))
+                print(f"""domain=>{domain} answers={answers}""")
                 for state_items in answers:
                     user_state = state_items['user_state']
                     if  user_state != '':
