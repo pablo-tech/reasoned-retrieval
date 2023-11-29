@@ -213,11 +213,8 @@ class ParserQuery(RunInference):
         try:
             if len(result_rows) > n:
                 result_rows = result_rows[:n]
-            user_state, is_success = self.user_state(query_sql)
-            if is_success:
-                result_items = self.response_items(result_columns, result_rows)
-            # else:
-            #     result_items = list(result_rows[0])
+            user_state = self.user_state(query_sql)
+            result_items = self.response_items(result_columns, result_rows)
         except Exception as e:
             print("NEW_RESPONSE_ERROR=>" + str(e))
         return user_state, result_items            
@@ -253,10 +250,9 @@ class ParserQuery(RunInference):
         try:
             state = query_sql.split("WHERE")[1].strip()
             state = self.simple_name(state)
-            return state, True
+            return state
         except:
-            state = query_sql.split("FROM")[0].strip()
-            return state, False
+            return ""
     
     def simple_name(self, column_name):
         column_name = column_name.replace("context.", "")
