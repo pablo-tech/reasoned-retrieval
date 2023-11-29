@@ -140,3 +140,19 @@ class MetaBase():
         return HuggingFacePipeline(pipeline=pipeline, 
                                    model_kwargs=model_kwargs)
 
+
+class ModelFactory():
+
+    def __init__(self):
+        self.azure_ai = AzureBase()
+        self.google_ai = GoogleBase()
+        # self.aopen_ai = OpenaiBase()
+
+    def new_model(self, executable_name):
+        if executable_name == "GPT3.5":
+            return self.azure_ai.inference_llm_35()
+        if executable_name == "GPT4.0":
+            return self.azure_ai.chat_llm_40(max_tokens = 1000)
+        if executable_name == "PALM2":
+            return self.google_ai.palm2()
+        # return self.azure_ai.inference_llm_35()  
