@@ -103,7 +103,7 @@ class RunInference():
             inferred = self.post_infernece(inferred)
             return inferred
         except Exception as e:
-            print("INFERRENCE_ERROR="+str(e))
+            # print("INFERRENCE_ERROR="+str(e))
             return ""
 
     def post_infernece(self, inferred):
@@ -190,18 +190,18 @@ class ParserQuery(RunInference):
         user_state, result_items = "", []
         try:
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
+            print("---> " + subdomain_name)                
             prompt = self.get_prompt(query_english, schema_sql, 
                                         enum_values, fewshot_examples)
             query_sql = self.run_inference(prompt)
             responses = self.db_cursor.execute(query_sql)
             responses = [row for row in responses]
             if len(responses) > 0:
-                print("---> " + subdomain_name)                
                 print("QUERY_SQL=>" + str(query_sql))            
                 user_state, result_items = self.new_response(query_sql, columns,
                                                             responses, n)
         except Exception as e:
-            print("INVOKE_ERROR="+str(e))
+            print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
 
         return user_state, result_items
         
