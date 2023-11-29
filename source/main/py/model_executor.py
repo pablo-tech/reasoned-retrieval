@@ -1,7 +1,13 @@
 import concurrent.futures
 import uuid
 
-from qna_tuple import AnsweredContent
+from collections import namedtuple
+
+### AnsweredContent
+''' For a given text, each model provides an answer
+'''
+fields = ['content_id', 'model_answers', 'score', 'payload_id', 'exception_text']
+AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, '', 0, '', ''))
 
 
 class QueryExecutor():
