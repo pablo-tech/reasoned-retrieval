@@ -195,13 +195,12 @@ class ParserQuery(RunInference):
             print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)}""")                
             query_sql = self.run_inference(prompt)
             # if len(query_sql.split("WHERE")>1):
-            if "WHERE" in query_sql:
-                query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
-                print("QUERY_SQL=>" + str(query_sql))            
-                result_rows = self.db_cursor.execute(query_sql)
-                result_rows = [row for row in result_rows]
-                user_state = self.user_state(query_sql)
-                result_items = self.response_items(columns, result_rows)
+            query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
+            print("QUERY_SQL=>" + str(query_sql))            
+            result_rows = self.db_cursor.execute(query_sql)
+            result_rows = [row for row in result_rows]
+            user_state = self.user_state(query_sql)
+            result_items = self.response_items(columns, result_rows)
         except Exception as e:
             # print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
             pass 
