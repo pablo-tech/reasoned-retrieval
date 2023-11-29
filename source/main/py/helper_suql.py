@@ -327,6 +327,7 @@ class InferenceLoader(DatasetLoader):
         for grouping in self.column_annotation.values():
             for concept, values in grouping.items():
                 concept = self.annotation_name + concept
+                print(f"{concept} CONCEPT_VALUES=>"+str(values))                
                 for value in values:
                     for product in products:
                         if value in product[self.subdomain_column]:
