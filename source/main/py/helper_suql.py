@@ -323,30 +323,15 @@ class InferenceLoader(DatasetLoader):
             domain_products[product[self.subdomain_column]].append(product)
         return domain_products
         
-    def annotate_products(self, products_in):
-        products_out = []
+    def annotate_products(self, products):
         for grouping in self.column_annotation.values():
             for concept, values in grouping.items():
                 concept = self.annotation_name + concept
-                # print(f"{concept} CONCEPT_VALUES=>"+str(values))                
                 for value in values:
-                    for product in products_in:
+                    for product in products:
                         if value in product[self.subdomain_column]:
-                            # print(f"""value={value} subdomain_column={product[self.subdomain_column]}""")
                             product[concept] = True
-                        # else:
-                        #     product[concept] = False
-                        products_out.append(product)
-                        # if value == "watch-women":
-                        #     print(f"""value={value} concept={concept} p.concept={product[concept]}""")
-
-        for p in products_out:
-            if p[self.subdomain_column] == "fragrances-women.json":
-                print("FOR_HER?" + str(p))
-                # print(f"""is_for_her=> {p['is_for_her']}""")
-        #     if p[self.subdomain_column] == "watch-men.json":
-        #         print(f"""is_for_him=> {p['is_for_him']}""")
-        return products_out
+        return products
 
 
 class InferenceDomain(InferenceLoader):
