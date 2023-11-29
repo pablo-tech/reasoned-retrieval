@@ -42,7 +42,7 @@ class ModelExecutor(QueryExecutor):
                     
                     qna_model = self.model_factory.new_model(executable_name)
                     model_payload = execution_payload.model_payload
-                    model_answer = qna_model(model_payload)
+                    model_answer = qna_model.invoke(model_payload)
                     # print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_name] = model_answer
                 except Exception as e:
