@@ -115,7 +115,7 @@ class QueryExecutor(ModelExecutor):
                     for state_items in answers:
                         user_state = state_items['user_state']
                         if  user_state != '':
-                            final_state.extend(user_state)
+                            final_state.add(user_state)
                         state_items = state_items['result_items']
                         if len(state_items) > 0:
                             final_items.append(state_items)
