@@ -63,13 +63,15 @@ class ExecutionPlayload():
     def __init__(self, 
                  model_payload,
                  executable_choice, 
-                 payload_id):
+                 payload_id,
+                 content_id=""):
         self.model_payload = model_payload
         self.executable_choice = executable_choice
         self.payload_id = payload_id
+        self.content_id = content_id
 
     def get_payload_id(self):
         return self.payload_id
 
     def get_content_id(self):
-        return self.model_payload.get_content_id()
+        return self.content_id
