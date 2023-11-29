@@ -330,6 +330,7 @@ class InferenceLoader(DatasetLoader):
                 print(f"{concept} CONCEPT_VALUES=>"+str(values))                
                 for value in values:
                     for product in products:
+                        print(f"""subdomain_column={product[self.subdomain_column]}""")
                         if value in product[self.subdomain_column]:
                             product[concept] = True
                         else:
