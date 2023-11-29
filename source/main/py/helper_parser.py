@@ -180,7 +180,7 @@ Answer:
 Question: {product_str}
 """
     
-class SemanticParser(RunInference):
+class SemanticQuery(RunInference):
 
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
@@ -279,7 +279,7 @@ class SemanticParser(RunInference):
         return prompt            
             
 
-class ContextSemanticQuery(SemanticParser):    
+class ContextSemanticQuery(SemanticQuery):    
 
     def __init__(self, 
                  context_parser, db_cursor,
