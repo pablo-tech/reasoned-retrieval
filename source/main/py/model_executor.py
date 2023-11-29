@@ -98,9 +98,6 @@ class ModelExecutor(QueryExecutor):
                                           content_id = execution_payload.get_content_id())
         payload_answers[execution_payload.payload_id] = content_answers    
 
-    # def new_payload(self, model_payload, executable_choice):
-    #     return ExecutionPlayload(model_payload, executable_choice, payload_id = str(uuid.uuid4()))        
-
 
 
     

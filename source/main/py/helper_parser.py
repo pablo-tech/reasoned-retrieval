@@ -194,13 +194,13 @@ class ParserQuery(RunInference):
                                      enum_values, fewshot_examples)
             print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)}""")                
             query_sql = self.run_inference(prompt)
-            if len(query_sql.split("WHERE")>1):
-                print("QUERY_SQL=>" + str(query_sql))            
-                responses = self.db_cursor.execute(query_sql)
-                responses = [row for row in responses]
-                if len(responses) > 0:
-                    user_state, result_items = self.new_response(query_sql, columns,
-                                                                responses, n)
+            # if len(query_sql.split("WHERE")>1):
+            print("QUERY_SQL=>" + str(query_sql))            
+            responses = self.db_cursor.execute(query_sql)
+            responses = [row for row in responses]
+            if len(responses) > 0:
+                user_state, result_items = self.new_response(query_sql, columns,
+                                                             responses, n)
         except Exception as e:
             # print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
             pass 
