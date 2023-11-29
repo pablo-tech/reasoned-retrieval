@@ -300,8 +300,7 @@ class SemanticQuery(ParserQuery):
         for invocation in self.invocations:
             user_state, result_items =\
                  self.invoke_query(query_english, self.n, invocation)
-            if len(result_items) > 0:
-                results.append(self.state_items(user_state, result_items))
+            results.append(self.state_items(user_state, result_items))
         return results
 
 

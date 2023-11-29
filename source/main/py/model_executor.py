@@ -2,7 +2,7 @@ import concurrent.futures
 import uuid
 import time
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 import langchain
 
@@ -99,7 +99,20 @@ class ModelExecutor(QueryExecutor):
         payload_answers[execution_payload.payload_id] = content_answers    
 
 
+class QueryExecutor(ModelExecutor):
 
-    
+    def __init__(self, model_factory):
+        super().__init__(model_factory)
 
-    
+    def execute_queries(self, execution_payloads):
+        response = self.execute_payloads(execution_payloads)
+        final_state = defaultdict(list)
+        final_items = defaultdict(list)
+        for domain, state_items in response.get_model_answers().items():
+            user_state = state_items['user_state']
+            if  user_state != '':
+                final_state[domain].append(user_state)
+            state_items = state_items['result_items']
+            if len(state_items) > 0:
+                final_items[domain].append(state_items)
+        return final_state, final_items
