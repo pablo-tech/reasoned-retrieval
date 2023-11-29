@@ -195,30 +195,19 @@ class ParserQuery(RunInference):
             print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)}""")                
             query_sql = self.run_inference(prompt)
             # if len(query_sql.split("WHERE")>1):
-            print("QUERY_SQL=>" + str(query_sql))            
-            responses = self.db_cursor.execute(query_sql)
-            responses = [row for row in responses]
-            if len(responses) > 0:
-                user_state, result_items = self.new_response(query_sql, columns,
-                                                             responses, n)
+            if "WHERE" in query_sql:
+                query_sql = query_sql.replace(";", f"""LIMIT {n};""")
+                print("QUERY_SQL=>" + str(query_sql))            
+                result_rows = self.db_cursor.execute(query_sql)
+                result_rows = [row for row in result_rows]
+                user_state = self.user_state(query_sql)
+                result_items = self.response_items(columns, result_rows)
         except Exception as e:
             # print("INVOKE_ERROR=" + str(e) + "... QUERY_SQL=" + str(query_sql))
             pass 
 
         return user_state, result_items
-        
-    def new_response(self, query_sql, result_columns, 
-                     result_rows, n):
-        user_state, result_items = "", []
-        try:
-            if len(result_rows) > n:
-                result_rows = result_rows[:n]
-            user_state = self.user_state(query_sql)
-            result_items = self.response_items(result_columns, result_rows)
-        except Exception as e:
-            print("NEW_RESPONSE_ERROR=>" + str(e))
-        return user_state, result_items            
-    
+            
     def response_items(self, result_columns, result_rows):
         # print("RESULT_COLS="+str(result_columns))
         # print("RESULT_ROWS="+str(result_rows))
