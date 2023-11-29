@@ -285,18 +285,20 @@ class SemanticQuery(RunInference):
 
 class ContextSemanticQuery(SemanticQuery):    
 
-    def __init__(self, 
+    def __init__(self, n,
                  context_parser, db_cursor,
                  completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
+        self.n = n
         self.context_parser = context_parser
         self.db_cursor = db_cursor
 
-    def invoke(self, query_english, n):
+    def invoke(self, query_english):
         invocations = self.context_parser.get_invocations()
         results = []
         for invocation in invocations:
-            user_state, result_items = self.invoke_query(query_english, n, invocation)
+            user_state, result_items =\
+                 self.invoke_query(query_english, self.n, invocation)
             results.append(self.state_items(user_state, result_items))
         return results
     
