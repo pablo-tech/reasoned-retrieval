@@ -178,7 +178,6 @@ INSERT INTO {table_name} VALUES {table_rows}
 
     def default_columns(self):
         columns = [self.primary_key,  self.price_column]
-        columns += ["product_type", "product_category"] 
         columns += self.summarize_columns
         return columns
     
@@ -438,10 +437,31 @@ class InferenceParser():
 {self.context_parser.get_schema_sql()}
 """    
 
+    #         columns.update(["product_brand", "product_type", "product_category"])
     def join_enum_values(self, subdomain_name):
-        return self.domain_inference[subdomain_name].get_enum_values()            
+        enum_values = self.domain_inference[subdomain_name].get_enum_values() 
+        for k, v in self.global_enum_values():
+            if k in enum_values:
+                enum_values[k].update(v)          
+            else:
+                enum_values[k] = v
         # return { **self.context_parser.get_enum_values(), 
         #          **self.inference_parser.get_enum_values() }
+        return enum_values
+    
+    def global_enum_values(self, global_columns=["product_brand", 
+                                                 "product_type", 
+                                                 "product_category"]):
+        global_enums = defaultdict(set)
+        for subdomain_name, enum_values in self.domain_inference.items():
+            for column in global_columns:
+                try:
+                    global_enums[column].update(enum_values[column]) 
+                except:
+                    pass
+        print("global_enums==>" + str(global_enums))
+        return global_enums
+                    
 
     def join_fewshot_examples(self, columns, table_name):
         columns = ", ".join(columns)
