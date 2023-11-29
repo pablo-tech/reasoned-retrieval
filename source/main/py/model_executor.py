@@ -105,14 +105,15 @@ class QueryExecutor(ModelExecutor):
         super().__init__(model_factory)
 
     def execute_queries(self, execution_payloads):
-        response = self.execute_payloads(execution_payloads)
+        answered_contents = self.execute_payloads(execution_payloads)
         final_state = defaultdict(list)
         final_items = defaultdict(list)
-        for domain, state_items in response.get_model_answers().items():
-            user_state = state_items['user_state']
-            if  user_state != '':
-                final_state[domain].append(user_state)
-            state_items = state_items['result_items']
-            if len(state_items) > 0:
-                final_items[domain].append(state_items)
+        for answered_content in answered_contents:
+            for domain, state_items in answered_content.get_model_answers().items():
+                user_state = state_items['user_state']
+                if  user_state != '':
+                    final_state[domain].append(user_state)
+                state_items = state_items['result_items']
+                if len(state_items) > 0:
+                    final_items[domain].append(state_items)
         return final_state, final_items
