@@ -324,8 +324,7 @@ class InferenceLoader(DatasetLoader):
         return domain_products
         
     def annotate_products(self, products):
-        groupings = self.column_annotation.values()
-        for grouping in groupings:
+        for grouping in self.column_annotation.values():
             for concept, values in grouping.items():
                 concept = self.annotation_name + concept
                 for value in values:
@@ -334,6 +333,9 @@ class InferenceLoader(DatasetLoader):
                             product[concept] = True
                         else:
                             product[concept] = False
+        for p in products:
+            if p[self.subdomain_column] == "fragrances-women.json":
+                print(f"""is_for_her=> {p['is_for_her']}""")
         return products
 
 
@@ -462,7 +464,7 @@ class InferenceParser():
                     global_enums[column].update(short_values) 
                 except:
                     pass
-        print("global_enums==>" + str(global_enums))
+        # print("global_enums==>" + str(global_enums))
         return global_enums
                     
 
