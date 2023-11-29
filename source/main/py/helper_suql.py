@@ -453,7 +453,8 @@ class InferenceParser():
                                                  "product_type", 
                                                  "product_category"]):
         global_enums = defaultdict(set)
-        for enum_values in self.domain_inference.values():
+        for inference_domain in self.domain_inference.values():
+            enum_values = inference_domain.get_enum_values()
             print("DOMAIN_ENUMS=>"+str(enum_values))
             for column in global_columns:
                 try:
