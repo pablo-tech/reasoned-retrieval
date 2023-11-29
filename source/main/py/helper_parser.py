@@ -278,6 +278,10 @@ class SemanticQuery(RunInference):
             print("PROMPT=>"+str(prompt))
         return prompt            
             
+    def state_items(self, user_state, result_items):
+        return {"user_state": user_state,
+                "result_items": result_items}        
+
 
 class ContextSemanticQuery(SemanticQuery):    
 
@@ -293,14 +297,9 @@ class ContextSemanticQuery(SemanticQuery):
         results = []
         for invocation in invocations:
             user_state, result_items = self.invoke_query(query_english, n, invocation)
-            results.append({"user_state": user_state,
-                            "result_items": result_items})
+            results.append(self.state_items(user_state, result_items))
         return results
     
-    def state_items(self, user_state, result_items):
-        return {"user_state": user_state,
-                "result_items": result_items}        
-
 
 class SqlSemanticParser(RunInference):
 
