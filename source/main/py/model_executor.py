@@ -31,7 +31,9 @@ class ModelExecutor(QueryExecutor):
         if len(execution_payloads) == 0:
             print("NOTHING_TO_DO execution count=" + str(len(execution_payloads)))
             return []
-        max_workers = len(execution_payloads) * len(execution_payloads.get_executable_names()) 
+        max_workers = len(execution_payloads)
+        for payload in execution_payloads:
+            max_workers *= len(payload.get_executable_names()) 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as thread_executor:
             for execution_payload in execution_payloads:
               try:
