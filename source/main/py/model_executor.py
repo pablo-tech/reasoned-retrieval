@@ -73,8 +73,8 @@ class ExecutionPlayload():
     def __init__(self, 
                  model_payload,
                  executable_choice, 
-                 payload_id,
-                 content_id=""):
+                 payload_id=str(uuid.uuid4()),
+                 content_id=str(uuid.uuid4())):
         self.model_payload = model_payload
         self.executable_choice = executable_choice
         self.payload_id = payload_id
