@@ -461,7 +461,7 @@ class InferenceParser():
                     global_enums[column].update(enum_values[column]) 
                 except:
                     pass
-        # print("global_enums==>" + str(global_enums))
+        print("global_enums==>" + str(global_enums))
         return global_enums
                     
 
