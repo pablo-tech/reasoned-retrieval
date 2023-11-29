@@ -449,13 +449,12 @@ class InferenceParser():
         #          **self.inference_parser.get_enum_values() }
         return enum_values
     
-    def global_enum_values(self, global_columns=["product_brand", 
-                                                 "product_type", 
-                                                 "product_category"]):
+    # "product_brand", "product_category"
+    def global_enum_values(self, global_columns=["product_type"]):
         global_enums = defaultdict(set)
         for inference_domain in self.domain_inference.values():
             enum_values = inference_domain.get_enum_values()
-            print("DOMAIN_ENUMS=>"+str(enum_values))
+            # print("DOMAIN_ENUMS=>"+str(enum_values))
             for column in global_columns:
                 try:
                     global_enums[column].update(enum_values[column]) 
