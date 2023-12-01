@@ -28,7 +28,7 @@ class DatabaseInstance():
         db_connection = self.new_connection()
         db_cursor = db_connection.cursor()
         db_cursor.execute(query)
-        db_connection().commit()
+        db_connection.commit()
         db_connection.close()
 
     def execute_read(self, query):
