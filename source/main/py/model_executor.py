@@ -49,7 +49,7 @@ class QueryExecutor():
     def max_workers(self, execution_payloads):
         max_workers = 5
         for payload in execution_payloads:
-            max_workers += len(payload.get_executable_count()) 
+            max_workers += payload.get_executable_count()
         print("max_workers=" + str(max_workers))
         return max_workers            
 
@@ -70,7 +70,6 @@ class QueryExecutor():
             thread_executor.submit(self.payload_answers_func, execution_payload, payload_answers)
         except:
             print("UNABLE_TO_THREAD=" + str(execution_payload.get_payload_id()))
-
 
 
 class ModelExecutor(QueryExecutor):
