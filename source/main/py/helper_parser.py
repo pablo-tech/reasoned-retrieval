@@ -288,4 +288,23 @@ class SemanticQuery(ParserQuery):
         return results
 
 
-    
+class QueryFactory():
+
+    def __init__(self, query_limit, 
+                 domain_oracle, 
+                 completion_llm, 
+                 db_instance):
+        self.domain_oracle = domain_oracle
+        self.inference_queries = {}
+        sub_domains = self.domain_oracle.get_context_parser().get_subdomain_names()
+        inference_parser = domain_oracle.get_inference_parser()
+        for sub_domain in sub_domains:
+            inference_query = SemanticQuery(
+                query_limit=query_limit,
+                invocations=inference_parser.get_invocations(sub_domain),
+                completion_llm=completion_llm,
+                db_instance=db_instance)
+            self.inference_queries[sub_domain] = inference_query
+
+    def get_model(self, sub_domain):
+        return self.inference_queries[sub_domain]    
