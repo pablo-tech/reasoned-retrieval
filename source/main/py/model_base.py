@@ -147,12 +147,12 @@ class ModelFactory():
         self.azure_ai = AzureBase()
         self.google_ai = GoogleBase()
         # self.aopen_ai = OpenaiBase()
-
-    def new_model(self, executable_name):
-        if executable_name == "GPT3.5":
-            return self.azure_ai.inference_llm_35()
-        if executable_name == "GPT4.0":
-            return self.azure_ai.chat_llm_40(max_tokens = 1000)
-        if executable_name == "PALM2":
-            return self.google_ai.palm2()
-        # return self.azure_ai.inference_llm_35()  
+        self.model_instances = {"GPT3.5": self.azure_ai.inference_llm_35(),
+                                "GPT4.0": self.azure_ai.chat_llm_40(max_tokens = 1000),
+                                "PALM2": self.google_ai.palm2()}
+                                
+    def get_model(self, executable_name):
+        return self.model_instances[executable_name]
+    
+    def get_names(self):
+        return self.model_instances.keys()

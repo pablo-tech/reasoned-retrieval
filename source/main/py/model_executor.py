@@ -10,7 +10,7 @@ import langchain
 ### AnsweredContent
 ''' For a given text, each model provides an answer
 '''
-fields = ['model_answers', 'model_latency', 'exception_text', 'payload_id']
+fields = ['model_answers', 'model_latency', 'payload_id', 'exception_text']
 AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', ''))
 
 
@@ -59,7 +59,9 @@ class QueryExecutor():
         max_workers = self.max_workers(execution_payloads)        
         with concurrent.futures.ThreadPoolExecutor(max_workers) as thread_executor:
             for execution_payload in execution_payloads:
-                self.execute_payload(thread_executor, execution_payload, payload_answers)
+                self.execute_payload(thread_executor, 
+                                     execution_payload, 
+                                     payload_answers)
         return list(payload_answers.values())
     
     def execute_payload(self, thread_executor:concurrent.futures.ThreadPoolExecutor, 
@@ -84,7 +86,7 @@ class ModelExecutor(QueryExecutor):
         for executable_id in execution_payload.get_executable_ids():
                 try: 
                     executable_name = execution_payload.get_executable_name(executable_id)
-                    qna_model = self.model_factory.new_model(executable_name)
+                    qna_model = self.model_factory.get_model(executable_name)
                     model_payload = execution_payload.get_model_payload()
                     time_start = time.time()
                     model_answer = qna_model.invoke(model_payload)
@@ -92,8 +94,9 @@ class ModelExecutor(QueryExecutor):
                     if isinstance(qna_model, langchain.chat_models.ChatOpenAI):
                         model_answer = model_answer.content
                     print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
+                    print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_id] = model_answer
-                    model_latency[executable_id] = "{:0.2f}".format(time_end-time_start)                    
+                    print("model_answers=>"+str(model_answers))                    
                 except Exception as e:
                     print("ERROR_COMPOSING_ANSWER=" + str(e))
 
