@@ -94,8 +94,8 @@ class ModelExecutor(QueryExecutor):
                     if isinstance(qna_model, langchain.chat_models.ChatOpenAI):
                         model_answer = model_answer.content
                     print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
-                    print(f"""qna_model={type(qna_model)} executable_name={executable_name} payload={model_payload} model_answer={model_answer}""")
                     model_answers[executable_id] = model_answer
+                    model_latency[executable_id] = "{:0.2f}".format(time_end-time_start)
                     print("model_answers=>"+str(model_answers))                    
                 except Exception as e:
                     print("ERROR_COMPOSING_ANSWER=" + str(e))
