@@ -66,9 +66,9 @@ class QueryExecutor():
                                             execution_payload, 
                                             payload_answers) 
                         for execution_payload in execution_payloads]
-            print('Waiting for tasks to complete...')
+            # print('Waiting for tasks to complete...')
             concurrent.futures.wait(futures)
-            print('All tasks are done!')                
+            # print('All tasks are done!')                
         return payload_answers
         # return list(payload_answers.values())
     
