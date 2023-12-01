@@ -41,16 +41,14 @@ class ExecutionPlayload():
 
 
 class QueryExecutor():
-
+    '''' Parallelism: payload-level
+    '''
     def __init__(self, model_factory, payload_answers_func):
         self.model_factory = model_factory
         self.payload_answers_func = payload_answers_func
 
     def max_workers(self, execution_payloads):
-        max_workers = 5
-        for payload in execution_payloads:
-            max_workers += payload.get_executable_count()
-        print("max_workers=" + str(max_workers))
+        max_workers = 1 + len(execution_payloads)
         return max_workers            
 
     def execute_payloads(self, execution_payloads):
@@ -73,7 +71,8 @@ class QueryExecutor():
 
 
 class ModelExecutor(QueryExecutor):
-
+    ''' Sequential: executable runs
+    '''
     def __init__(self, model_factory):
         super().__init__(model_factory, self.payload_model_answers)
 
