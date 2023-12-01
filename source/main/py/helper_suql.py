@@ -124,7 +124,7 @@ class DatasetLoader(SchemaCreator):
             try:
                 self.execute_load(insert_sql)
             except Exception as e:
-                print("LOAD_EXCEPTION="+str(table_name)+"\t"+str(e)+"\n"+str(insert_sql))
+                print("LOAD_EXCEPTION="+str(table_name)+"\t"+str(e))
                 fails+=1
                 pass
             i+=n
