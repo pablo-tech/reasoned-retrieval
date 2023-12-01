@@ -198,8 +198,8 @@ class ParserQuery(RunInference):
             # if len(query_sql.split("WHERE")>1):
             query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
             print("QUERY_SQL=>" + str(query_sql))            
-            result_rows = self.db_instance.execute(query_sql)
-            result_rows = [row for row in result_rows]
+            result_rows = self.db_instance.execute_read(query_sql)
+            # result_rows = [row for row in result_rows]
             user_state = self.user_state(query_sql)
             result_items = self.response_items(columns, result_rows)
         except Exception as e:

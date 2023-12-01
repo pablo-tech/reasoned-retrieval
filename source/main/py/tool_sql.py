@@ -16,15 +16,19 @@ class DatabaseInstance():
                                              check_same_thread=False)
         self.db_cursor = self.db_connection.cursor()
 
-    def execute(self, query):
+    def execute_write(self, query):
         db_connection = sqlite3.connect(self.database_name,
                                         check_same_thread=False)
         db_cursor = db_connection.cursor()
         db_cursor.execute(query)
-        try:
-            db_connection().commit()
-        except:
-            pass
+        db_connection().commit()
+        db_connection.close()
+
+    def execute_read(self, query):
+        db_connection = sqlite3.connect(self.database_name,
+                                        check_same_thread=False)
+        db_cursor = db_connection.cursor()
+        db_cursor.execute(query)
         response = db_cursor.fetchall()
         db_connection.close()
         return response 
