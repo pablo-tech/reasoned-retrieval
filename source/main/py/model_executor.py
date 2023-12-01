@@ -10,8 +10,8 @@ import langchain
 ### AnsweredContent
 ''' For a given text, each model provides an answer
 '''
-fields = ['model_answers', 'model_latency', 'exception_text', 'payload_id', 'content_id']
-AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', '', ''))
+fields = ['model_answers', 'model_latency', 'exception_text', 'payload_id']
+AnsweredContent = namedtuple('AnsweredContent', fields, defaults =  ({}, {}, '', ''))
 
 
 class ExecutionPlayload():
@@ -99,9 +99,8 @@ class ModelExecutor(QueryExecutor):
 
         content_answers = AnsweredContent(model_answers = model_answers, 
                                           model_latency = model_latency,
-                                          payload_id = execution_payload.get_payload_id(),
-                                          content_id = execution_payload.get_content_id())
-        payload_answers[execution_payload.payload_id] = content_answers    
+                                          payload_id = execution_payload.get_payload_id())
+        payload_answers[execution_payload.get_payload_id()] = content_answers    
 
 
 class QueryExecutor(ModelExecutor):
