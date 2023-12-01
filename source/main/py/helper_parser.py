@@ -183,8 +183,9 @@ Question: {product_str}
 
 class ParserQuery(RunInference):
 
-    def __init__(self, completion_llm, is_verbose=False):
+    def __init__(self, completion_llm, db_instance, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
+        self.db_instance = db_instance
 
     def invoke_query(self, query_english, query_limit, invocation):
         user_state, result_items = "", []
@@ -197,7 +198,7 @@ class ParserQuery(RunInference):
             # if len(query_sql.split("WHERE")>1):
             query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
             print("QUERY_SQL=>" + str(query_sql))            
-            result_rows = self.db_cursor.execute(query_sql)
+            result_rows = self.db_instance.execute(query_sql)
             result_rows = [row for row in result_rows]
             user_state = self.user_state(query_sql)
             result_items = self.response_items(columns, result_rows)
@@ -272,12 +273,11 @@ class ParserQuery(RunInference):
 
 class SemanticQuery(ParserQuery):    
 
-    def __init__(self, query_limit, invocations, db_cursor,
-                 completion_llm, is_verbose=False):
-        super().__init__(completion_llm, is_verbose)
+    def __init__(self, query_limit, invocations, 
+                 completion_llm, db_instance, is_verbose=False):
+        super().__init__(completion_llm, db_instance, is_verbose)
         self.query_limit = query_limit 
         self.invocations = invocations
-        self.db_cursor = db_cursor
 
     def invoke(self, query_english):
         results = []

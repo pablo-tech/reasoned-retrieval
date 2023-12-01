@@ -31,22 +31,19 @@ class SchemaCreator(DomainSchema):
 
     def drop_table(self, table_name):
         try:
-            self.db_execute(f"DROP TABLE IF EXISTS {table_name};")
+            self.db_instance.execute(f"DROP TABLE IF EXISTS {table_name};")
         except Exception as e:
             print("DELETE_TABLE_ERROR="+str(table_name)+"\t"+str(e))
             pass
 
     def new_table(self, create_sql):
         try:
-            self.db_execute(create_sql)
+            self.db_instance.execute(create_sql)
             if self.is_verbose:
                 print(create_sql)
         except Exception as e:
             print("CREATION_ERROR=" + self.domain_name + " " + str(e) + "\n" + str(create_sql))
             pass
-
-    def db_execute(self, query):
-        return self.db_instance.db_cursor.execute(query)
 
     def create_sql(self, table_name, column_names):
         column_txt = ""
@@ -155,8 +152,7 @@ class DatasetLoader(SchemaCreator):
         return insert_sql
 
     def execute_load(self, insert_sql):
-        self.db_instance.get_db_cursor().execute(insert_sql)
-        self.db_instance.get_db_connection().commit()
+        self.db_instance.execute(insert_sql)
     
     def get_sql(self, table_name, table_rows):
         return f"""

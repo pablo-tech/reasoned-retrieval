@@ -11,16 +11,20 @@ class DatabaseInstance():
     
     def __init__(self, 
                  database_name="tutorial.db"):
+        self.database_name = database_name
         self.db_connection = sqlite3.connect(database_name,
                                              check_same_thread=False)
         self.db_cursor = self.db_connection.cursor()
 
-    def get_db_connection(self):
-        return self.db_connection
-
-    def get_db_cursor(self):
-        return self.db_cursor
-
+    def execute(self, query):
+        db_connection = sqlite3.connect(self.database_name,
+                                        check_same_thread=False)
+        db_cursor = db_connection.cursor()
+        db_cursor.execute(query)
+        db_connection().commit()
+        response = db_cursor.fetchall()
+        db_connection.close()
+        return response 
 
 class GiftOracle():
 
@@ -46,7 +50,6 @@ class GiftOracle():
                                                 picked_columns, primary_key, price_column,  
                                                 summarize_columns, column_annotation, 
                                                 self.db_instance, completion_llm, is_verbose=False)
-        # self.wholistic_parser = WholisticParser(self.context_parser, self.inference_parser)
 
     def subdomain_dataset_func(self, subdomain_names):
         return [GiftDataset2(subdomain_names)]
@@ -59,9 +62,6 @@ class GiftOracle():
 
     def get_wholistic_parser(self):
         return self.wholistic_parser
-
-    def get_db_cursor(self):
-        return self.db_instance.get_db_cursor()
 
     def get_annotation(self):
         return { 
@@ -112,7 +112,7 @@ class GiftOracle():
 
 class QueryFactory():
 
-    def __init__(self, query_limit, domain_oracle, completion_llm):
+    def __init__(self, query_limit, domain_oracle, completion_llm, db_instance):
         self.domain_oracle = domain_oracle
         self.inference_queries = {}
         sub_domains = self.domain_oracle.get_context_parser().get_subdomain_names()
@@ -121,8 +121,8 @@ class QueryFactory():
             inference_query = SemanticQuery(
                 query_limit=query_limit,
                 invocations=inference_parser.get_invocations(sub_domain),
-                db_cursor=domain_oracle.get_db_cursor(),
-                completion_llm=completion_llm)
+                completion_llm=completion_llm,
+                db_instance=db_instance)
             self.inference_queries[sub_domain] = inference_query
 
     def executable_names(self):
