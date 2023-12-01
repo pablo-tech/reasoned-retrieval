@@ -152,7 +152,10 @@ class ModelFactory():
                                 "PALM2": self.google_ai.palm2()}
                                 
     def get_model(self, executable_name):
-        return self.model_instances[executable_name]
+        try:
+            return self.model_instances[executable_name]
+        except Exception as e:
+            print("GET_MODEL_ERROR="+executable_name+"\t"+str(e))
     
     def get_names(self):
         return self.model_instances.keys()

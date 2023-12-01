@@ -125,7 +125,10 @@ class GiftOracle():
 
 class QueryFactory():
 
-    def __init__(self, query_limit, domain_oracle, completion_llm, db_instance):
+    def __init__(self, query_limit, 
+                 domain_oracle, 
+                 completion_llm, 
+                 db_instance):
         self.domain_oracle = domain_oracle
         self.inference_queries = {}
         sub_domains = self.domain_oracle.get_context_parser().get_subdomain_names()
