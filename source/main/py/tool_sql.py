@@ -60,8 +60,8 @@ class GiftOracle():
     def get_inference_parser(self):
         return self.inference_parser
 
-    def get_wholistic_parser(self):
-        return self.wholistic_parser
+    def get_db_instance(self):
+        return self.db_instance    
 
     def get_annotation(self):
         return { 
