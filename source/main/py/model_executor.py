@@ -83,7 +83,7 @@ class ModelExecutor(QueryExecutor):
         model_latency = {}
         for executable_id in execution_payload.get_executable_ids():
                 try: 
-                    executable_name = execution_payload.get_executable_name()
+                    executable_name = execution_payload.get_executable_name(executable_id)
                     qna_model = self.model_factory.new_model(executable_name)
                     model_payload = execution_payload.get_model_payload()
                     time_start = time.time()
