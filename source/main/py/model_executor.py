@@ -50,7 +50,7 @@ class PayloadFactory():
                          for executable in executable_names] 
 
     def get_payloads(self):
-        self.payloads
+        return self.payloads
 
 
 class QueryExecutor():
