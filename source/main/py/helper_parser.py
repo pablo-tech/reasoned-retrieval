@@ -193,13 +193,10 @@ class ParserQuery(RunInference):
             subdomain_name, columns, schema_sql, enum_values, fewshot_examples = invocation
             prompt = self.get_prompt(query_english, schema_sql, 
                                      enum_values, fewshot_examples)
-            print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)}""")                
             query_sql = self.run_inference(prompt)
-            # if len(query_sql.split("WHERE")>1):
             query_sql = query_sql.replace(";", f""" LIMIT {query_limit};""")
-            print("QUERY_SQL=>" + str(query_sql))            
+            print(f"""---> subdomain_name={subdomain_name} prompt={len(prompt)} query_sql={query_sql}""")                
             result_rows = self.db_instance.execute_read(query_sql)
-            # result_rows = [row for row in result_rows]
             user_state = self.user_state(query_sql)
             result_items = self.response_items(columns, result_rows)
         except Exception as e:
@@ -209,8 +206,6 @@ class ParserQuery(RunInference):
         return user_state, result_items
             
     def response_items(self, result_columns, result_rows):
-        # print("RESULT_COLS="+str(result_columns))
-        # print("RESULT_ROWS="+str(result_rows))
         result_columns = [self.simple_name(column) for column in result_columns]
         items = []
         for row in result_rows:
