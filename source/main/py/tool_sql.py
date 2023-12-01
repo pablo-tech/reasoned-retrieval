@@ -21,7 +21,10 @@ class DatabaseInstance():
                                         check_same_thread=False)
         db_cursor = db_connection.cursor()
         db_cursor.execute(query)
-        db_connection().commit()
+        try:
+            db_connection().commit()
+        except:
+            pass
         response = db_cursor.fetchall()
         db_connection.close()
         return response 
