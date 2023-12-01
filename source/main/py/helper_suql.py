@@ -31,14 +31,14 @@ class SchemaCreator(DomainSchema):
 
     def drop_table(self, table_name):
         try:
-            self.db_instance.execute_write(f"DROP TABLE IF EXISTS {table_name};")
+            self.db_instance.execute_create(f"DROP TABLE IF EXISTS {table_name};")
         except Exception as e:
             print("DELETE_TABLE_ERROR="+str(table_name)+"\t"+str(e))
             pass
 
     def new_table(self, create_sql):
         try:
-            self.db_instance.execute_write(create_sql)
+            self.db_instance.execute_create(create_sql)
             if self.is_verbose:
                 print(create_sql)
         except Exception as e:

@@ -12,9 +12,13 @@ class DatabaseInstance():
     def __init__(self, 
                  database_name="tutorial.db"):
         self.database_name = database_name
-        self.db_connection = sqlite3.connect(database_name,
-                                             check_same_thread=False)
-        self.db_cursor = self.db_connection.cursor()
+
+    def execute_create(self, query):
+        db_connection = sqlite3.connect(self.database_name,
+                                        check_same_thread=False)
+        db_cursor = db_connection.cursor()
+        db_cursor.execute(query)
+        db_connection.close()
 
     def execute_write(self, query):
         db_connection = sqlite3.connect(self.database_name,
