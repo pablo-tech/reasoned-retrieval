@@ -175,7 +175,9 @@ class ProductReader(ProductRetriever):
         return self.invoke(tool_input, tool_filter, self.select)
 
     def select(self, query):
+        print("SELECT=>"+str(query))
         results = self.subquery(query)
+        print("RESULTS=>"+str(results))
         return self.answer(self.summarize(results, query), query)
 
 
