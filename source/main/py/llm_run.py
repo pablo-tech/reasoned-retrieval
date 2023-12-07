@@ -240,7 +240,7 @@ class ToolRun(ModelRun):
                                        model_end-model_start)
             self.get_journey().add_run(model_step, model_step.get_answer()) 
         except Exception as e:
-                self.get_error().error_input(self.get_name() + "_RUN_ERROR" + str(e), query_txt)
+                self.get_error().error_input(self.get_name() + ": RUN_ERROR=>" + str(e), query_txt)
         return RunAnswer(model_step, self.get_journey(), 
                          self.get_error(), self.get_measure(), self.get_name()) 
 
