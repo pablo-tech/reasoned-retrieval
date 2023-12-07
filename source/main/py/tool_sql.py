@@ -1,3 +1,5 @@
+from langchain.agents import Tool
+
 from helper_suql import ContextParser, InferenceParser
 from helper_parser import SemanticQuery
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
@@ -125,11 +127,72 @@ class GiftOracle():
 
 class ProductRetriever():
 
-    def __init__(self):
-        pass
+    def __init__(self, completion_llm, is_verbose):
+        domain_oracle = GiftOracle(is_run_inference=False,
+                                   subdomain_names=[],
+                                   completion_llm=completion_llm)
+        print(domain_oracle.get_context_parser().default_columns())
+        print(domain_oracle.get_context_parser().get_columns())
+        print(domain_oracle.get_context_parser().get_schema_sql())
+        print(domain_oracle.get_context_parser().get_products()[0])
+        coluns, rows = domain_oracle.get_context_parser().load_items()
+        print(domain_oracle.get_context_parser().get_enum_values())
+        print(domain_oracle.get_context_parser().get_fewshot_examples())
+        print(domain_oracle.get_context_parser().get_subdomain_names())
+        # products = domain_oracle.get_inference_parser().get_products('fragrances-men.json')
+
+# class HotpotRetriever(SelectHelper):
+
+#     def __init__(self, completion_llm, is_verbose):
+#         super().__init__("HOTPOT", completion_llm, is_verbose)
+#         self.hotpot_data = HotpotDataset(completion_llm, is_verbose)
+#         self.doc_store = {}
+#         for example in self.hotpot_data.get_corpus():
+#             contexts = example['context']
+#             contexts = ["".join(context[1]) for context in contexts]
+#             self.doc_store[example['question'].strip()] = contexts        
+
+#     def subquery(self, query):
+#         try:
+#           return self.doc_store[query]
+#         except Exception as e:
+#           error = "HOTPOT_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query)
+#           print(error)
+#           return [error]
 
 
-class ProductReader():
+class ProductReader(ProductRetriever):
 
-    def __init__(self):
-        pass    
+    def __init__(self, completion_llm, is_verbose):
+        super().__init__(completion_llm, is_verbose)
+
+
+# class HotpotReader(HotpotRetriever):
+
+#     def __init__(self, completion_llm, is_verbose):
+#         super().__init__(completion_llm, is_verbose)
+
+#     def run(self, tool_input, user_query):
+#         return self.invoke(user_query, self.select)
+
+#     def select(self, query):
+#         results = self.subquery(query)
+#         return self.answer(self.summarize(results, query), query)
+
+
+class SqlToolFactory():
+
+    def __init__(self, completion_llm, is_verbose=False):
+        # inference_llm_35
+        self.completion_llm = completion_llm
+        self.is_verbose = is_verbose
+
+    def get_tools(self):
+        api = ProductReader(self.completion_llm, self.is_verbose)
+        return [
+          Tool(
+              name="ProductSearch",
+              func=api.run,
+              description="useful to search for product information"
+          )
+        ]    
