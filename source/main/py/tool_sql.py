@@ -174,11 +174,11 @@ class ProductReader(ProductRetriever):
     def run(self, tool_input, user_query, tool_filter={}):
         return self.invoke(tool_input, tool_filter, self.select)
 
-    def select(self, query):
-        print("SELECT=>"+str(query))
-        results = self.subquery(query)
+    def select(self, query_txt, query_filter):
+        print("SELECT=>"+str(query_txt))
+        results = self.subquery(query_txt)
         print("RESULTS=>"+str(results))
-        return self.answer(self.summarize(results, query), query)
+        return self.answer(self.summarize(results, query_txt), query_txt)
 
 
 class SqlToolFactory():
