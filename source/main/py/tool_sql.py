@@ -171,13 +171,11 @@ class ProductReader(ProductRetriever):
     def __init__(self, discretize_llm, parsing_llm, is_verbose):
         super().__init__(discretize_llm, parsing_llm, is_verbose)
 
-    def run(self, tool_input, user_query, tool_filter={}):
-        return self.invoke(tool_input, tool_filter, self.select)
+    def run(self, tool_input="", user_query="", query_filter={}):
+        return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
-        print("SELECT=>"+str(query_txt))
         results = self.subquery(query_txt)
-        print("RESULTS=>"+str(results))
         return self.answer(self.summarize(results, query_txt), query_txt)
 
 

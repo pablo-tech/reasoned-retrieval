@@ -37,12 +37,12 @@ class MathRetriever(SelectHelper):
 
 class MathReader(MathRetriever):
 
-    def run(self, tool_input, user_query=""):
+    def run(self, tool_input="", user_query="", query_filter={}):
         return self.invoke(tool_input, self.select)
     
-    def select(self, query):
-        results = self.subquery(query)
-        return self.answer(self.summarize(results, query), query)
+    def select(self, query_txt, query_filter):
+        results = self.subquery(query_txt)
+        return self.answer(self.summarize(results, query_txt), query_txt)
 
         
 class MathToolFactory():

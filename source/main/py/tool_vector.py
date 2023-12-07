@@ -51,8 +51,8 @@ class VectorSearchReader(VectorRetriever):
     def __init__(self, completion_llm, is_verbose=False):
         super().__init__(completion_llm, is_verbose)
 
-    def run(self, tool_input, user_query="", tool_filter={}):
-        return self.invoke(tool_input, tool_filter, self.select)
+    def run(self, tool_input="", user_query="", query_filter={}):
+        return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
         results = self.subquery(query_txt, query_filter)
