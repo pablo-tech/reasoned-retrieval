@@ -1,9 +1,10 @@
 from langchain.agents import Tool
 
 from helper_suql import ContextParser, InferenceParser
-from helper_parser import SemanticQuery
+from helper_parser import SemanticQuery, QueryFactory
 from domain_knowledge import GiftDataset2, TvDataset, AcDataset
-
+from model_executor import PayloadFactory, QueryExecutor, ModelExecutor
+from helper_select import SelectHelper
 from model_base import OpenaiBase
 
 import sqlite3
@@ -125,12 +126,13 @@ class GiftOracle():
         } 
     
 
-class ProductRetriever():
+class ProductRetriever(SelectHelper):
 
-    def __init__(self, completion_llm, is_verbose):
+    def __init__(self, discretize_llm, parsing_llm, is_verbose):
+        super().__init__("CLIQ", discretize_llm, is_verbose)
         domain_oracle = GiftOracle(is_run_inference=False,
                                    subdomain_names=[],
-                                   completion_llm=completion_llm)
+                                   completion_llm=discretize_llm)
         print(domain_oracle.get_context_parser().default_columns())
         print(domain_oracle.get_context_parser().get_columns())
         print(domain_oracle.get_context_parser().get_schema_sql())
@@ -140,55 +142,52 @@ class ProductRetriever():
         print(domain_oracle.get_context_parser().get_fewshot_examples())
         print(domain_oracle.get_context_parser().get_subdomain_names())
         # products = domain_oracle.get_inference_parser().get_products('fragrances-men.json')
+        self.query_executor = QueryExecutor()
+        # model_executor = ModelExecutor()
+        self.query_factory = QueryFactory(query_limit=1, 
+                                          domain_oracle=domain_oracle, 
+                                          completion_llm=parsing_llm)
 
-# class HotpotRetriever(SelectHelper):
-
-#     def __init__(self, completion_llm, is_verbose):
-#         super().__init__("HOTPOT", completion_llm, is_verbose)
-#         self.hotpot_data = HotpotDataset(completion_llm, is_verbose)
 #         self.doc_store = {}
 #         for example in self.hotpot_data.get_corpus():
 #             contexts = example['context']
 #             contexts = ["".join(context[1]) for context in contexts]
 #             self.doc_store[example['question'].strip()] = contexts        
 
-#     def subquery(self, query):
-#         try:
-#           return self.doc_store[query]
-#         except Exception as e:
-#           error = "HOTPOT_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query)
-#           print(error)
-#           return [error]
+    def subquery(self, query):
+        try:
+          payloads = PayloadFactory("what non-black 15 liter under $400 bags do you have?",
+                                    [self.query_factory.get_model("backpacks-men.json")]).get_payloads()
+          return self.query_executor.execute_queries(payloads)
+        #   return self.doc_store[query]
+        except Exception as e:
+          error = "SLIQ_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query)
+          print(error)
+          return [error]
 
 
 class ProductReader(ProductRetriever):
 
-    def __init__(self, completion_llm, is_verbose):
-        super().__init__(completion_llm, is_verbose)
+    def __init__(self, discretize_llm, parsing_llm, is_verbose):
+        super().__init__(discretize_llm, parsing_llm, is_verbose)
 
+    def run(self, tool_input, user_query):
+        return self.invoke(tool_input, self.select)
 
-# class HotpotReader(HotpotRetriever):
-
-#     def __init__(self, completion_llm, is_verbose):
-#         super().__init__(completion_llm, is_verbose)
-
-#     def run(self, tool_input, user_query):
-#         return self.invoke(user_query, self.select)
-
-#     def select(self, query):
-#         results = self.subquery(query)
-#         return self.answer(self.summarize(results, query), query)
+    def select(self, query):
+        results = self.subquery(query)
+        return self.answer(self.summarize(results, query), query)
 
 
 class SqlToolFactory():
 
-    def __init__(self, completion_llm, is_verbose=False):
-        # inference_llm_35
-        self.completion_llm = completion_llm
+    def __init__(self, discretize_llm, parsing_llm, is_verbose=False):
+        self.discretize_llm = discretize_llm
+        self.parsing_llm = parsing_llm
         self.is_verbose = is_verbose
 
     def get_tools(self):
-        api = ProductReader(self.completion_llm, self.is_verbose)
+        api = ProductReader(self.discretize_llm, self.parsing_llm, self.is_verbose)
         return [
           Tool(
               name="ProductSearch",
