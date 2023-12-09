@@ -72,6 +72,7 @@ class SerpReader(SerpRetriever):
         return snippets
 
 
+
 class SearchSerpReader(SelectHelper):
 
     def __init__(self, completion_llm, is_verbose):
