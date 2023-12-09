@@ -21,7 +21,7 @@ class WikipediaSearchReader(WikipediaRetriever):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, tool_input="", user_query="", query_filter={}):
-        return self.invoke(tool_input, self.select)
+        return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
         results = self.subquery(query_txt)
@@ -53,7 +53,7 @@ class WikipediaLookupReader(WikipediaRetriever):
         super().__init__(completion_llm, is_verbose)
 
     def run(self, tool_input="", user_query="", query_filter={}):
-        return self.invoke(tool_input, self.select)
+        return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
         return self.answer(self.summarize(self.subquery(query_txt)))

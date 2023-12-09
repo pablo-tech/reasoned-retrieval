@@ -1,4 +1,4 @@
-from llm_executor import ExecutorFactory
+from llm_executor import ExecutorFactory, PipelinedExecutor
 from llm_memory import LlmMemory
 
 
@@ -8,7 +8,7 @@ class ChatBot():
         self.is_verbose = is_verbose
         self.executor_factory = ExecutorFactory(agent_llm=agent_llm,
                                                 is_verbose=is_verbose)
-        self.executor = self.executor_factory.react_executor(agent_tools=agent_tools,
+        self.executor:PipelinedExecutor = self.executor_factory.react_executor(agent_tools=agent_tools,
                                                             agent_memory=LlmMemory())
         self.react_agent = self.executor.get_agent()
 
