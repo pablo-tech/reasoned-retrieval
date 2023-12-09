@@ -73,7 +73,7 @@ class SearchSerpReader(SelectHelper):
         self.is_verbose = is_verbose
 
     def run(self, tool_input="", user_query="", query_filter={}):
-        return self.invoke(tool_input, self.select)
+        return self.invoke(tool_input, query_filter, self.select)
     
     def select(self, query_txt, query_filter):
         results = self.search_engine.subquery(query_txt), query_txt
