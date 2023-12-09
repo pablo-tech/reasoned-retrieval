@@ -63,11 +63,12 @@ class SerpReader(SerpRetriever):
         results = self.organic(results)
         snippets = []
         for result in results:
-            try:
+            if 'snippet' in result:
                 snippets.append(result['snippet'])
-            except:
-                print("NO_SNIPPET="+str(result))
-                pass
+            elif 'rich_snippet_table' in result:
+                snippets.append(result['rich_snippet_table'])
+            else:
+                print("NO_SNIPPET=>"+str(result))
         return snippets
 
 
