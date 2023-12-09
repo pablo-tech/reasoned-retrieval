@@ -97,3 +97,4 @@ class EncyclopediaToolFactory():
               description="useful to lookup named entity facts"
           )
         ]
+    
