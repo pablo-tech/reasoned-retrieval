@@ -79,6 +79,7 @@ class SearchSerpReader(SelectHelper):
         results = self.search_engine.subquery(query_txt), query_txt
         return self.answer(self.summarize(results, query_txt), query_txt)
                 
+                
 
 class SearchToolFactory():
 
