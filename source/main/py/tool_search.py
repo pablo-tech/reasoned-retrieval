@@ -61,7 +61,9 @@ class SerpReader(SerpRetriever):
     def subquery(self, query):
         results = self.select(query)
         results = self.organic(results)
-        return [result['snippet'] for result in results]
+        print("SERP_RESULTS="+str(results))
+        return results
+        # return [result['snippet'] for result in results]
 
 
 class SearchSerpReader(SelectHelper):
@@ -79,7 +81,7 @@ class SearchSerpReader(SelectHelper):
         results = self.search_engine.subquery(query_txt), query_txt
         return self.answer(self.summarize(results, query_txt), query_txt)
                 
-                
+
 
 class SearchToolFactory():
 
