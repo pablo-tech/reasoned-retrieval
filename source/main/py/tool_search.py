@@ -61,9 +61,14 @@ class SerpReader(SerpRetriever):
     def subquery(self, query):
         results = self.select(query)
         results = self.organic(results)
-        print("SERP_RESULTS="+str(results))
-        return results
-        # return [result['snippet'] for result in results]
+        snippets = []
+        for result in results:
+            try:
+                snippets.append(result['snippet'])
+            except:
+                print("NO_SNIPPET="+str(result))
+                pass
+        return snippets
 
 
 class SearchSerpReader(SelectHelper):
