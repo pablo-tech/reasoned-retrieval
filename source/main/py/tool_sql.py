@@ -152,7 +152,7 @@ class ProductRetriever(SelectHelper):
         try:
           # TODO: use all filters:
           if len(query_filter) > 0:
-              query_filter = query_filter[0]
+              query_filter = sorted(list(query_filter.values()))[0]
           payloads = PayloadFactory(query_txt,
                                    [self.query_factory.get_model(query_filter)]).get_payloads()
           return self.query_executor.execute_queries(payloads)
