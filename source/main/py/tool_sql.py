@@ -200,6 +200,6 @@ class SqlToolFactory():
           Tool(
               name="ProductSearch",
               func=api.run,
-              description="useful to search for product information"
+              description="useful access to a database of products"
           )
         ]    

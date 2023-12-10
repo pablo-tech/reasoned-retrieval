@@ -113,14 +113,15 @@ class PipelinedExecutor(ModelRun):
                     elif tool_name == "Describe" and tool_input == 'format':
                         observation = ReactDescribe().react_format() 
                         observation += ReactDescribe().name_template(self.llm_agent.get_tool_names())
-                    elif tool_name == "List" and tool_input == 'tools':
-                        observation = ReactDescribe().name_template(self.llm_agent.get_tool_names())
-                    elif tool_name == "Describe" and tool_input == 'tools':
-                        observation = ReactDescribe().summary_template(self.llm_agent.get_tool_summaries())
-                        print("DESCRIBE_OBSERVATION"+str(observation))
+                    elif tool_input == 'tools':
+                        if tool_name == "List": 
+                            observation = ReactDescribe().name_template(self.llm_agent.get_tool_names())
+                        elif tool_name == "Describe" or tool_name == "Explain":
+                            observation = ReactDescribe().summary_template(self.llm_agent.get_tool_summaries())
                     elif tool_name not in ToolFactory.tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to the agent. "
-                        observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
+                        observation += ReactDescribe().summary_template(self.llm_agent.get_tool_summaries())
+                        # observation += "Try: Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
                         is_hallucination = True
 
                 self.get_measure().add_run(is_hallucination, input_len, output_len,
