@@ -24,7 +24,7 @@ class VectorRetriever(SelectHelper):
                  files=['joined_faq.csv'], 
                  path='/content/drive/MyDrive/StanfordLLM/qa_data/faq_qa/',):
         docs = self.doc_store.read_files(file_names=files,
-                                             directory_path=path)
+                                         directory_path=path)
         begins = [" ".join(doc.page_content.split(" ")[:3]).lstrip('\"') 
                 for doc in docs]
         metas = [{'begins':str(begin)} for begin in begins]        
@@ -44,6 +44,9 @@ class VectorRetriever(SelectHelper):
         docs = self.doc_store.read_files(files, path)        
         metas = []
         self.doc_store.load_docs(items=docs, metas=metas)  
+
+    # def load_products(self,
+    #                   )
 
 
 class VectorSearchReader(VectorRetriever):

@@ -1,5 +1,6 @@
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders.csv_loader import CSVLoader
+from langchain.document_loaders import JSONLoader
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 
 from vector_embed import BytePairEmbedding
@@ -7,7 +8,6 @@ from vector_embed import BytePairEmbedding
 import pinecone
 from langchain.vectorstores import Pinecone
 
-# from tqdm.auto import tqdm
 from uuid import uuid4
     
 
@@ -26,11 +26,17 @@ class VectorDb():
 
     def read_files(self, file_names,
                   directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/legal_qa/'):
-        files = [directory_path+name for name in file_names]      
-        return self.text_documents(files)
+        file_names = [directory_path+name for name in file_names]      
+        return self.text_documents(file_names)
 
     def read_faq(self, file_names):
         return self.csv_documents(file_names)
+    
+    def read_products(self, 
+                      file_names,
+                      directory_path='/content/drive/MyDrive/StanfordLLM/qa_data/faq_qa/'):
+        file_names = [directory_path+name for name in file_names]            
+        return self.json_documents(file_names)
 
     def text_documents(self, file_names):
         split_documents = []
@@ -44,6 +50,29 @@ class VectorDb():
         for file_name in file_names:
           whole_document = CSVLoader(file_name).load()
           split_documents += self.text_splitter.split_documents(whole_document)    
+        return split_documents
+        
+    def product_metadata_func(self, record: dict, metadata: dict) -> dict:
+        # can't do price, 
+        metadata["brand"] = record.get("brand")
+        metadata["store"] = record.get("store")
+        metadata["gender"] = record.get("gender")
+        metadata["category"] = record.get("category")
+        metadata["product_id"] = record.get("product_id")
+        return metadata
+            
+    def json_documents(self, file_names):
+        # https://python.langchain.com/docs/modules/data_connection/document_loaders/json
+        split_documents = []
+        for file_name in file_names:
+          loader = JSONLoader(
+                file_path=file_name,
+                jq_schema=".[]", # ".[].description", # ".[]", # 
+                content_key="description",
+                metadata_func=self.product_metadata_func)
+          whole_documents = loader.load()
+          split_documents += whole_documents
+          # split_documents += self.text_splitter.split_documents(whole_document)    
         return split_documents
 
     def get_vector(self, text):
