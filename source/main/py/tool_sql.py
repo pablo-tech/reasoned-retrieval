@@ -133,6 +133,7 @@ class ProductRetriever(SelectHelper):
         domain_oracle = GiftOracle(is_run_inference=False,
                                    subdomain_names=[],
                                    completion_llm=discretize_llm)
+        ### CONTEXT
         print(domain_oracle.get_context_parser().default_columns())
         print(domain_oracle.get_context_parser().get_columns())
         print(domain_oracle.get_context_parser().get_schema_sql())
@@ -141,6 +142,16 @@ class ProductRetriever(SelectHelper):
         print(domain_oracle.get_context_parser().get_enum_values())
         print(domain_oracle.get_context_parser().get_fewshot_examples())
         print(domain_oracle.get_context_parser().get_subdomain_names())
+        ### INFERENCE
+        print(len(domain_oracle.get_inference_parser().get_columns('backpacks-men.json')))
+        print(domain_oracle.get_inference_parser().join_schema_sql("backpacks-men.json"))
+        domain_oracle.get_inference_parser().load_items()
+        print(domain_oracle.get_inference_parser().join_enum_values("backpacks-men.json"))
+        ### SQL: see more at SQLTool-ProductSearch
+        # for r in domain_oracle.get_db_instance().execute_read("""
+        # SELECT COUNT(*) FROM 'CLIQ_INFERENCE_FRAGRANCES_WOMEN_JSON';"""):
+        # print(r[0])
+        ### EXECUTOR
         # products = domain_oracle.get_inference_parser().get_products('fragrances-men.json')
         self.query_executor = QueryExecutor()
         # model_executor = ModelExecutor()
