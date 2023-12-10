@@ -117,6 +117,7 @@ class PipelinedExecutor(ModelRun):
                         observation = ReactDescribe().name_template(self.llm_agent.get_tool_names())
                     elif tool_name == "Describe" and tool_input == 'tools':
                         observation = ReactDescribe().summary_template(self.llm_agent.get_tool_summaries())
+                        print("DESCRIBE_OBSERVATION"+str(observation))
                     elif tool_name not in ToolFactory.tool_names(self.agent_tools):
                         observation = tool_name + " is not a valid action available to the agent. "
                         observation += "Try: 'Thought: I need to describe the tools available to the agent\nAction: Describe[tools]'."
