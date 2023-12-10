@@ -53,12 +53,13 @@ class VectorDb():
         return split_documents
         
     def product_metadata_func(self, record: dict, metadata: dict) -> dict:
-        # can't do price, 
+        # price is meta but not categorical
         metadata["brand"] = record.get("brand")
         metadata["store"] = record.get("store")
         metadata["gender"] = record.get("gender")
         metadata["category"] = record.get("category")
         metadata["product_id"] = record.get("product_id")
+        metadata["price"] = record.get("price")
         return metadata
             
     def json_documents(self, file_names):
