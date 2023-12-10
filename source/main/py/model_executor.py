@@ -116,7 +116,9 @@ class QueryExecutor(ModelExecutor):
         super().__init__()
 
     def execute_queries(self, execution_payloads):
+        print("EXECUTION_PAYLOADS=>"+str(execution_payloads))
         answered_contents = self.execute_payloads(execution_payloads)
+        print("ANSWERED_CONTENTS=>"+str(answered_contents))
         final_state = set()
         final_items = []
         for answered_content in answered_contents.values():
