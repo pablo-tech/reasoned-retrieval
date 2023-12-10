@@ -106,7 +106,7 @@ class PipelinedExecutor(ModelRun):
                     tool_name, tool_input = model_step.get_tool(), model_step.get_input()
                     if tool_name in ToolFactory.tool_names(self.agent_tools):
                         tool = [t for t in self.agent_tools if t.name==tool_name][0]
-                        tool_run = tool.func(tool_input, user_query, query_filter={})
+                        tool_run = tool.func(tool_input, user_query) # query_filter={}
                         if self.is_verbose:
                             print("TOOL_" + str(tool_run))
                         observation = tool_run.get_answer()
