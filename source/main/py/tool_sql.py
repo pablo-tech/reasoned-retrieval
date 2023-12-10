@@ -150,11 +150,9 @@ class ProductRetriever(SelectHelper):
 
     def subquery(self, query_txt, query_filter):
         try:
-            # TODO: use all filters:
-            if len(query_filter) > 0:
-                query_filter = sorted(query_filter)[0]
-            payloads = PayloadFactory(query_txt,
-                                    [self.query_factory.get_model(query_filter)]).get_payloads()
+            query_models = [self.query_factory.get_model(sub_domain)
+                            for sub_domain in query_filter]            
+            payloads = PayloadFactory(query_txt, query_models).get_payloads()
             return self.query_executor.execute_queries(payloads)
         except Exception as e:
             error = "SLIQ_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query_txt)+"...QUERY_FILTER="+str(query_filter)
