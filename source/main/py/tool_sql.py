@@ -151,8 +151,9 @@ class ProductRetriever(SelectHelper):
     def subquery(self, query_txt, query_filter):
         try:
           # TODO: use all filters:
+          query_filter = set(query_filter.values())
           if len(query_filter) > 0:
-              query_filter = sorted(list(query_filter.values()))[0]
+              query_filter = sorted(list(query_filter))[0]
           payloads = PayloadFactory(query_txt,
                                    [self.query_factory.get_model(query_filter)]).get_payloads()
           return self.query_executor.execute_queries(payloads)
