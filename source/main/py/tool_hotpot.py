@@ -17,11 +17,11 @@ class HotpotRetriever(SelectHelper):
             contexts = ["".join(context[1]) for context in contexts]
             self.doc_store[example['question'].strip()] = contexts        
 
-    def subquery(self, query):
+    def subquery(self, query_txt, query_filter):
         try:
-          return self.doc_store[query]
+          return self.doc_store[query_txt]
         except Exception as e:
-          error = "HOTPOT_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query)
+          error = "HOTPOT_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query_txt)
           print(error)
           return [error]
 
@@ -35,7 +35,7 @@ class HotpotReader(HotpotRetriever):
         return self.invoke(user_query, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
-        results = self.subquery(query_txt)
+        results = self.subquery(query_txt, query_filter)
         return self.answer(self.summarize(results, query_txt), query_txt)
 
 

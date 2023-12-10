@@ -10,8 +10,8 @@ class ConversationRetriever(SelectHelper):
     def __init__(self, completion_llm, is_verbose):
         super().__init__("CONVERSATION", completion_llm, is_verbose)
 
-    def subquery(self, txt):
-        return txt
+    def subquery(self, query_txt, query_filter):
+        return query_txt
 
 
 class ConversationReader(ConversationRetriever):
@@ -23,7 +23,7 @@ class ConversationReader(ConversationRetriever):
         return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
-        results = self.subquery(query_txt)
+        results = self.subquery(query_txt, query_filter)
         return self.answer(self.summarize(results, query_txt), query_txt)
     
 

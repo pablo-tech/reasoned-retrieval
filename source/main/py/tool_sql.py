@@ -148,14 +148,16 @@ class ProductRetriever(SelectHelper):
                                           domain_oracle=domain_oracle, 
                                           completion_llm=parsing_llm)
 
-    def subquery(self, query):
+    def subquery(self, query_txt, query_filter):
         try:
-          payloads = PayloadFactory(query,
-                                   [self.query_factory.get_model("backpacks-men.json")]).get_payloads()
+          # TODO: use all filters:
+          if len(query_filter) > 0:
+              query_filter = query_filter[0]
+          payloads = PayloadFactory(query_txt,
+                                   [self.query_factory.get_model(query_filter)]).get_payloads()
           return self.query_executor.execute_queries(payloads)
-        #   return self.doc_store[query]
         except Exception as e:
-          error = "SLIQ_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query)
+          error = "SLIQ_SUBQUERY_ERROR="+str(e)+"...WITH_QUERY="+str(query_txt)
           print(error)
           return [error]
 
@@ -169,7 +171,7 @@ class ProductReader(ProductRetriever):
         return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
-        results = self.subquery(query_txt)
+        results = self.subquery(query_txt, query_filter)
         return self.answer(self.summarize(results, query_txt), query_txt)
 
 

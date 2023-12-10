@@ -26,8 +26,8 @@ class MathRetriever(SelectHelper):
                 # coroutine= ... <- you can specify an async method if desired as well
         )
 
-    def subquery(self, query):
-        results = [self.math_tool.run(query)]
+    def subquery(self, query_txt, query_filter):
+        results = [self.math_tool.run(query_txt)]
         try:
             return [eval(result.replace('Answer: ', '')) for result in results]
         except:
@@ -41,7 +41,7 @@ class MathReader(MathRetriever):
         return self.invoke(tool_input, self.select)
     
     def select(self, query_txt, query_filter):
-        results = self.subquery(query_txt)
+        results = self.subquery(query_txt, query_filter)
         return self.answer(self.summarize(results, query_txt), query_txt)
 
         
