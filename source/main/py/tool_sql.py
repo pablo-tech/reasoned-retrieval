@@ -148,16 +148,10 @@ class ProductRetriever(SelectHelper):
                                           domain_oracle=domain_oracle, 
                                           completion_llm=parsing_llm)
 
-#         self.doc_store = {}
-#         for example in self.hotpot_data.get_corpus():
-#             contexts = example['context']
-#             contexts = ["".join(context[1]) for context in contexts]
-#             self.doc_store[example['question'].strip()] = contexts        
-
     def subquery(self, query):
         try:
-          payloads = PayloadFactory("what non-black 15 liter under $400 bags do you have?",
-                                    [self.query_factory.get_model("backpacks-men.json")]).get_payloads()
+          payloads = PayloadFactory(query,
+                                   [self.query_factory.get_model("backpacks-men.json")]).get_payloads()
           return self.query_executor.execute_queries(payloads)
         #   return self.doc_store[query]
         except Exception as e:
