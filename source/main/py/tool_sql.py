@@ -165,7 +165,9 @@ class ProductReader(ProductRetriever):
     def __init__(self, discretize_llm, parsing_llm, is_verbose):
         super().__init__(discretize_llm, parsing_llm, is_verbose)
 
-    def run(self, tool_input="", user_query="", query_filter={}):
+    def run(self, tool_input="", 
+                  user_query="", 
+                  query_filter=['backpacks-men.json']):
         return self.invoke(tool_input, query_filter, self.select)
 
     def select(self, query_txt, query_filter):
