@@ -44,7 +44,10 @@ class DatabaseInstance():
 
 class GiftOracle():
 
-    def __init__(self, is_run_inference, subdomain_names, completion_llm):
+    def __init__(self, is_run_inference, 
+                 subdomain_names, completion_llm,
+                 dataset_path):
+        self.dataset_path = dataset_path
         domain_name="CLIQ"
         picked_columns=['id', 'price', 
                         'brand', 'colors', 'gender',
@@ -68,7 +71,8 @@ class GiftOracle():
                                                 self.db_instance, completion_llm, is_verbose=False)
 
     def subdomain_dataset_func(self, subdomain_names):
-        return [GiftDataset2(subdomain_names)]
+        return [GiftDataset2(subdomain_names=subdomain_names,
+                             dir_path=self.dataset_path)]
     
     def get_context_parser(self):
         return self.context_parser
@@ -128,11 +132,12 @@ class GiftOracle():
 
 class ProductRetriever(SelectHelper):
 
-    def __init__(self, discretize_llm, parsing_llm, is_verbose):
+    def __init__(self, discretize_llm, parsing_llm, is_verbose, dataset_path):
         super().__init__("CLIQ", discretize_llm, is_verbose)
         domain_oracle = GiftOracle(is_run_inference=False,
                                    subdomain_names=[],
-                                   completion_llm=discretize_llm)
+                                   completion_llm=discretize_llm,
+                                   dataset_path=dataset_path)
         ### CONTEXT
         print(domain_oracle.get_context_parser().default_columns())
         print(domain_oracle.get_context_parser().get_columns())
@@ -173,8 +178,8 @@ class ProductRetriever(SelectHelper):
 
 class ProductReader(ProductRetriever):
 
-    def __init__(self, discretize_llm, parsing_llm, is_verbose):
-        super().__init__(discretize_llm, parsing_llm, is_verbose)
+    def __init__(self, discretize_llm, parsing_llm, is_verbose, dataset_path):
+        super().__init__(discretize_llm, parsing_llm, is_verbose, dataset_path)
 
     def run(self, tool_input="", 
                   user_query="", 
@@ -189,13 +194,16 @@ class ProductReader(ProductRetriever):
 
 class SqlToolFactory():
 
-    def __init__(self, discretize_llm, parsing_llm, is_verbose=False):
+    def __init__(self, discretize_llm, parsing_llm, is_verbose=False,
+                 dataset_path="/content/drive/MyDrive/StanfordLLM/qa_data/gift2_qa/"):
         self.discretize_llm = discretize_llm
         self.parsing_llm = parsing_llm
         self.is_verbose = is_verbose
+        self.dataset_path = dataset_path
 
     def get_tools(self):
-        api = ProductReader(self.discretize_llm, self.parsing_llm, self.is_verbose)
+        api = ProductReader(self.discretize_llm, self.parsing_llm, 
+                            self.is_verbose, self.dataset_path)
         return [
           Tool(
               name="ProductSearch",
