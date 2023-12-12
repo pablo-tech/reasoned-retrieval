@@ -36,6 +36,11 @@ Within vector_db.py:
 
 ##### Cloning the repo
 
-- Load this notebook in Colab: ReAct-Chatbot-ToolSet
+- Load this notebook in Colab: ReAct-Chatbot-ToolSet.ipynb (found in source/main/ipynb)
 - Within the notebook set the google drive work_dir, where GitHome is instantiated
 - Running the notebook will clone the repository from GitHub into Google Drive
+
+##### The Demo
+
+- See sub-section Exploratory Query
+- See sub-section Complex Direct Queries
