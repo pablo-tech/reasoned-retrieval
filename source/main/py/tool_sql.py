@@ -184,6 +184,7 @@ class ProductReader(ProductRetriever):
     def run(self, tool_input="", 
                   user_query="", 
                   query_filter={}):
+        print(">>>>> QUERY_FILTER=" + str(query_filter))
         # TODO: query_filter = domain_oracle.get_context_parser().get_subdomain_names()]).get_payloads()
         return self.invoke(tool_input, query_filter, self.select)
 
