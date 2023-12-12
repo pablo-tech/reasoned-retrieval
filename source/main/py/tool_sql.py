@@ -181,7 +181,7 @@ class ProductReader(ProductRetriever):
     def __init__(self, discretize_llm, parsing_llm, is_verbose, dataset_path):
         super().__init__(discretize_llm, parsing_llm, is_verbose, dataset_path)
 
-    def run(self, tool_input, 
+    def runx(self, tool_input, 
                   user_query, 
                   query_filter):
         print(">>>>> QUERY_FILTER=" + str(query_filter))
@@ -208,7 +208,7 @@ class SqlToolFactory():
         return [
           Tool(
               name="ProductSearch",
-              func=api.run,
+              func=api.runx,
               description="useful access to a database of products"
           )
         ]    
