@@ -181,9 +181,10 @@ class ProductReader(ProductRetriever):
     def __init__(self, discretize_llm, parsing_llm, is_verbose, dataset_path):
         super().__init__(discretize_llm, parsing_llm, is_verbose, dataset_path)
 
-    def runx(self, tool_input, 
-                  user_query, 
-                  query_filter):
+    def run(self, reader_args): 
+        tool_input = reader_args["tool_input"]
+        user_query = reader_args["user_query"]
+        query_filter = reader_args["query_filter"]
         print(">>>>> QUERY_FILTER=" + str(query_filter))
         # TODO: query_filter = domain_oracle.get_context_parser().get_subdomain_names()]).get_payloads()
         return self.invoke(tool_input, query_filter, self.select)
@@ -208,7 +209,7 @@ class SqlToolFactory():
         return [
           Tool(
               name="ProductSearch",
-              func=api.runx,
+              func=api.run,
               description="useful access to a database of products"
           )
         ]    
