@@ -176,7 +176,7 @@ class ProductRetriever(SelectHelper):
             return [error]
 
 
-class ProductReader(ProductRetriever):
+class ProductsReader(ProductRetriever):
 
     def __init__(self, discretize_llm, parsing_llm, is_verbose, dataset_path):
         super().__init__(discretize_llm, parsing_llm, is_verbose, dataset_path)
@@ -201,7 +201,7 @@ class SqlToolFactory():
         self.dataset_path = dataset_path
 
     def get_tools(self):
-        api = ProductReader(self.discretize_llm, self.parsing_llm, 
+        api = ProductsReader(self.discretize_llm, self.parsing_llm, 
                             self.is_verbose, self.dataset_path)
         return [
           Tool(
