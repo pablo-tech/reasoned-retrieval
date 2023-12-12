@@ -167,7 +167,7 @@ class ProductRetriever(SelectHelper):
     def subquery(self, query_txt, query_filter):
         try:
             query_models = [self.query_factory.get_model(sub_domain)
-                            for sub_domain in query_filter]            
+                            for sub_domain in query_filter.values()]            
             payloads = PayloadFactory(query_txt, query_models).get_payloads()
             return self.query_executor.execute_queries(payloads)
         except Exception as e:
@@ -183,7 +183,7 @@ class ProductReader(ProductRetriever):
 
     def run(self, tool_input="", 
                   user_query="", 
-                  query_filter=[]):
+                  query_filter={}):
         # TODO: query_filter = domain_oracle.get_context_parser().get_subdomain_names()]).get_payloads()
         return self.invoke(tool_input, query_filter, self.select)
 
